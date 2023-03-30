@@ -55,8 +55,8 @@ defmodule LiveroomWeb.Components.Playground do
     <form
       id="msgform"
       phx-change="message_updated"
-      phx-submit="send_message"
-      phx-keyup="send_message"
+      phx-submit={js_send_message()}
+      phx-keyup={js_send_message()}
       phx-key="Enter"
       class={[
         "flex flex-col items-stretch space-y-4 text-xs",
@@ -185,6 +185,12 @@ defmodule LiveroomWeb.Components.Playground do
   end
 
   ### Helpers
+
+  defp js_send_message(js \\ %JS{}) do
+    js
+    |> JS.push("send_message")
+    |> JS.focus(to: "textarea#msg")
+  end
 
   defp send_event(:cursor_moved, socket_id, x, y) do
     Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{x: x, y: y}))
