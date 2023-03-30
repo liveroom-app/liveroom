@@ -39,19 +39,21 @@ defmodule LiveroomWeb.Components.Playground do
         </ul>
       </div>
 
-      <.msg_form class="min-w-[15ch] w-full max-w-[30ch]" />
+      <.msg_form msg={@msg} class="min-w-[15ch] w-full max-w-[30ch]" />
     </div>
     """
   end
 
   ### Components
 
+  attr :msg, :string, required: true
   attr :class, :string, default: nil
 
   def msg_form(assigns) do
     ~H"""
     <form
       id="msgform"
+      phx-change="message_updated"
       phx-submit="send_message"
       phx-keyup="send_message"
       phx-key="Enter"
@@ -71,17 +73,21 @@ defmodule LiveroomWeb.Components.Playground do
           "flex-1 appearance-none py-1 px-2",
           "text-gray-600 bg-gray-50 placeholder-gray-400",
           "border-none rounded-md shadow-inner",
-          "focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:shadow-none"
+          "focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:shadow-none",
+          @msg == "" && "opacity-50"
         ]}
       />
 
       <button
         type="submit"
         tabindex="0"
-        class="flex justify-center items-center py-1.5 px-3 bg-brand text-white font-semibold rounded focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+        class="flex justify-center items-center py-2 px-3 bg-brand text-white text-base font-semibold rounded focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
       >
-        <span>send</span>
-        <.icon name="hero-paper-airplane-solid" class="h-4 w-4 ml-2 mt-0.5" />
+        <span :if={@msg != ""}>send</span>
+        <.icon :if={@msg != ""} name="hero-paper-airplane-mini" class="h-4 w-4 ml-2 mt-0.5" />
+
+        <span :if={@msg == ""}>clear</span>
+        <.icon :if={@msg == ""} name="hero-backspace-mini" class="h-4 w-4 ml-2 mt-0.5 stroke-white" />
       </button>
     </form>
     """
@@ -130,6 +136,7 @@ defmodule LiveroomWeb.Components.Playground do
 
     socket
     |> assign(
+      msg: "",
       socket_id: socket_id,
       users: initial_users
     )
@@ -144,7 +151,11 @@ defmodule LiveroomWeb.Components.Playground do
 
   def handle_event("send_message", %{"msg" => msg}, socket) do
     send_event(:message_sent, socket.id, msg)
-    {:noreply, socket}
+    {:noreply, assign(socket, msg: "")}
+  end
+
+  def handle_event("message_updated", %{"msg" => msg}, socket) do
+    {:noreply, assign(socket, msg: msg)}
   end
 
   @impl true
