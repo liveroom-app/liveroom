@@ -8,11 +8,7 @@ defmodule LiveroomWeb.Components.Playground do
   @impl true
   def render(assigns) do
     ~H"""
-    <ul
-      id="playground_cursors"
-      phx-hook="TrackCursorsHook"
-      class="relative w-full h-full list-none p-8"
-    >
+    <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none p-8">
       <li
         style={"color: deeppink; left: #{@x}%; top: #{@y}%"}
         class="flex flex-col absolute pointer-events-none whitespace-nowrap overflow-hidden"
