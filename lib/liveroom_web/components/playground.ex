@@ -1,6 +1,8 @@
 defmodule LiveroomWeb.Components.Playground do
   use LiveroomWeb, :live_view
 
+  alias Liveroom.Names
+
   ### Render
 
   @impl true
@@ -13,9 +15,12 @@ defmodule LiveroomWeb.Components.Playground do
     >
       <li
         style={"color: deeppink; left: #{@x}%; top: #{@y}%"}
-        class="flex flex-col absolute pointer-events-none whitespace-nowrap overflow-hidden shadow-xl"
+        class="flex flex-col absolute pointer-events-none whitespace-nowrap overflow-hidden"
       >
         <.cursor />
+        <span style="background-color: deeppink;" class="mt-1 ml-4 px-1 text-sm text-white">
+          <%= @user %>
+        </span>
       </li>
     </ul>
     """
@@ -42,9 +47,15 @@ defmodule LiveroomWeb.Components.Playground do
   ### Server
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
+    user = session["user"] || Names.generate()
+
     socket
-    |> assign(x: Enum.random(1..100), y: Enum.random(1..100))
+    |> assign(
+      x: Enum.random(1..100),
+      y: Enum.random(1..100),
+      user: user
+    )
     |> ok()
   end
 
