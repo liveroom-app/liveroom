@@ -8,7 +8,10 @@ defmodule LiveroomWeb.Layouts do
     <div class="min-h-[100dvh] grid grid-cols-1 grid-rows-[auto_1fr_auto]">
       <.flash_group flash={@flash} />
 
-      <main class="">
+      <LiveroomWeb.Header.render />
+
+      <main class="debug h-full">
+        <LiveroomWeb.Hero.render />
         <%= @inner_content %>
       </main>
     </div>
@@ -29,7 +32,7 @@ defmodule LiveroomWeb.Layouts do
 
         <.live_title><%= assigns[:page_title] || "IRL café" %></.live_title>
 
-        <link rel="manifest" href={~p"/manifest.json"} />
+        <%!-- <link rel="manifest" href={~p"/manifest.json"} /> --%>
         <link rel="icon" href={~p"/favicon.ico"} />
         <%!-- <link rel="icon" href={~p"/favicon.ico"} sizes="any" /> --%>
         <%!-- <link rel="icon" href={~p"/images/icons/icon.svg"} type="image/svg+xml" /> --%>

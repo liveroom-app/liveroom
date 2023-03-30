@@ -1,5 +1,22 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import 'tailwindcss/base';
 
-/* This file is for your main application CSS */
+body {
+  @apply text-brand;
+}
+
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  html {
+    /* Deactivate blue background on touch on Android Chrome */
+    -webkit-tap-highlight-color: transparent;
+
+    /* Color selected text properly */
+    @apply selection:bg-emerald-200;
+  }
+
+  .debug {
+    @apply outline outline-2 outline-red-400/50;
+  }
+}
