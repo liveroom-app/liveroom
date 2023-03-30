@@ -1,6 +1,8 @@
 defmodule LiveroomWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :liveroom
 
+  plug :canonical_host
+
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
@@ -48,4 +50,17 @@ defmodule LiveroomWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug LiveroomWeb.Router
+
+  ### Helpers
+
+  defp canonical_host(conn, _opts) do
+    case Application.get_env(:liveroom, :canonical_host) do
+      host when is_binary(host) and host != "" ->
+        opts = PlugCanonicalHost.init(canonical_host: host)
+        PlugCanonicalHost.call(conn, opts)
+
+      _ ->
+        conn
+    end
+  end
 end

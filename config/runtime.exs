@@ -63,6 +63,8 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  config :liveroom, canonical_host: System.get_env("PHX_HOST")
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key
