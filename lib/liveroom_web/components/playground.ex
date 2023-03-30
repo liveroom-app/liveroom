@@ -39,7 +39,7 @@ defmodule LiveroomWeb.Components.Playground do
         </ul>
       </div>
 
-      <.msg_form msg={@msg} class="min-w-[15ch] w-full max-w-[30ch]" />
+      <.msg_form msg={@msg} current_msg={@current_msg} class="min-w-[15ch] w-full max-w-[30ch]" />
     </div>
     """
   end
@@ -47,6 +47,7 @@ defmodule LiveroomWeb.Components.Playground do
   ### Components
 
   attr :msg, :string, required: true
+  attr :current_msg, :string, required: true
   attr :class, :string, default: nil
 
   def msg_form(assigns) do
@@ -80,14 +81,28 @@ defmodule LiveroomWeb.Components.Playground do
 
       <button
         type="submit"
+        disabled={disabled = @msg == "" && @current_msg == ""}
         tabindex="0"
-        class="flex justify-center items-center py-2 px-3 bg-brand text-white text-base font-semibold rounded focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+        class={[
+          "flex justify-center items-center py-2 px-3",
+          "text-white text-base font-semibold",
+          "rounded",
+          "focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2",
+          disabled && "bg-gray-300",
+          !disabled && "bg-brand"
+        ]}
       >
-        <span :if={@msg != ""}>send</span>
-        <.icon :if={@msg != ""} name="hero-paper-airplane-mini" class="h-4 w-4 ml-2 mt-0.5" />
-
-        <span :if={@msg == ""}>clear</span>
-        <.icon :if={@msg == ""} name="hero-backspace-mini" class="h-4 w-4 ml-2 mt-0.5 stroke-white" />
+        <%= cond do %>
+          <% @msg == "" && @current_msg != "" -> %>
+            <span>clear</span>
+            <.icon name="hero-backspace-mini" class="h-4 w-4 ml-2 mt-0.5" />
+          <% @msg == "" && @current_msg == "" -> %>
+            <span>send</span>
+            <.icon name="hero-paper-airplane-mini" class="h-4 w-4 ml-2 mt-0.5" />
+          <% true -> %>
+            <span>send</span>
+            <.icon name="hero-paper-airplane-mini" class="h-4 w-4 ml-2 mt-0.5" />
+        <% end %>
       </button>
     </form>
     """
@@ -137,6 +152,7 @@ defmodule LiveroomWeb.Components.Playground do
     socket
     |> assign(
       msg: "",
+      current_msg: "",
       socket_id: socket_id,
       users: initial_users
     )
@@ -151,7 +167,7 @@ defmodule LiveroomWeb.Components.Playground do
 
   def handle_event("send_message", %{"msg" => msg}, socket) do
     send_event(:message_sent, socket.id, msg)
-    {:noreply, assign(socket, msg: "")}
+    {:noreply, assign(socket, msg: "", current_msg: msg)}
   end
 
   def handle_event("message_updated", %{"msg" => msg}, socket) do
