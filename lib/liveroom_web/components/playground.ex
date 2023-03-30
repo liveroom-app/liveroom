@@ -2,6 +2,9 @@ defmodule LiveroomWeb.Components.Playground do
   use LiveroomWeb, :live_view
 
   alias Liveroom.Names
+  alias LiveroomWeb.Presence
+
+  @cursorview "cursorview"
 
   ### Render
 
@@ -10,12 +13,13 @@ defmodule LiveroomWeb.Components.Playground do
     ~H"""
     <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none p-8">
       <li
-        style={"color: deeppink; left: #{@x}%; top: #{@y}%"}
+        :for={user <- @users}
+        style={"color: deeppink; left: #{user.x}%; top: #{user.y}%"}
         class="flex flex-col absolute pointer-events-none whitespace-nowrap overflow-hidden"
       >
         <.cursor />
         <span style="background-color: deeppink;" class="mt-1 ml-4 px-1 text-sm text-white">
-          <%= @user %>
+          <%= user.name %>
         </span>
       </li>
     </ul>
@@ -46,23 +50,63 @@ defmodule LiveroomWeb.Components.Playground do
   def mount(_params, session, socket) do
     user = session["user"] || Names.generate()
 
+    initial_users =
+      if connected?(socket) do
+        Presence.track(self(), @cursorview, socket.id, %{
+          socket_id: socket.id,
+          x: 50,
+          y: 50,
+          name: user
+        })
+
+        LiveroomWeb.Endpoint.subscribe(@cursorview)
+
+        Presence.list(@cursorview)
+        |> Enum.map(fn {_, data} -> data[:metas] |> List.first() end)
+      else
+        []
+      end
+
     socket
     |> assign(
-      x: Enum.random(1..100),
-      y: Enum.random(1..100),
-      user: user
+      user: user,
+      users: initial_users,
+      socket_id: socket.id
     )
     |> ok()
   end
 
   @impl true
   def handle_event("cursor-move", %{"x" => x, "y" => y}, socket) do
+    send_event(:cursor_moved, socket.id, x, y)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(%{event: "presence_diff", payload: _payload}, socket) do
     socket
-    |> assign(x: x, y: y)
+    |> assign(socket_id: socket.id, users: list_users())
     |> noreply()
   end
 
   ### Helpers
+
+  defp send_event(:cursor_moved, socket_id, x, y) do
+    payload = %{x: x, y: y}
+
+    metas =
+      Presence.get_by_key(@cursorview, socket_id)[:metas]
+      |> List.first()
+      |> Map.merge(payload)
+
+    Presence.update(self(), @cursorview, socket_id, metas)
+  end
+
+  defp list_users do
+    Presence.list(@cursorview)
+    |> Enum.map(fn {_, data} -> data[:metas] |> List.first() end)
+  end
 
   defp ok(socket), do: {:ok, socket}
   defp noreply(socket), do: {:noreply, socket}
