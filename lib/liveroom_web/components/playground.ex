@@ -100,12 +100,7 @@ defmodule LiveroomWeb.Components.Playground do
   ### Helpers
 
   defp send_event(:cursor_moved, socket_id, x, y) do
-    @cursorview
-    |> Presence.get_by_key(socket_id)
-    |> Map.get(:metas)
-    |> hd()
-    |> Map.merge(%{x: x, y: y})
-    |> then(&Presence.update(self(), @cursorview, socket_id, &1))
+    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{x: x, y: y}))
   end
 
   defp list_users do
