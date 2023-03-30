@@ -8,9 +8,9 @@ defmodule LiveroomWeb.Layouts do
     <div class="min-h-[100dvh] grid grid-cols-1 grid-rows-[auto_1fr_auto]">
       <.flash_group flash={@flash} />
 
-      <LiveroomWeb.Header.render />
+      <%!-- <LiveroomWeb.Header.render /> --%>
 
-      <main class="debug h-full">
+      <main class="h-full">
         <%= @inner_content %>
       </main>
     </div>
