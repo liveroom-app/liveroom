@@ -89,9 +89,7 @@ defmodule LiveroomWeb.Components.Playground do
   end
 
   @impl true
-  def handle_info(%{event: "presence_diff", payload: payload}, socket) do
-    dbg(payload)
-
+  def handle_info(%{event: "presence_diff", payload: _payload}, socket) do
     socket
     |> assign(socket_id: socket.id, users: list_users())
     |> noreply()
