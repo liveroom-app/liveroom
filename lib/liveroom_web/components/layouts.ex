@@ -27,7 +27,29 @@ defmodule LiveroomWeb.Layouts do
         <meta name="csrf-token" content={get_csrf_token()} />
 
         <meta name="theme-color" content="#111827" />
-        <meta name="description" content="find the best spots near you and meet coffee buddies." />
+        <meta name="description" content="Collaborate live with your users." />
+
+        <%!-- NOTE: Check rendering with https://socialsharepreview.com --%>
+
+        <%!-- Facebook Open Graph meta tags --%>
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={assigns[:page_title] || "LiveRoom"} />
+        <meta
+          property="og:description"
+          content={assigns[:page_description] || "Collaborate live with your users."}
+        />
+        <meta property="og:url" content={assigns[:current_url] || "https://liveroom.app"} />
+        <meta
+          property="og:image"
+          content={
+            assigns[:page_image] ||
+              LiveroomWeb.Endpoint.static_url() <> ~p"/images/liveroom_screenshot.jpg"
+          }
+        />
+
+        <%!-- Twitter Card meta tags --%>
+        <meta name="twitter:card" content={assigns[:page_twitter_card] || "summary_large_image"} />
+        <meta name="twitter:domain" content="liveroom.app" />
 
         <.live_title><%= assigns[:page_title] || "IRL café" %></.live_title>
 
