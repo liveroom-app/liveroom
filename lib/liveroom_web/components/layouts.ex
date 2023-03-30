@@ -11,7 +11,6 @@ defmodule LiveroomWeb.Layouts do
       <LiveroomWeb.Header.render />
 
       <main class="debug h-full">
-        <LiveroomWeb.Hero.render />
         <%= @inner_content %>
       </main>
     </div>

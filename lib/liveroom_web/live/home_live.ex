@@ -4,7 +4,17 @@ defmodule LiveroomWeb.HomeLive do
   @impl true
   def render(assigns) do
     ~H"""
-    Coucou
+    <.hero />
+    """
+  end
+
+  def hero(assigns) do
+    ~H"""
+    <section>
+      <h1>Where demos are live and collaborative.</h1>
+
+      <h2>Make your prospect feel like you&apos;re with them</h2>
+    </section>
     """
   end
 
