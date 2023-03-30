@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "phoenixframework.phoenix",
+    "jamilabreu.vscode-phoenix-snippets",
+    "jakebecker.elixir-ls"
+  ]
+}

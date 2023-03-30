@@ -1,0 +1,33 @@
+{
+  "files.associations": {
+    "*.css": "tailwindcss",
+    "*.heex": "phoenix-heex",
+    "*.livemd": "markdown",
+    ".envrc.example": "shellscript"
+  },
+  "elixirLS.dialyzerEnabled": true,
+  "elixirLS.suggestSpecs": false,
+  "elixirLS.enableTestLenses": false,
+  "elixirLS.fetchDeps": false,
+  "emmet.includeLanguages": {
+    "elixir": "html",
+    "phoenix-heex": "html"
+  },
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.includeLanguages": {
+    "elixir": "html",
+    "phoenix-heex": "html"
+  },
+  "tailwindCSS.experimental.classRegex": ["class:\\s*\"([^\"]*)\""],
+  "[elixir]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
+  },
+  "[phoenix-heex]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
+  },
+  "[svelte]": {
+    "editor.defaultFormatter": "svelte.svelte-vscode"
+  }
+}
