@@ -35,13 +35,15 @@ jobs:
   build-docker-image:
     name: "build docker image"
     # needs: [build-and-test, type-linting, quality-checks]
-    needs: [build-and-test, quality-checks]
+    # needs: [build-and-test, quality-checks]
     uses: ./.github/workflows/build-docker-image.yml
 
   deploy-to-fly-io:
     if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
     name: "deploy to fly.io"
-    needs: [build-docker-image]
+    # needs: [build-docker-image]
+    # needs: [build-and-test, type-linting, quality-checks, build-docker-image]
+    needs: [build-and-test, quality-checks, build-docker-image]
     uses: ./.github/workflows/deploy-to-fly-io.yml
     secrets:
       FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
