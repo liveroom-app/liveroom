@@ -1,0 +1,9 @@
+export DATABASE_PORT="5432"
+export DATABASE_HOST="localhost"
+export DATABASE_NAME="liveroom"
+export DATABASE_USERNAME="postgres"
+export DATABASE_PASSWORD="postgres"
+# to test locally prod release
+export DATABASE_URL="postgres://postgres:postgres@localhost:5432/liveroom"
+
+export SECRET_KEY_BASE="FILL_ME" # run `mix phx.gen.secret` to generate one
