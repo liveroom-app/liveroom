@@ -12,57 +12,73 @@ defmodule LiveroomWeb.Components.Playground do
   @impl true
   def render(assigns) do
     ~H"""
-    <.msg_form />
+    <.msg_form class="mb-4" />
 
-    <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none p-8">
-      <li
-        :for={user <- @users}
-        style={"color: #{user.color}; left: #{user.x}%; top: #{user.y}%"}
-        class="flex flex-col absolute pointer-events-none whitespace-nowrap overflow-hidden"
-      >
-        <.cursor />
-
-        <span
-          style={"background-color: #{user.color};"}
-          class="mt-1 ml-4 px-1 text-sm text-white select-none"
+    <div class="aspect-video max-w-screen-lg w-full mx-auto rounded-lg bg-gray-100 border border-gray-300">
+      <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none p-8">
+        <li
+          :for={user <- @users}
+          style={"color: #{user.color}; left: #{user.x}%; top: #{user.y}%"}
+          class="flex flex-col absolute pointer-events-none"
         >
-          <%= user.name %>
-        </span>
+          <.cursor />
 
-        <span
-          style={"background-color: #{user.color};"}
-          class="text-green-50 mt-1 py-0 px-1 text-sm text-left rounded-br-md opacity-80 fit-content"
-        >
-          <%= user.msg %>
-        </span>
-      </li>
-    </ul>
+          <span
+            style={"background-color: #{user.color};"}
+            class="mt-1 ml-4 px-1 text-sm text-white font-semibold select-none whitespace-nowrap overflow-hidden"
+          >
+            <%= user.name %>
+          </span>
+
+          <span
+            style={"background-color: #{user.color};"}
+            class="max-w-[20ch] mt-1 px-1 text-sm text-white text-left rounded-br-md opacity-90"
+          >
+            <%= user.msg %>
+          </span>
+        </li>
+      </ul>
+    </div>
     """
   end
 
   ### Components
+
+  attr :class, :string, default: nil
 
   def msg_form(assigns) do
     ~H"""
     <form
       id="msgform"
       phx-submit="send_message"
-      class="rounded-xl bg-gradient-to-r to-pink-100 from-pink-50 p-8 drop-shadow-xl flex w-xs mx-auto space-x-3"
+      phx-keyup="send_message"
+      phx-key="enter"
+      class={[
+        "flex flex-row-reverse items-end space-x-reverse space-x-4",
+        @class
+      ]}
     >
-      <input
-        class="flex-1 appearance-none border border-transparent py-2 px-4 bg-white text-gray-600 placeholder-gray-400 shadow-md rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-pink-600 focus:border-transparent"
-        maxlength="30"
-        aria-label="Your message"
-        type="text"
+      <button
+        type="submit"
+        tabindex="0"
+        class="flex items-center py-1.5 px-3 bg-brand text-white font-semibold rounded focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+      >
+        <span>send</span>
+        <.icon name="hero-paper-airplane-solid" class="h-4 w-4 ml-2 mt-0.5" />
+      </button>
+      <textarea
         id="msg"
         name="msg"
+        tabindex="1"
+        maxlength="280"
         placeholder="Say something"
-      />
-      <input
-        id="submit-msg"
-        type="submit"
-        class="flex-shrink-0 bg-pink-600 text-white text-base font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-pink-200"
-        value="Change"
+        aria-label="Your message"
+        class={[
+          "min-w-[24rem] min-h-[2rem] appearance-none py-1 px-3",
+          "text-gray-600 bg-gray-50 placeholder-gray-400",
+          "border-none rounded-md shadow-inner",
+          "focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-4 focus:shadow-none"
+        ]}
       />
     </form>
     """

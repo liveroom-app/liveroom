@@ -8,13 +8,7 @@ defmodule LiveroomWeb.HomeLive do
     <.hero />
 
     <div id="playground_container" class="px-32">
-      <%= live_render(@socket, Playground,
-        id: "playground",
-        container:
-          {:div,
-           class:
-             "aspect-video max-w-screen-lg w-full mx-auto rounded-lg bg-gray-100 border border-gray-300"}
-      ) %>
+      <%= live_render(@socket, Playground, id: "playground") %>
     </div>
     """
   end
