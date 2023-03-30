@@ -1,5 +1,5 @@
 defmodule LiveroomWeb.PageControllerTest do
-  use LiveroomWeb.ConnCase
+  use LiveroomWeb.ConnCase, async: true
 
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")
