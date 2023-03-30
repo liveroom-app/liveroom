@@ -18,20 +18,20 @@ defmodule LiveroomWeb.Components.Playground do
           <li
             :for={user <- @users}
             style={"color: #{user.color}; left: #{user.x}%; top: #{user.y}%"}
-            class="flex flex-col absolute pointer-events-none"
+            class="z-10 flex flex-col absolute pointer-events-none"
           >
-            <.cursor />
+            <.cursor class="rounded shadow-2xl" />
 
             <span
               style={"background-color: #{user.color};"}
-              class="mt-1 ml-4 px-1 text-sm text-white font-semibold select-none whitespace-nowrap overflow-hidden"
+              class="mt-1 ml-4 px-1 text-sm text-white font-semibold select-none whitespace-nowrap overflow-hidden rounded shadow-2xl"
             >
               <%= user.name %>
             </span>
 
             <span
               style={"background-color: #{user.color};"}
-              class="max-w-[20ch] mt-1 px-1 text-sm text-white text-left rounded-br-md opacity-90"
+              class="max-w-[20ch] mt-1 px-1 text-sm text-white text-left select-none rounded-br-md opacity-90"
             >
               <%= user.msg %>
             </span>
@@ -74,7 +74,7 @@ defmodule LiveroomWeb.Components.Playground do
           "flex-1 appearance-none py-1 px-2",
           "text-gray-600 bg-gray-50 placeholder-gray-400",
           "border-none rounded-md shadow-inner",
-          "focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:shadow-none",
+          "focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:shadow-none",
           @msg == "" && "opacity-50"
         ]}
       />
@@ -108,10 +108,13 @@ defmodule LiveroomWeb.Components.Playground do
     """
   end
 
+  attr :class, :string, default: nil
+
   def cursor(assigns) do
     ~H"""
     <svg
       version="1.1"
+      class{@class}
       width="25px"
       height="25px"
       xmlns="http://www.w3.org/2000/svg"
