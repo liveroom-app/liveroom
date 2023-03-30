@@ -17,7 +17,7 @@ defmodule LiveroomWeb.Router do
   scope "/", LiveroomWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", HomeLive, :index
   end
 
   # Other scopes may use custom stacks.
