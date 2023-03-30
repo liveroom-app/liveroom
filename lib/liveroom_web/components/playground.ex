@@ -2,6 +2,7 @@ defmodule LiveroomWeb.Components.Playground do
   use LiveroomWeb, :live_view
 
   alias Liveroom.Names
+  alias Liveroom.Colors
   alias LiveroomWeb.Presence
 
   @cursorview "cursorview"
@@ -14,11 +15,12 @@ defmodule LiveroomWeb.Components.Playground do
     <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none p-8">
       <li
         :for={user <- @users}
-        style={"color: deeppink; left: #{user.x}%; top: #{user.y}%"}
+        style={"color: #{user.color}; left: #{user.x}%; top: #{user.y}%"}
         class="flex flex-col absolute pointer-events-none whitespace-nowrap overflow-hidden"
       >
         <.cursor />
-        <span style="background-color: deeppink;" class="mt-1 ml-4 px-1 text-sm text-white">
+
+        <span style={"background-color: #{user.color};"} class="mt-1 ml-4 px-1 text-sm text-white">
           <%= user.name %>
         </span>
       </li>
@@ -48,30 +50,30 @@ defmodule LiveroomWeb.Components.Playground do
 
   @impl true
   def mount(_params, session, socket) do
-    user = session["user"] || Names.generate()
+    socket_id = socket.id
+    name = session["name"] || Names.generate()
 
     initial_users =
       if connected?(socket) do
-        Presence.track(self(), @cursorview, socket.id, %{
-          socket_id: socket.id,
+        Presence.track(self(), @cursorview, socket_id, %{
+          socket_id: socket_id,
           x: 50,
           y: 50,
-          name: user
+          name: name,
+          color: Colors.get_hsl(name)
         })
 
         LiveroomWeb.Endpoint.subscribe(@cursorview)
 
-        Presence.list(@cursorview)
-        |> Enum.map(fn {_, data} -> data[:metas] |> List.first() end)
+        list_users()
       else
         []
       end
 
     socket
     |> assign(
-      user: user,
-      users: initial_users,
-      socket_id: socket.id
+      socket_id: socket_id,
+      users: initial_users
     )
     |> ok()
   end
@@ -84,7 +86,9 @@ defmodule LiveroomWeb.Components.Playground do
   end
 
   @impl true
-  def handle_info(%{event: "presence_diff", payload: _payload}, socket) do
+  def handle_info(%{event: "presence_diff", payload: payload}, socket) do
+    dbg(payload)
+
     socket
     |> assign(socket_id: socket.id, users: list_users())
     |> noreply()
@@ -93,19 +97,21 @@ defmodule LiveroomWeb.Components.Playground do
   ### Helpers
 
   defp send_event(:cursor_moved, socket_id, x, y) do
-    payload = %{x: x, y: y}
-
-    metas =
-      Presence.get_by_key(@cursorview, socket_id)[:metas]
-      |> List.first()
-      |> Map.merge(payload)
-
-    Presence.update(self(), @cursorview, socket_id, metas)
+    @cursorview
+    |> Presence.get_by_key(socket_id)
+    |> get_meta()
+    |> Map.merge(%{x: x, y: y})
+    |> then(&Presence.update(self(), @cursorview, socket_id, &1))
   end
 
   defp list_users do
-    Presence.list(@cursorview)
-    |> Enum.map(fn {_, data} -> data[:metas] |> List.first() end)
+    @cursorview
+    |> Presence.list()
+    |> Enum.map(fn {_socket_id, presence} -> get_meta(presence) end)
+  end
+
+  defp get_meta(presence) do
+    hd(presence[:metas])
   end
 
   defp ok(socket), do: {:ok, socket}
