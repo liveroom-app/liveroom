@@ -1,0 +1,53 @@
+name: "workflow: quality checks"
+
+on:
+  workflow_call:
+    inputs:
+      elixir-version:
+        required: false
+        type: string
+        default: "1.14.3"
+      otp-version:
+        required: false
+        type: string
+        default: "25.3"
+
+env:
+  MIX_ENV: dev
+
+jobs:
+  run:
+    name: " "
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Elixir Project
+        uses: ./.github/actions/elixir-setup
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+          build-app: false
+
+      - name: Check for unused deps
+        run: mix deps.unlock --check-unused
+
+      - name: Check code formatting
+        run: mix format --check-formatted
+        # Check formatting even if there were unused deps so that
+        # we give devs as much feedback as possible & save some time.
+        if: always()
+
+      # - name: Run Credo
+      #   run: mix credo suggest --min-priority=normal
+      #   # Run Credo even if formatting or the unused deps check failed
+      #   if: always()
+
+      # - name: Check for compile-time dependencies
+      #   run: mix xref graph --label compile-connected --fail-above 0
+      #   if: always()
+
+      # - name: Check for security vulnerabilities in Phoenix project
+      #   run: mix sobelow
+      #   if: always()

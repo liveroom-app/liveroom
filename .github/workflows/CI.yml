@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "*"
+  workflow_dispatch: # for Github Button to trigger workflow
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-test:
+    name: "build and test"
+    uses: ./.github/workflows/build-and-test.yml
+    # secrets:
+    #   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  # type-linting:
+  #   name: "type linting"
+  #   uses: ./.github/workflows/type-linting.yml
+
+  quality-checks:
+    name: "quality checks"
+    uses: ./.github/workflows/quality-checks.yml
+
+  build-docker-image:
+    name: "build docker image"
+    # needs: [build-and-test, type-linting, quality-checks]
+    needs: [build-and-test, quality-checks]
+    uses: ./.github/workflows/build-docker-image.yml
+
+  deploy-to-fly-io:
+    if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+    name: "deploy to fly.io"
+    needs: [build-docker-image]
+    uses: ./.github/workflows/deploy-to-fly-io.yml
+    secrets:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
