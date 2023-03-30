@@ -12,6 +12,8 @@ defmodule LiveroomWeb.Components.Playground do
   @impl true
   def render(assigns) do
     ~H"""
+    <.msg_form />
+
     <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none p-8">
       <li
         :for={user <- @users}
@@ -26,12 +28,45 @@ defmodule LiveroomWeb.Components.Playground do
         >
           <%= user.name %>
         </span>
+
+        <span
+          style={"background-color: #{user.color};"}
+          class="text-green-50 mt-1 py-0 px-1 text-sm text-left rounded-br-md opacity-80 fit-content"
+        >
+          <%= user.msg %>
+        </span>
       </li>
     </ul>
     """
   end
 
   ### Components
+
+  def msg_form(assigns) do
+    ~H"""
+    <form
+      id="msgform"
+      phx-submit="send_message"
+      class="rounded-xl bg-gradient-to-r to-pink-100 from-pink-50 p-8 drop-shadow-xl flex w-xs mx-auto space-x-3"
+    >
+      <input
+        class="flex-1 appearance-none border border-transparent py-2 px-4 bg-white text-gray-600 placeholder-gray-400 shadow-md rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-pink-600 focus:border-transparent"
+        maxlength="30"
+        aria-label="Your message"
+        type="text"
+        id="msg"
+        name="msg"
+        placeholder="Say something"
+      />
+      <input
+        id="submit-msg"
+        type="submit"
+        class="flex-shrink-0 bg-pink-600 text-white text-base font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-pink-200"
+        value="Change"
+      />
+    </form>
+    """
+  end
 
   def cursor(assigns) do
     ~H"""
@@ -62,6 +97,7 @@ defmodule LiveroomWeb.Components.Playground do
           socket_id: socket_id,
           x: 50,
           y: 50,
+          msg: "",
           name: name,
           color: Colors.get_hsl(name)
         })
@@ -84,7 +120,11 @@ defmodule LiveroomWeb.Components.Playground do
   @impl true
   def handle_event("cursor-move", %{"x" => x, "y" => y}, socket) do
     send_event(:cursor_moved, socket.id, x, y)
+    {:noreply, socket}
+  end
 
+  def handle_event("send_message", %{"msg" => msg}, socket) do
+    send_event(:message_sent, socket.id, msg)
     {:noreply, socket}
   end
 
@@ -99,6 +139,10 @@ defmodule LiveroomWeb.Components.Playground do
 
   defp send_event(:cursor_moved, socket_id, x, y) do
     Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{x: x, y: y}))
+  end
+
+  defp send_event(:message_sent, socket_id, msg) do
+    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{msg: msg}))
   end
 
   defp list_users do
