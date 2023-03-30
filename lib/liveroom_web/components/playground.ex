@@ -20,7 +20,10 @@ defmodule LiveroomWeb.Components.Playground do
       >
         <.cursor />
 
-        <span style={"background-color: #{user.color};"} class="mt-1 ml-4 px-1 text-sm text-white">
+        <span
+          style={"background-color: #{user.color};"}
+          class="mt-1 ml-4 px-1 text-sm text-white select-none"
+        >
           <%= user.name %>
         </span>
       </li>
@@ -99,7 +102,8 @@ defmodule LiveroomWeb.Components.Playground do
   defp send_event(:cursor_moved, socket_id, x, y) do
     @cursorview
     |> Presence.get_by_key(socket_id)
-    |> get_meta()
+    |> Map.get(:metas)
+    |> hd()
     |> Map.merge(%{x: x, y: y})
     |> then(&Presence.update(self(), @cursorview, socket_id, &1))
   end
@@ -107,11 +111,8 @@ defmodule LiveroomWeb.Components.Playground do
   defp list_users do
     @cursorview
     |> Presence.list()
-    |> Enum.map(fn {_socket_id, presence} -> get_meta(presence) end)
-  end
-
-  defp get_meta(presence) do
-    hd(presence[:metas])
+    |> Enum.map(fn {_socket_id, presence} -> presence[:metas] end)
+    |> List.flatten()
   end
 
   defp ok(socket), do: {:ok, socket}
