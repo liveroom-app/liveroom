@@ -30,12 +30,10 @@ defmodule LiveroomWeb.Components.Playground do
               class="absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-inner"
             />
 
-            <% is_other_user = user.socket_id != @socket_id %>
-
-            <.cursor :if={is_other_user} class="absolute top-0 left-0 shadow-2xl" />
+            <.cursor :if={user.socket_id != @socket_id} class="absolute top-0 left-0 shadow-2xl" />
 
             <span
-              :if={is_other_user}
+              :if={user.socket_id != @socket_id}
               style={"background-color: #{user.color};"}
               class="!mt-[26px] ml-[26px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
             >
@@ -43,7 +41,7 @@ defmodule LiveroomWeb.Components.Playground do
             </span>
 
             <span
-              :if={is_other_user && user.msg != ""}
+              :if={user.socket_id != @socket_id && user.msg != ""}
               style={"border-color: #{user.color};"}
               class="max-w-[20ch] ml-[26px] py-1 px-2 text-sm bg-white text-left border rounded shadow-2xl"
             >
