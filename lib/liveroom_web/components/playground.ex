@@ -17,7 +17,7 @@ defmodule LiveroomWeb.Components.Playground do
         <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none p-8">
           <li
             :for={user <- @users}
-            style={"color: #{user.color}; left: #{user.x}%; top: #{user.y}%"}
+            style={"color: #{user.color}; left: calc(#{user.x}% - 11px); top: calc(#{user.y}% - 10px);"}
             class="z-10 flex flex-col absolute pointer-events-none"
           >
             <.cursor class="rounded shadow-2xl" />
