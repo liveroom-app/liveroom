@@ -73,7 +73,7 @@ defmodule LiveroomWeb.Components.Playground do
         class={[
           "flex-1 appearance-none py-1 px-2",
           "text-gray-600 bg-gray-50 placeholder-gray-400",
-          "border-none rounded-md shadow-inner",
+          "border-none rounded-md shadow-inner resize-none",
           "focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:shadow-none",
           @msg == "" && "bg-gray-50/50"
         ]}
