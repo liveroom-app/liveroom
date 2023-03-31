@@ -24,16 +24,13 @@ defmodule LiveroomWeb.Components.Playground do
             ]}
           >
             <div
-              :if={
-                case is_other_user = user.socket_id != @socket_id do
-                  true -> user.is_space_pressed
-                  false -> @is_space_pressed
-                end
-              }
+              :if={user.is_space_pressed}
               id="cursor_blink"
               style={"background-color: #{user.color}25; border-color: #{user.color};"}
               class="absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-inner"
             />
+
+            <% is_other_user = user.socket_id != @socket_id %>
 
             <.cursor :if={is_other_user} class="absolute top-0 left-0 shadow-2xl" />
 
@@ -185,8 +182,7 @@ defmodule LiveroomWeb.Components.Playground do
       msg: "",
       current_msg: "",
       socket_id: socket_id,
-      users: initial_users,
-      is_space_pressed: false
+      users: initial_users
     )
     |> ok()
   end
@@ -199,12 +195,12 @@ defmodule LiveroomWeb.Components.Playground do
 
   def handle_event("space-key-down", _, socket) do
     send_event(:space_key_down, socket.id)
-    {:noreply, assign(socket, is_space_pressed: true)}
+    {:noreply, socket}
   end
 
   def handle_event("space-key-up", _, socket) do
     send_event(:space_key_up, socket.id)
-    {:noreply, assign(socket, is_space_pressed: false)}
+    {:noreply, socket}
   end
 
   def handle_event("send_message", %{"msg" => msg}, socket) do
