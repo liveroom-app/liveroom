@@ -3,7 +3,7 @@ defmodule LiveroomWeb.Layouts do
 
   def render("app.html", assigns) do
     ~H"""
-    <div class="min-h-[100dvh] grid grid-cols-1 grid-rows-[auto_1fr_auto]">
+    <div class="min-h-[100dvh] grid grid-cols-1 grid-rows-[auto_1fr_auto] overflow-hidden">
       <.flash_group flash={@flash} />
 
       <%!-- <LiveroomWeb.Header.render /> --%>
