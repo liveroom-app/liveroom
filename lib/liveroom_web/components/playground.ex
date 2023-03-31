@@ -31,7 +31,6 @@ defmodule LiveroomWeb.Components.Playground do
             />
 
             <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
-            <%!-- <.cursor class="z-50 absolute top-0 left-0 shadow-2xl" /> --%>
 
             <span
               :if={user.socket_id != @socket_id}
