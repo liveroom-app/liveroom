@@ -44,7 +44,7 @@ defmodule LiveroomWeb.Components.Playground do
               :if={user.msg != ""}
               style={"border-color: #{user.color};"}
               class={[
-                "z-50 max-w-[38ch] min-w-[15ch] mt-0.5 ml-[30px] mr-3 py-1 px-2",
+                "z-50 max-w-[38ch] min-w-[15ch] mt-2 ml-[30px] mr-3 py-1 px-2",
                 "bg-white font-medium text-base text-left border rounded shadow-2xl",
                 user.socket_id == @socket_id && "translate-y-2 translate-x-1"
               ]}
