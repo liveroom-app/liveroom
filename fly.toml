@@ -10,6 +10,8 @@ processes = []
   release_command = "/app/bin/migrate"
 
 [env]
+  ECTO_IPV6 = "true"
+  ERL_AFLAGS = "-proto_dist inet6_tcp"
   PHX_HOST = "liveroom.app"
   PORT = "8080"
   UMAMI_ENABLED = "true"
