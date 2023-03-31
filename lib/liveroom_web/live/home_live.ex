@@ -34,17 +34,27 @@ defmodule LiveroomWeb.HomeLive do
 
   def hero(assigns) do
     ~H"""
-    <header class="flex flex-col items-center gap-10 md:gap-14">
+    <header class="flex relative flex-col items-center gap-10 md:gap-14 w-full">
       <h1 class="text-3xl font-bold text-accent flex items-center gap-3">
         <img src={LiveroomWeb.Endpoint.static_url() <> ~p"/images/liveroom_logo.png"} class="w-6 h-6" />
         Liveroom
       </h1>
 
+      <img
+        src={LiveroomWeb.Endpoint.static_url() <> ~p"/images/cursor_left.svg"}
+        class="w-16 xs:w-24 absolute top-32 -right-0 xs:-right-4 sm:top-48 sm:right-5"
+      />
+
+      <img
+        src={LiveroomWeb.Endpoint.static_url() <> ~p"/images/cursor_right.svg"}
+        class="w-16 xs:w-24 absolute top-72 -left-4"
+      />
+
       <h2 class="font-bold text-4xl sm:text-3xl md:text-6xl lg:text-7xl text-center leading-none">
         Sit next to your customers
       </h2>
 
-      <h3 class="font-medium text-lg sm:text-xl text-gray-500 text-center">
+      <h3 class="font-medium text-lg sm:text-xl text-gray-500 text-center max-w-xs">
         Liveroom lets you instantly join your customer in your product with live cursors, video call and interactions.
       </h3>
 
