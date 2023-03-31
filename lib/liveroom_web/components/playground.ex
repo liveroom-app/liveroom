@@ -30,15 +30,26 @@ defmodule LiveroomWeb.Components.Playground do
               class="z-40 absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-md"
             />
 
-            <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
+            <.cursor class="z-50 absolute top-0 left-0 shadow-2xl" />
+            <%!--
+            <.cursor
+              :if={dbg(user.socket_id) && dbg(@socket_id) && user.socket_id != @socket_id}
+              class="z-50 absolute top-0 left-0 shadow-2xl"
+            /> --%>
 
             <span
-              :if={user.socket_id != @socket_id}
               style={"background-color: #{user.color};"}
               class="z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
             >
               <%= user.name %>
             </span>
+            <%!-- <span
+              :if={dbg(user.socket_id != @socket_id) && user.socket_id != @socket_id}
+              style={"background-color: #{user.color};"}
+              class="z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
+            >
+              <%= user.name %>
+            </span> --%>
 
             <span
               :if={user.msg != ""}
@@ -157,8 +168,8 @@ defmodule LiveroomWeb.Components.Playground do
 
   @impl true
   def mount(_params, session, socket) do
-    socket_id = socket.id
     name = session["name"] || Names.generate()
+    socket_id = Ecto.UUID.generate()
 
     initial_users =
       if connected?(socket) do
@@ -216,8 +227,14 @@ defmodule LiveroomWeb.Components.Playground do
 
   @impl true
   def handle_info(%{event: "presence_diff", payload: _payload}, socket) do
+    prev_users = socket.assigns.users
+    new_users = list_users()
+
+    dbg(new_users)
+    dbg(new_users -- prev_users)
+
     socket
-    |> assign(socket_id: socket.id, users: list_users())
+    |> assign(users: new_users)
     |> noreply()
   end
 
@@ -250,6 +267,7 @@ defmodule LiveroomWeb.Components.Playground do
     |> Presence.list()
     |> Enum.map(fn {_socket_id, presence} -> presence[:metas] end)
     |> List.flatten()
+    |> dbg()
   end
 
   defp ok(socket), do: {:ok, socket}

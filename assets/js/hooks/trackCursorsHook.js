@@ -2,8 +2,8 @@ export const TrackCursorsHook = {
   mounted() {
     // Mouse move
     document.addEventListener("mousemove", (e) => {
-      const x = (e.pageX / window.innerWidth) * 100; // in %
-      const y = (e.pageY / window.innerHeight) * 100; // in %
+      const x = Number((e.pageX / window.innerWidth) * 100).toFixed(2); // in %
+      const y = Number((e.pageY / window.innerHeight) * 100).toFixed(2); // in %
 
       this.pushEvent("cursor-move", { x, y });
     });
