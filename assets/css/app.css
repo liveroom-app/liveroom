@@ -1,11 +1,13 @@
-@import 'tailwindcss/base';
+@import "tailwindcss/base";
 
 body {
   @apply text-brand;
 }
 
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "./fontInterWeb.css";
 
 @layer base {
   html {
