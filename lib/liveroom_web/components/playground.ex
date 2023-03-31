@@ -27,9 +27,9 @@ defmodule LiveroomWeb.Components.Playground do
               id="cursor_blink"
               style={"background-color: #{user.color}25; border-color: #{user.color};"}
               class={[
-                not user.is_halo_key_pressed && "opacity-0",
+                not user.is_halo_key_pressed && "scale-0",
                 "z-40 absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-md",
-                "transition-opacity duration-300 ease-in-out"
+                "transition-transform duration-300 ease-out"
               ]}
             />
 
