@@ -1,54 +1,55 @@
 // See the Tailwind configuration guide for advanced usage
 // https://tailwindcss.com/docs/configuration
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const plugin = require("tailwindcss/plugin");
-const colors = require("tailwindcss/colors");
-const defaultTheme = require("tailwindcss/defaultTheme");
+const plugin = require('tailwindcss/plugin');
+const colors = require('tailwindcss/colors');
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
-  content: ["./js/**/*.js", "../lib/*_web.ex", "../lib/*_web/**/*.*ex"],
+  content: ['./js/**/*.js', '../lib/*_web.ex', '../lib/*_web/**/*.*ex'],
   theme: {
     extend: {
       colors: {
         brand: colors.slate[900],
-        gray: colors.slate,
+        gray: colors.neutral,
         muted: colors.slate[500],
         background: colors.white,
+        accent: colors.indigo[600],
       },
       fontFamily: {
-        sans: ["Inter var", ...defaultTheme.fontFamily.sans],
+        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       },
     },
   },
   plugins: [
-    require("@tailwindcss/forms"),
+    require('@tailwindcss/forms'),
     // Allows prefixing tailwind classes with LiveView classes to add rules
     // only when LiveView classes are applied, for example:
     //
     //     <div class="phx-click-loading:animate-ping">
     //
     plugin(({ addVariant }) =>
-      addVariant("phx-no-feedback", [".phx-no-feedback&", ".phx-no-feedback &"])
+      addVariant('phx-no-feedback', ['.phx-no-feedback&', '.phx-no-feedback &'])
     ),
     plugin(({ addVariant }) =>
-      addVariant("phx-click-loading", [
-        ".phx-click-loading&",
-        ".phx-click-loading &",
+      addVariant('phx-click-loading', [
+        '.phx-click-loading&',
+        '.phx-click-loading &',
       ])
     ),
     plugin(({ addVariant }) =>
-      addVariant("phx-submit-loading", [
-        ".phx-submit-loading&",
-        ".phx-submit-loading &",
+      addVariant('phx-submit-loading', [
+        '.phx-submit-loading&',
+        '.phx-submit-loading &',
       ])
     ),
     plugin(({ addVariant }) =>
-      addVariant("phx-change-loading", [
-        ".phx-change-loading&",
-        ".phx-change-loading &",
+      addVariant('phx-change-loading', [
+        '.phx-change-loading&',
+        '.phx-change-loading &',
       ])
     ),
 
@@ -56,16 +57,16 @@ module.exports = {
     // See your `CoreComponents.icon/1` for more information.
     //
     plugin(function ({ matchComponents, theme }) {
-      let iconsDir = path.join(__dirname, "./vendor/heroicons/optimized");
+      let iconsDir = path.join(__dirname, './vendor/heroicons/optimized');
       let values = {};
       let icons = [
-        ["", "/24/outline"],
-        ["-solid", "/24/solid"],
-        ["-mini", "/20/solid"],
+        ['', '/24/outline'],
+        ['-solid', '/24/solid'],
+        ['-mini', '/20/solid'],
       ];
       icons.forEach(([suffix, dir]) => {
         fs.readdirSync(path.join(iconsDir, dir)).map((file) => {
-          let name = path.basename(file, ".svg") + suffix;
+          let name = path.basename(file, '.svg') + suffix;
           values[name] = { name, fullPath: path.join(iconsDir, dir, file) };
         });
       });
@@ -75,16 +76,16 @@ module.exports = {
             let content = fs
               .readFileSync(fullPath)
               .toString()
-              .replace(/\r?\n|\r/g, "");
+              .replace(/\r?\n|\r/g, '');
             return {
               [`--hero-${name}`]: `url('data:image/svg+xml;utf8,${content}')`,
-              "-webkit-mask": `var(--hero-${name})`,
+              '-webkit-mask': `var(--hero-${name})`,
               mask: `var(--hero-${name})`,
-              "background-color": "currentColor",
-              "vertical-align": "middle",
-              display: "inline-block",
-              width: theme("spacing.5"),
-              height: theme("spacing.5"),
+              'background-color': 'currentColor',
+              'vertical-align': 'middle',
+              display: 'inline-block',
+              width: theme('spacing.5'),
+              height: theme('spacing.5'),
             };
           },
         },
