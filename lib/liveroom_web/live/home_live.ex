@@ -34,7 +34,7 @@ defmodule LiveroomWeb.HomeLive do
       <.features />
     </.section>
 
-    <.section class="bg-zinc-50 border-b-4 border-black rounded-b-3xl">
+    <.section class="bg-zinc-50 border-4 border-t-0 border-black rounded-b-3xl w-[calc(100%+8px)] self-center">
       <.call_to_action />
     </.section>
 
