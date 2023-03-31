@@ -24,10 +24,13 @@ defmodule LiveroomWeb.Components.Playground do
             ]}
           >
             <div
-              :if={user.is_halo_key_pressed}
               id="cursor_blink"
               style={"background-color: #{user.color}25; border-color: #{user.color};"}
-              class="z-40 absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-md"
+              class={[
+                not user.is_halo_key_pressed && "opacity-0",
+                "z-40 absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-md",
+                "transition-opacity duration-300 ease-in-out"
+              ]}
             />
 
             <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
@@ -216,14 +219,8 @@ defmodule LiveroomWeb.Components.Playground do
 
   @impl true
   def handle_info(%{event: "presence_diff", payload: _payload}, socket) do
-    prev_users = socket.assigns.users
-    new_users = list_users()
-
-    dbg(new_users)
-    dbg(new_users -- prev_users)
-
     socket
-    |> assign(users: new_users)
+    |> assign(users: list_users())
     |> noreply()
   end
 
