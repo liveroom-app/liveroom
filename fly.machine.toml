@@ -15,7 +15,7 @@ processes = []
   UMAMI_ENABLED = "true"
   UMAMI_BASE_URL = "https://liveroom-umami.fly.dev"
   # UMAMI_BASE_URL = "http://liveroom-umami.internal:3000" # Does not work...
-  UMAMI_WEBSITE_ID = "FILL_ME"
+  UMAMI_WEBSITE_ID = "967625af-7d33-46b0-b31d-2a447704e5a6"
 
 [experimental]
   auto_rollback = true
