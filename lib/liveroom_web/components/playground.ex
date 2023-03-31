@@ -17,6 +17,7 @@ defmodule LiveroomWeb.Components.Playground do
         <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none p-8">
           <li
             :for={user <- @users}
+            :if={user.socket_id != @socket_id}
             style={"color: #{user.color}; left: calc(#{user.x}% - 11px); top: calc(#{user.y}% - 10px);"}
             class="z-10 absolute flex flex-col justify-start items-start space-y-2 pointer-events-none"
           >
