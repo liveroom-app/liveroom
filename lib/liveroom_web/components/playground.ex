@@ -17,13 +17,23 @@ defmodule LiveroomWeb.Components.Playground do
         <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none p-8">
           <li
             :for={user <- @users}
-            :if={user.socket_id != @socket_id}
             style={"color: #{user.color}; left: calc(#{user.x}% - 11px); top: calc(#{user.y}% - 10px);"}
-            class="z-10 absolute flex flex-col justify-start items-start space-y-1 pointer-events-none select-none"
+            class={[
+              "z-10 absolute flex flex-col justify-start items-start",
+              "space-y-1 pointer-events-none select-none"
+            ]}
           >
-            <.cursor class="absolute top-0 left-0 shadow-2xl" />
+            <div
+              :if={@is_space_pressed}
+              id="cursor_blink"
+              style={"background-color: #{user.color}25; border-color: #{user.color};"}
+              class="absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-inner"
+            />
+
+            <.cursor :if={user.socket_id != @socket_id} class="absolute top-0 left-0 shadow-2xl" />
 
             <span
+              :if={user.socket_id != @socket_id}
               style={"background-color: #{user.color};"}
               class="!mt-[26px] ml-[26px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
             >
@@ -31,7 +41,7 @@ defmodule LiveroomWeb.Components.Playground do
             </span>
 
             <span
-              :if={user.msg != ""}
+              :if={user.socket_id != @socket_id && user.msg != ""}
               style={"border-color: #{user.color};"}
               class="max-w-[20ch] ml-[26px] py-1 px-2 text-sm bg-white text-left border rounded shadow-2xl"
             >
@@ -154,7 +164,8 @@ defmodule LiveroomWeb.Components.Playground do
           y: 50,
           msg: "",
           name: name,
-          color: Colors.get_random_color()
+          color: Colors.get_random_color(),
+          is_space_pressed: false
         })
 
         LiveroomWeb.Endpoint.subscribe(@cursorview)
@@ -169,7 +180,8 @@ defmodule LiveroomWeb.Components.Playground do
       msg: "",
       current_msg: "",
       socket_id: socket_id,
-      users: initial_users
+      users: initial_users,
+      is_space_pressed: false
     )
     |> ok()
   end
@@ -178,6 +190,16 @@ defmodule LiveroomWeb.Components.Playground do
   def handle_event("cursor-move", %{"x" => x, "y" => y}, socket) do
     send_event(:cursor_moved, socket.id, x, y)
     {:noreply, socket}
+  end
+
+  def handle_event("space-key-down", _, socket) do
+    send_event(:space_key_down, socket.id)
+    {:noreply, assign(socket, is_space_pressed: true)}
+  end
+
+  def handle_event("space-key-up", _, socket) do
+    send_event(:space_key_up, socket.id)
+    {:noreply, assign(socket, is_space_pressed: false)}
   end
 
   def handle_event("send_message", %{"msg" => msg}, socket) do
@@ -206,6 +228,14 @@ defmodule LiveroomWeb.Components.Playground do
 
   defp send_event(:cursor_moved, socket_id, x, y) do
     Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{x: x, y: y}))
+  end
+
+  defp send_event(:space_key_down, socket_id) do
+    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{is_space_pressed: true}))
+  end
+
+  defp send_event(:space_key_up, socket_id) do
+    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{is_space_pressed: false}))
   end
 
   defp send_event(:message_sent, socket_id, msg) do
