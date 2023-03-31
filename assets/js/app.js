@@ -20,8 +20,14 @@ import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
-import topbar from "../vendor/topbar";
+import {
+  users,
+  add_user_connection,
+  remove_user_connection,
+  create_peer_connection,
+} from "./videochat";
 import { Hooks } from "./hooks";
+import topbar from "../vendor/topbar";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")

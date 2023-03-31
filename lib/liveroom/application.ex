@@ -16,9 +16,10 @@ defmodule Liveroom.Application do
       {Phoenix.PubSub, name: Liveroom.PubSub},
       # Start Finch
       {Finch, name: Liveroom.Finch},
+      LiveroomWeb.Presence,
       # Start the Endpoint (http/https)
       LiveroomWeb.Endpoint,
-      LiveroomWeb.Presence
+      LiveroomWeb.Stun
       # Start a worker by calling: Liveroom.Worker.start_link(arg)
       # {Liveroom.Worker, arg}
     ]

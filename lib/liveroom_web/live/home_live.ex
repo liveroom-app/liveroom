@@ -1,6 +1,7 @@
 defmodule LiveroomWeb.HomeLive do
-  alias LiveroomWeb.Components.Playground
   use LiveroomWeb, :live_view
+
+  alias LiveroomWeb.Components.Playground
 
   @impl true
   def render(assigns) do

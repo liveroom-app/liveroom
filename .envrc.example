@@ -11,3 +11,11 @@ export SECRET_KEY_BASE="FILL_ME" # run `mix phx.gen.secret` to generate one
 export UMAMI_ENABLED="true"
 export UMAMI_BASE_URL="http://localhost:3000"
 export UMAMI_WEBSITE_ID="FILL_ME"
+
+export LDFLAGS="-L/usr/local/opt/openssl/lib"
+export CFLAGS="-I/usr/local/opt/openssl/include/"
+export CPPFLAGS="-I/usr/local/opt/openssl/include/"
+export LIBRARY_PATH="/usr/local/opt/openssl/lib"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig"
+export LDFLAGS="$LDFLAGS -arch x86_64 -flat_namespace -undefined suppress -L/usr/local/Cellar/openssl/3.3.6/lib/"
+export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/Cellar/openssl/3.3.6/include
