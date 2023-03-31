@@ -191,7 +191,7 @@ defmodule LiveroomWeb.HomeLive do
 
   def footer(assigns) do
     ~H"""
-    <footer class="p-8 grid place-items-center">
+    <footer class="p-8 grid place-items-center bg-background">
       <small class="text-sm text-gray-400">
         Follow <a class="font-bold" href="https://twitter.com">@liveroom</a> for invites
       </small>
