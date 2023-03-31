@@ -8,7 +8,7 @@ defmodule LiveroomWeb.HomeLive do
     <.hero />
 
     <div id="playground_container" class="px-32">
-      <%= live_render(@socket, Playground, id: "playground") %>
+      <%= live_render(@socket, Playground, id: "playground-#{@socket.id}") %>
     </div>
     """
   end
