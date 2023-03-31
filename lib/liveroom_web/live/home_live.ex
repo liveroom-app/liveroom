@@ -33,6 +33,12 @@ defmodule LiveroomWeb.HomeLive do
     <.section>
       <.features />
     </.section>
+
+    <.section class="bg-zinc-50 border-b-4 border-black rounded-b-3xl">
+      <.call_to_action />
+    </.section>
+
+    <.footer />
     """
   end
 
@@ -54,20 +60,16 @@ defmodule LiveroomWeb.HomeLive do
         class="w-20 sm:w-28 absolute top-72 -left-4"
       />
 
-      <h2 class="font-bold text-4xl sm:text-3xl md:text-6xl lg:text-7xl text-center leading-none">
+      <.heading>
         Sit next to your customers
-      </h2>
-
+      </.heading>
       <h3 class="font-medium text-lg sm:text-xl text-gray-500 text-center max-w-xs">
         Liveroom lets you instantly join your customer in your product with live cursors, video call and interactions.
       </h3>
 
-      <a
-        href="https://tally.so/r/wQ1EvX"
-        class="rounded-[10px] bg-slate-900 text-white text-lg font-semibold px-6 py-4"
-      >
+      <.button_link>
         Join waitlist
-      </a>
+      </.button_link>
     </header>
     """
   end
@@ -80,6 +82,29 @@ defmodule LiveroomWeb.HomeLive do
     <section class={["flex flex-col items-center gap-10 py-24 md:gap-14 xl:py-32 px-8", @class]}>
       <%= render_slot(@inner_block) %>
     </section>
+    """
+  end
+
+  slot :inner_block, required: true
+
+  def heading(assigns) do
+    ~H"""
+    <h2 class="font-bold text-4xl sm:text-3xl md:text-6xl lg:text-7xl text-center leading-none">
+      <%= render_slot(@inner_block) %>
+    </h2>
+    """
+  end
+
+  slot :inner_block, required: true
+
+  def button_link(assigns) do
+    ~H"""
+    <a
+      href="https://tally.so/r/wQ1EvX"
+      class="rounded-[10px] bg-slate-900 text-white text-lg font-semibold px-6 py-4"
+    >
+      <%= render_slot(@inner_block) %>
+    </a>
     """
   end
 
@@ -108,7 +133,38 @@ defmodule LiveroomWeb.HomeLive do
     """
   end
 
-  attr :class, :string, default: nil
+  def call_to_action(assigns) do
+    ~H"""
+    <.heading>
+      Too far from your customers?
+    </.heading>
+
+    <h3 class="text-2xl font-bold text-gray-700">
+      We can help with that
+    </h3>
+
+    <div class="w-full">
+      <ul class="mx-auto grid grid-cols-[repeat(auto-fit,_minmax(min(13rem,_100%),1fr))] max-w-3xl gap-14">
+        <.feature_card>
+          <:title>For Sales teams</:title>
+          <:description>
+            Drop the boring slides and passive screenshares. Bring the customer along with you in your product demos.
+          </:description>
+        </.feature_card>
+
+        <.feature_card>
+          <:title>For Customer support teams</:title>
+          <:description>Get the perfect context and troubleshoot in real time.</:description>
+        </.feature_card>
+      </ul>
+    </div>
+
+    <.button_link>
+      Join waitlist
+    </.button_link>
+    """
+  end
+
   slot :inner_block, required: true
   slot :title, required: true
   slot :description, required: true
@@ -130,6 +186,16 @@ defmodule LiveroomWeb.HomeLive do
         </p>
       </div>
     </li>
+    """
+  end
+
+  def footer(assigns) do
+    ~H"""
+    <footer class="p-8 grid place-items-center">
+      <small class="text-sm text-gray-400">
+        Follow <a class="font-bold" href="https://twitter.com">@liveroom</a> for invites
+      </small>
+    </footer>
     """
   end
 
