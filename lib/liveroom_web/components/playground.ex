@@ -44,7 +44,7 @@ defmodule LiveroomWeb.Components.Playground do
               :if={user.msg != ""}
               style={"border-color: #{user.color};"}
               class={[
-                "z-50 max-w-[38ch] min-w-[15ch] ml-[30px] mr-3 py-1 px-2",
+                "z-50 max-w-[38ch] min-w-[15ch] mt-0.5 ml-[30px] mr-3 py-1 px-2",
                 "bg-white font-medium text-base text-left border rounded shadow-2xl",
                 user.socket_id == @socket_id && "translate-y-2 translate-x-1"
               ]}
@@ -89,8 +89,8 @@ defmodule LiveroomWeb.Components.Playground do
         class={[
           "flex-1 appearance-none py-1 px-2",
           "text-gray-600 bg-gray-50 placeholder-gray-400",
-          "border-gray-50 outline-none rounded-md resize-none",
-          "focus:border-gray-50 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2",
+          "border-gray-300 outline-none rounded-md resize-none",
+          "focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2",
           @msg == "" && "bg-gray-50/50"
         ]}
       />

@@ -101,6 +101,7 @@ defmodule LiveroomWeb.HomeLive do
     ~H"""
     <a
       href="https://tally.so/r/wQ1EvX"
+      tabindex="2"
       class="rounded-[10px] bg-slate-900 text-white text-lg font-semibold px-6 py-4"
     >
       <%= render_slot(@inner_block) %>
