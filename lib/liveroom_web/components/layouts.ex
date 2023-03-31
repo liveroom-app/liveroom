@@ -2,8 +2,6 @@ defmodule LiveroomWeb.Layouts do
   use LiveroomWeb, :html
 
   def render("app.html", assigns) do
-    assigns = assign_new(assigns, :city, fn -> nil end)
-
     ~H"""
     <div class="min-h-[100dvh] grid grid-cols-1 grid-rows-[auto_1fr_auto]">
       <.flash_group flash={@flash} />
@@ -33,7 +31,7 @@ defmodule LiveroomWeb.Layouts do
 
         <%!-- Facebook Open Graph meta tags --%>
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={assigns[:page_title] || "LiveRoom"} />
+        <meta property="og:title" content={assigns[:page_title] || "Liveroom"} />
         <meta
           property="og:description"
           content={assigns[:page_description] || "Collaborate live with your users."}
@@ -51,7 +49,7 @@ defmodule LiveroomWeb.Layouts do
         <meta name="twitter:card" content={assigns[:page_twitter_card] || "summary_large_image"} />
         <meta name="twitter:domain" content="liveroom.app" />
 
-        <.live_title><%= assigns[:page_title] || "IRL café" %></.live_title>
+        <.live_title><%= assigns[:page_title] || "Liveroom" %></.live_title>
 
         <%!-- <link rel="manifest" href={~p"/manifest.json"} /> --%>
         <link rel="icon" href={~p"/favicon.ico"} />
