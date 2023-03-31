@@ -18,20 +18,21 @@ defmodule LiveroomWeb.Components.Playground do
           <li
             :for={user <- @users}
             style={"color: #{user.color}; left: calc(#{user.x}% - 11px); top: calc(#{user.y}% - 10px);"}
-            class="z-10 flex flex-col absolute pointer-events-none"
+            class="z-10 absolute flex flex-col justify-start items-start space-y-2 pointer-events-none"
           >
-            <.cursor class="rounded shadow-2xl" />
+            <.cursor class="shadow-2xl" />
 
             <span
               style={"background-color: #{user.color};"}
-              class="mt-1 ml-4 px-1 text-sm text-white font-semibold select-none whitespace-nowrap overflow-hidden rounded shadow-2xl"
+              class="ml-4 py-1 px-3 text-sm text-white font-semibold select-none whitespace-nowrap overflow-hidden rounded-full shadow-2xl"
             >
               <%= user.name %>
             </span>
 
             <span
-              style={"background-color: #{user.color};"}
-              class="max-w-[20ch] mt-1 px-1 text-sm text-white text-left select-none rounded-br-md opacity-90"
+              :if={user.msg != ""}
+              style={"border-color: #{user.color};"}
+              class="max-w-[20ch] ml-4 py-1 px-2 text-sm bg-white text-left select-none border rounded shadow-2xl"
             >
               <%= user.msg %>
             </span>
