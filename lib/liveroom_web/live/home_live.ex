@@ -38,7 +38,7 @@ defmodule LiveroomWeb.HomeLive do
 
   def hero(assigns) do
     ~H"""
-    <header class="flex relative flex-col items-center gap-10 md:gap-14 w-full">
+    <header class="flex relative flex-col items-center gap-10 md:gap-14 w-full md:max-w-7xl">
       <h1 class="text-3xl font-bold text-accent flex items-center gap-3">
         <img src={LiveroomWeb.Endpoint.static_url() <> ~p"/images/liveroom_logo.png"} class="w-6 h-6" />
         Liveroom
@@ -46,12 +46,12 @@ defmodule LiveroomWeb.HomeLive do
 
       <img
         src={LiveroomWeb.Endpoint.static_url() <> ~p"/images/cursor_left.svg"}
-        class="w-16 xs:w-24 absolute top-32 -right-0 xs:-right-4 sm:top-48 sm:right-5"
+        class="w-20 sm:w-28 absolute top-32 -right-0 sm:-right-4 sm:top-48"
       />
 
       <img
         src={LiveroomWeb.Endpoint.static_url() <> ~p"/images/cursor_right.svg"}
-        class="w-16 xs:w-24 absolute top-72 -left-4"
+        class="w-20 sm:w-28 absolute top-72 -left-4"
       />
 
       <h2 class="font-bold text-4xl sm:text-3xl md:text-6xl lg:text-7xl text-center leading-none">
@@ -85,9 +85,51 @@ defmodule LiveroomWeb.HomeLive do
 
   def features(assigns) do
     ~H"""
-    <div>
-      features lol
+    <div class="w-full">
+      <ul class="mx-auto grid grid-cols-[repeat(auto-fit,_minmax(min(13rem,_100%),1fr))] max-w-3xl gap-14">
+        <.feature_card>
+          <:title>Live interactions</:title>
+          <:description>
+            Everyone has their own live cursor and can interact with the app. As if you were in the same room.
+          </:description>
+        </.feature_card>
+
+        <.feature_card>
+          <:title>Video chat</:title>
+          <:description>See and talk to each other in a click.</:description>
+        </.feature_card>
+
+        <.feature_card>
+          <:title>Direct links</:title>
+          <:description>Easily join anyone anywhere in your product.</:description>
+        </.feature_card>
+      </ul>
     </div>
+    """
+  end
+
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  slot :title, required: true
+  slot :description, required: true
+
+  def feature_card(assigns) do
+    ~H"""
+    <li class="flex flex-col gap-8">
+      <div class="h-52 rounded-[20px] bg-emerald-50">
+        <%= render_slot(@inner_block) %>
+      </div>
+
+      <div class="flex flex-col gap-[10px]">
+        <h4 class="text-2xl font-bold">
+          <%= render_slot(@title) %>
+        </h4>
+
+        <p class="text-xl font-medium text-gray-500">
+          <%= render_slot(@description) %>
+        </p>
+      </div>
+    </li>
     """
   end
 
