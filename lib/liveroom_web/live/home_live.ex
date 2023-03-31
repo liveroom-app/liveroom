@@ -5,7 +5,7 @@ defmodule LiveroomWeb.HomeLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <section class="flex flex-col items-center gap-10 bg-zinc-50 py-24 md:gap-14  xl:py-32 px-8">
+    <.section class="bg-zinc-50">
       <.hero />
 
       <div
@@ -28,7 +28,11 @@ defmodule LiveroomWeb.HomeLive do
           </div>
         </div>
       </div>
-    </section>
+    </.section>
+
+    <.section>
+      <.features />
+    </.section>
     """
   end
 
@@ -65,6 +69,25 @@ defmodule LiveroomWeb.HomeLive do
         Join waitlist
       </a>
     </header>
+    """
+  end
+
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+
+  def section(assigns) do
+    ~H"""
+    <section class={["flex flex-col items-center gap-10 py-24 md:gap-14 xl:py-32 px-8", @class]}>
+      <%= render_slot(@inner_block) %>
+    </section>
+    """
+  end
+
+  def features(assigns) do
+    ~H"""
+    <div>
+      features lol
+    </div>
     """
   end
 
