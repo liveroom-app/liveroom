@@ -5,7 +5,7 @@ defmodule LiveroomWeb.HomeLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <.section class="bg-zinc-50">
+    <.section class="bg-zinc-50 w-full">
       <.hero />
 
       <div

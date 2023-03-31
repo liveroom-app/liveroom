@@ -8,7 +8,7 @@ defmodule LiveroomWeb.Layouts do
 
       <%!-- <LiveroomWeb.Header.render /> --%>
 
-      <main class="h-full overflow-x-hidden bg-red-100 flex-col flex justify-center items-center">
+      <main class="h-full overflow-x-hidden flex-col flex items-center">
         <%= @inner_content %>
       </main>
     </div>
