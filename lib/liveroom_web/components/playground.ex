@@ -29,7 +29,7 @@ defmodule LiveroomWeb.Components.Playground do
               class={[
                 not user.is_halo_key_pressed && "scale-0",
                 "z-40 absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-md",
-                "transition-transform duration-300 ease-out"
+                "transition-transform duration-100 ease-out"
               ]}
             />
 
