@@ -12,38 +12,43 @@ defmodule LiveroomWeb.Components.Playground do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="max-w-screen-md mx-auto flex space-x-4 items-stretch">
+    <div class="max-w-screen-md mx-auto flex flex-col items-stretch space-y-4">
       <div class="aspect-video w-full rounded-lg bg-gray-100 border border-gray-300">
         <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none p-8">
           <li
             :for={user <- @users}
             style={"color: #{user.color}; left: calc(#{user.x}% - 11px); top: calc(#{user.y}% - 10px);"}
             class={[
-              "z-10 absolute flex flex-col justify-start items-start",
-              "space-y-1 pointer-events-none select-none"
+              "absolute flex flex-col justify-start items-start pt-[24px]",
+              "pointer-events-none select-none"
             ]}
           >
             <div
               :if={user.is_space_pressed}
               id="cursor_blink"
               style={"background-color: #{user.color}25; border-color: #{user.color};"}
-              class="absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-inner"
+              class="z-40 absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-md"
             />
 
-            <.cursor :if={user.socket_id != @socket_id} class="absolute top-0 left-0 shadow-2xl" />
+            <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
+            <%!-- <.cursor class="z-50 absolute top-0 left-0 shadow-2xl" /> --%>
 
             <span
               :if={user.socket_id != @socket_id}
               style={"background-color: #{user.color};"}
-              class="!mt-[26px] ml-[26px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
+              class="z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
             >
               <%= user.name %>
             </span>
 
             <span
-              :if={user.socket_id != @socket_id && user.msg != ""}
+              :if={user.msg != ""}
               style={"border-color: #{user.color};"}
-              class="max-w-[20ch] ml-[26px] py-1 px-2 text-sm bg-white text-left border rounded shadow-2xl"
+              class={[
+                "z-50 max-w-[38ch] min-w-[15ch] ml-[30px] mr-3 py-1 px-2",
+                "bg-white font-medium text-base text-left border rounded shadow-2xl",
+                user.socket_id == @socket_id && "translate-y-2 translate-x-1"
+              ]}
             >
               <%= user.msg %>
             </span>
@@ -51,7 +56,7 @@ defmodule LiveroomWeb.Components.Playground do
         </ul>
       </div>
 
-      <.msg_form msg={@msg} current_msg={@current_msg} class="min-w-[15ch] w-full max-w-[30ch]" />
+      <.msg_form msg={@msg} current_msg={@current_msg} class="" />
     </div>
     """
   end
@@ -71,22 +76,22 @@ defmodule LiveroomWeb.Components.Playground do
       phx-keyup={js_send_message()}
       phx-key="Enter"
       class={[
-        "flex flex-col items-stretch space-y-4 text-xs",
+        "flex items-stretch space-x-4 text-xs",
         @class
       ]}
     >
-      <textarea
+      <input
         id="msg"
         name="msg"
+        type="text"
         tabindex="1"
-        maxlength="280"
         placeholder="Say something"
         aria-label="Your message"
         class={[
           "flex-1 appearance-none py-1 px-2",
           "text-gray-600 bg-gray-50 placeholder-gray-400",
-          "border-none rounded-md shadow-inner resize-none",
-          "focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:shadow-none",
+          "border-gray-50 outline-none rounded-md resize-none",
+          "focus:border-gray-50 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2",
           @msg == "" && "bg-gray-50/50"
         ]}
       />
@@ -96,7 +101,7 @@ defmodule LiveroomWeb.Components.Playground do
         disabled={disabled = @msg == "" && @current_msg == ""}
         tabindex="0"
         class={[
-          "flex justify-center items-center py-2 px-3",
+          "flex justify-center items-center py-2 px-4",
           "text-white text-base font-semibold",
           "rounded",
           "focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2",
