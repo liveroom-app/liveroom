@@ -29,7 +29,16 @@ let csrfToken = document
 
 let liveSocket = new LiveSocket("/live", Socket, {
   hooks: Hooks,
-  params: { _csrf_token: csrfToken },
+  params: (_node) => ({
+    _csrf_token: csrfToken,
+    // NOTE: Data needed for analytics.
+    referrer: document.referrer,
+    // screen_width: window.innerWidth,
+    // screen_height: window.innerHeight,
+    screen_width: window.screen.width,
+    screen_height: window.screen.height,
+    language: window.navigator.language,
+  }),
 });
 
 // Show progress bar on live navigation and form submits

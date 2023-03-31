@@ -1,6 +1,9 @@
 defmodule LiveroomWeb.Router do
   use LiveroomWeb, :router
 
+  alias LiveroomWeb.Hooks
+  alias LiveroomWeb.Plugs
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,16 +11,23 @@ defmodule LiveroomWeb.Router do
     plug :put_root_layout, {LiveroomWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    # no plug Plugs.Analytics, it is handled by a Liveview hook on mount
   end
 
   pipeline :api do
     plug :accepts, ["json"]
   end
 
+  pipeline :analytics do
+    plug Plugs.Analytics
+  end
+
   scope "/", LiveroomWeb do
     pipe_through :browser
 
-    live "/", HomeLive, :index
+    live_session :default, on_mount: [Hooks.Analytics] do
+      live "/", HomeLive, :index
+    end
   end
 
   # Other scopes may use custom stacks.

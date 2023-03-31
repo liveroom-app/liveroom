@@ -20,6 +20,13 @@ if System.get_env("PHX_SERVER") do
   config :liveroom, LiveroomWeb.Endpoint, server: true
 end
 
+if config_env() != :test do
+  config :liveroom, :umami,
+    enabled: System.get_env("UMAMI_ENABLED") == "true",
+    base_url: System.get_env("UMAMI_BASE_URL"),
+    website_id: System.get_env("UMAMI_WEBSITE_ID")
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

@@ -12,6 +12,10 @@ processes = []
 [env]
   PHX_HOST = "liveroom.app"
   PORT = "8080"
+  UMAMI_ENABLED = "true"
+  UMAMI_BASE_URL = "https://liveroom-umami.fly.dev"
+  # UMAMI_BASE_URL = "http://liveroom-umami.internal:3000" # Does not work...
+  UMAMI_WEBSITE_ID = "5abf2e2e-f757-4ee5-9e8b-97643a113c77"
 
 [experimental]
   auto_rollback = true
