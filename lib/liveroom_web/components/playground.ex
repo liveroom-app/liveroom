@@ -24,7 +24,7 @@ defmodule LiveroomWeb.Components.Playground do
             ]}
           >
             <div
-              :if={user.is_space_pressed}
+              :if={user.is_halo_key_pressed}
               id="cursor_blink"
               style={"background-color: #{user.color}25; border-color: #{user.color};"}
               class="z-40 absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-md"
@@ -169,7 +169,7 @@ defmodule LiveroomWeb.Components.Playground do
           msg: "",
           name: name,
           color: Colors.get_random_color(),
-          is_space_pressed: false
+          is_halo_key_pressed: false
         })
 
         LiveroomWeb.Endpoint.subscribe(@cursorview)
@@ -195,13 +195,13 @@ defmodule LiveroomWeb.Components.Playground do
     {:noreply, socket}
   end
 
-  def handle_event("space-key-down", _, socket) do
-    send_event(:space_key_down, socket.id)
+  def handle_event("halo-key-down", _, socket) do
+    send_event(:halo_key_down, socket.id)
     {:noreply, socket}
   end
 
-  def handle_event("space-key-up", _, socket) do
-    send_event(:space_key_up, socket.id)
+  def handle_event("halo-key-up", _, socket) do
+    send_event(:halo_key_up, socket.id)
     {:noreply, socket}
   end
 
@@ -233,12 +233,12 @@ defmodule LiveroomWeb.Components.Playground do
     Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{x: x, y: y}))
   end
 
-  defp send_event(:space_key_down, socket_id) do
-    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{is_space_pressed: true}))
+  defp send_event(:halo_key_down, socket_id) do
+    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{is_halo_key_pressed: true}))
   end
 
-  defp send_event(:space_key_up, socket_id) do
-    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{is_space_pressed: false}))
+  defp send_event(:halo_key_up, socket_id) do
+    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{is_halo_key_pressed: false}))
   end
 
   defp send_event(:message_sent, socket_id, msg) do

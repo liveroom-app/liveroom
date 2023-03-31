@@ -10,12 +10,18 @@ export const TrackCursorsHook = {
 
     // Keyboard press
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Space") this.pushEvent("space-key-down");
-      if (e.keyCode === 32) this.pushEvent("space-key-down");
+      if (e.key === HALO_KEY) this.pushEvent("halo-key-down");
+      if (e.keyCode === HALO_KEY_CODE) this.pushEvent("halo-key-down");
     });
+
     document.addEventListener("keyup", (e) => {
-      if (e.key === "Space") this.pushEvent("space-key-up");
-      if (e.keyCode === 32) this.pushEvent("space-key-up");
+      if (e.key === HALO_KEY) this.pushEvent("halo-key-up");
+      if (e.keyCode === HALO_KEY_CODE) this.pushEvent("halo-key-up");
     });
   },
 };
+
+// const HALO_KEY = "Space";
+// const HALO_KEY_CODE = 32;
+const HALO_KEY = "Escape";
+const HALO_KEY_CODE = 27;
