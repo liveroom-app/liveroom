@@ -10,7 +10,7 @@ defmodule LiveroomWeb.HomeLive do
 
       <div
         id="playground_container"
-        class="w-full max-w-4xl border-4 border-black rounded-3xl flex flex-col"
+        class="hidden w-full max-w-4xl border-4 border-black rounded-3xl sm:flex flex-col"
       >
         <div class="px-5 py-5">
           <%= live_render(@socket, Playground, id: "playground-#{@socket.id}") %>
@@ -63,7 +63,8 @@ defmodule LiveroomWeb.HomeLive do
       <.heading>
         Sit next to your customers
       </.heading>
-      <h3 class="font-medium text-lg sm:text-xl text-gray-500 text-center max-w-xs">
+
+      <h3 class="font-medium text-lg sm:text-xl text-gray-500 text-center max-w-sm">
         Liveroom lets you instantly join your customer in your product with live cursors, video call and interactions.
       </h3>
 
@@ -173,7 +174,7 @@ defmodule LiveroomWeb.HomeLive do
   def feature_card(assigns) do
     ~H"""
     <li class="flex flex-col gap-8">
-      <div class="h-52 rounded-[20px] bg-emerald-50">
+      <div class="h-52 rounded-[20px] grid place-items-center bg-card-pattern">
         <%= render_slot(@inner_block) %>
       </div>
 
@@ -194,7 +195,7 @@ defmodule LiveroomWeb.HomeLive do
     ~H"""
     <footer class="p-8 grid place-items-center bg-background">
       <small class="text-sm text-gray-400">
-        Follow <a class="font-bold" href="https://twitter.com">@liveroom</a> for invites
+        Follow <a class="font-bold" href="https://twitter.com/Liveroom_app">@liveroom</a> for invites
       </small>
     </footer>
     """
