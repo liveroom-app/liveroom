@@ -1,8 +1,8 @@
 export const InitUserHook = {
   mounted() {
-    addUserConnection(this.el.dataset.userUuid);
+    add_user_connection(this.el.dataset.userUuid);
   },
   destroyed() {
-    removeUserConnection(this.el.dataset.userUuid);
+    remove_user_connection(this.el.dataset.userUuid);
   },
 };
