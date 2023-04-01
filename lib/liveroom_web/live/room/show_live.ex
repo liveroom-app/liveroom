@@ -52,23 +52,24 @@ defmodule LiveroomWeb.Room.ShowLive do
         :for={request <- @offer_requests}
         id={"offer-request-from-user-#{request.from_user.uuid}"}
         phx-hook="HandleOfferRequestHook"
-        data-user-uuid={request.from_user.uuid}
+        data-from-user-uuid={request.from_user.uuid}
       />
     </div>
 
     <div id="sdp-offers">
       <span
-        :for={sdp_offer <- @sdp_offers}
-        id={"sdp-request-from-user-#{sdp_offer["from_user"]}"}
+        :for={sdp_offer <- Enum.uniq(@sdp_offers)}
+        id={"sdp-request-from-user-#{inspect sdp_offer}"}
         phx-hook="HandleSdpOfferHook"
         data-from-user-uuid={sdp_offer["from_user"]}
+        data-sdp={sdp_offer["description"]["sdp"]}
       />
     </div>
 
     <div id="sdp-answers">
       <span
-        :for={answer <- @answers}
-        id={"sdp-answer-from-user-#{answer["from_user"]}"}
+        :for={answer <- Enum.uniq(@answers)}
+        id={"sdp-answer-from-user-#{inspect answer}"}
         phx-hook="HandleAnswerHook"
         data-from-user-uuid={answer["from_user"]}
         data-sdp={answer["description"]["sdp"]}
@@ -77,8 +78,8 @@ defmodule LiveroomWeb.Room.ShowLive do
 
     <div id="ice-candidates">
       <span
-        :for={ice_candidate_offer <- @ice_candidate_offers}
-        id={"ice-candidate-from-user-#{ice_candidate_offer["from_user"]}"}
+        :for={ice_candidate_offer <- Enum.uniq(@ice_candidate_offers)}
+        id={"ice-candidate-from-user-#{inspect ice_candidate_offer}"}
         phx-hook="HandleIceCandidateOfferHook"
         data-from-user-uuid={ice_candidate_offer["from_user"]}
         data-ice-candidate={Jason.encode!(ice_candidate_offer["candidate"])}
@@ -139,21 +140,21 @@ defmodule LiveroomWeb.Room.ShowLive do
   def handle_event("new_ice_candidate", payload, socket) do
     payload = Map.merge(payload, %{"from_user" => socket.assigns.user.uuid})
 
-    send_direct_message(socket.assigns.slug, payload["toUser"], "new_ice_candidate", payload)
+    send_direct_message(socket.assigns.slug, payload["to_user"], "new_ice_candidate", payload)
     {:noreply, socket}
   end
 
   def handle_event("new_sdp_offer", payload, socket) do
     payload = Map.merge(payload, %{"from_user" => socket.assigns.user.uuid})
 
-    send_direct_message(socket.assigns.slug, payload["toUser"], "new_sdp_offer", payload)
+    send_direct_message(socket.assigns.slug, payload["to_user"], "new_sdp_offer", payload)
     {:noreply, socket}
   end
 
   def handle_event("new_answer", payload, socket) do
     payload = Map.merge(payload, %{"from_user" => socket.assigns.user.uuid})
 
-    send_direct_message(socket.assigns.slug, payload["toUser"], "new_answer", payload)
+    send_direct_message(socket.assigns.slug, payload["to_user"], "new_answer", payload)
     {:noreply, socket}
   end
 
