@@ -1,5 +1,5 @@
 defmodule Liveroom.OrganizerTest do
-  use Liveroom.DataCase
+  use Liveroom.DataCase, async: true
 
   alias Liveroom.Organizer
 
