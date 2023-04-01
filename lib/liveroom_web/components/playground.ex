@@ -51,12 +51,7 @@ defmodule LiveroomWeb.Components.Playground do
             <% end %>
           </li>
 
-          <.dashboard name={@name} color={@color} />
-          <.msg_form
-            msg={@msg}
-            current_msg={@current_msg}
-            class="hidden absolute bottom-[78px] inset-x-0"
-          />
+          <.dashboard name={@name} color={@color} msg={@msg} current_msg={@current_msg} />
         </ul>
       </div>
     </div>
@@ -156,6 +151,8 @@ defmodule LiveroomWeb.Components.Playground do
 
   attr :name, :string, required: true
   attr :color, :string, required: true
+  attr :msg, :string, required: true
+  attr :current_msg, :string, required: true
 
   def dashboard(assigns) do
     ~H"""
@@ -237,6 +234,12 @@ defmodule LiveroomWeb.Components.Playground do
             <%= String.at(@name, 0) %>
           </div>
         </div>
+
+        <.msg_form
+          msg={@msg}
+          current_msg={@current_msg}
+          class="hidden absolute bottom-[44px] inset-x-0"
+        />
       </div>
     </div>
     """
