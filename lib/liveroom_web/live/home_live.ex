@@ -10,7 +10,13 @@ defmodule LiveroomWeb.HomeLive do
       <.hero />
 
       <div id="playground_container" class="hidden w-full max-w-4xl sm:flex flex-col">
-        <%= live_render(@socket, Playground, id: "playground-#{@socket.id}") %>
+        <%= live_render(@socket, Playground,
+          id: "playground-#{@socket.id}",
+          session: %{
+            "name" => Liveroom.Names.generate(),
+            "color" => Liveroom.Colors.get_random_color()
+          }
+        ) %>
       </div>
 
       <div class="flex items-center gap-2 shrink-0">
@@ -97,6 +103,7 @@ defmodule LiveroomWeb.HomeLive do
     ~H"""
     <a
       href="https://tally.so/r/wQ1EvX"
+      tabindex="-1"
       class="rounded-[10px] bg-slate-900 text-white text-lg font-semibold px-6 py-4"
     >
       <%= render_slot(@inner_block) %>
@@ -198,7 +205,11 @@ defmodule LiveroomWeb.HomeLive do
     ~H"""
     <footer class="p-8 grid place-items-center bg-background">
       <small class="text-sm text-gray-400">
-        Follow <a class="font-bold" href="https://twitter.com/Liveroom_app">@liveroom</a> for invites
+        Follow
+        <a tabindex="-1" class="font-bold" href="https://twitter.com/Liveroom_app">
+          @liveroom
+        </a>
+        for invites
       </small>
     </footer>
     """
