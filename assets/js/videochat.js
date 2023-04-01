@@ -27,7 +27,8 @@ export function create_peer_connection(lv, from_user, offer) {
     iceServers: [
       // We're going to get into STUN servers later, but for now, you
       // may use ours for this portion of development.
-      { urls: "stun:liveroom.app:3478" },
+      // { urls: "stun:liveroom.app:3478" },
+      { urls: "stun.cope.es:3478" },
     ],
   });
 
