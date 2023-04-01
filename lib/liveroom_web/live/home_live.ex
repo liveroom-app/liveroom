@@ -44,7 +44,7 @@ defmodule LiveroomWeb.HomeLive do
 
   def hero(assigns) do
     ~H"""
-    <header class="flex relative flex-col items-center gap-10 md:gap-14 w-full md:max-w-7xl">
+    <header class="flex relative flex-col items-center gap-10 md:gap-20 w-full md:max-w-7xl">
       <h1 class="text-3xl font-bold text-accent flex items-center gap-3">
         <img src={LiveroomWeb.Endpoint.static_url() <> ~p"/images/liveroom_logo.png"} class="w-6 h-6" />
         Liveroom
@@ -60,13 +60,15 @@ defmodule LiveroomWeb.HomeLive do
         class="w-20 sm:w-28 absolute top-72 -left-4"
       />
 
-      <.heading>
-        Sit next to your customers
-      </.heading>
+      <div class="flex flex-col gap-8 items-center">
+        <.heading>
+          Sit next to your customers
+        </.heading>
 
-      <h3 class="font-medium text-lg sm:text-xl text-gray-500 text-center max-w-sm">
-        Liveroom lets you instantly join your customer in your product with live cursors, video call and interactions.
-      </h3>
+        <h3 class="font-medium text-lg sm:text-xl text-gray-500 text-center max-w-[40ch]">
+          Liveroom lets you instantly join your customer in your product with live cursors, video call and interactions.
+        </h3>
+      </div>
 
       <.button_link>
         Join waitlist
@@ -102,7 +104,6 @@ defmodule LiveroomWeb.HomeLive do
     ~H"""
     <a
       href="https://tally.so/r/wQ1EvX"
-      tabindex="2"
       class="rounded-[10px] bg-slate-900 text-white text-lg font-semibold px-6 py-4"
     >
       <%= render_slot(@inner_block) %>
@@ -115,7 +116,12 @@ defmodule LiveroomWeb.HomeLive do
     <div class="w-full">
       <ul class="mx-auto grid grid-cols-[repeat(auto-fit,_minmax(min(13rem,_100%),1fr))] max-w-3xl gap-14">
         <.feature_card>
+          <:illustration>
+            <div class="bg-[url('../../../priv/static/images/liveroom_screenshot.png')] h-full w-full debug" />
+          </:illustration>
+
           <:title>Live interactions</:title>
+
           <:description>
             Everyone has their own live cursor and can interact with the app. As if you were in the same room.
           </:description>
@@ -167,15 +173,15 @@ defmodule LiveroomWeb.HomeLive do
     """
   end
 
-  slot :inner_block, required: true
   slot :title, required: true
   slot :description, required: true
+  slot :illustration, default: nil
 
   def feature_card(assigns) do
     ~H"""
     <li class="flex flex-col gap-8">
       <div class="h-52 rounded-[20px] grid place-items-center bg-card-pattern">
-        <%= render_slot(@inner_block) %>
+        <%= render_slot(@illustration) %>
       </div>
 
       <div class="flex flex-col gap-[10px]">

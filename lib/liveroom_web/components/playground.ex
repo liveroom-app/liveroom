@@ -35,25 +35,21 @@ defmodule LiveroomWeb.Components.Playground do
 
             <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
 
-            <span
-              :if={user.socket_id != @socket_id}
-              style={"background-color: #{user.color};"}
-              class="z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
-            >
-              <%= user.name %>
-            </span>
-
-            <span
-              :if={user.msg != ""}
-              style={"border-color: #{user.color};"}
-              class={[
-                "z-50 max-w-[38ch] min-w-[15ch] mt-2 ml-[30px] mr-3 py-1 px-2",
-                "bg-white font-medium text-base text-left border rounded shadow-2xl",
-                user.socket_id == @socket_id && "translate-y-2 translate-x-1"
-              ]}
-            >
-              <%= user.msg %>
-            </span>
+            <%= if user.msg == "" do %>
+              <span
+                style={"background-color: #{user.color};"}
+                class="z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
+              >
+                <%= user.name %>
+              </span>
+            <% else %>
+              <span
+                style={"background-color: #{user.color};"}
+                class="z-50 ml-[30px] max-w-[50ch] py-1 px-3 text-sm truncate text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
+              >
+                <%= user.msg %>
+              </span>
+            <% end %>
           </li>
         </ul>
       </div>
