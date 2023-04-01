@@ -1,4 +1,4 @@
-import { add_user_connection, remove_user_connection } from "./videochat";
+import { add_user_connection, remove_user_connection } from "../videochat";
 
 export const InitUserHook = {
   mounted() {
