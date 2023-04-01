@@ -95,6 +95,7 @@ defmodule LiveroomWeb.Components.Playground do
       />
 
       <button
+        id="msg-form-submit-button"
         type="submit"
         disabled={disabled = @msg == "" && @current_msg == ""}
         tabindex="2"
@@ -221,7 +222,12 @@ defmodule LiveroomWeb.Components.Playground do
             <li phx-click={
               %JS{}
               |> JS.toggle(to: "#msg-form", display: "flex")
-              |> JS.focus(to: "#msg-form-input")
+              |> then(
+                &case @current_msg == "" do
+                  true -> JS.focus(&1, to: "#msg-form-input")
+                  false -> JS.focus(&1, to: "#msg-form-submit-button")
+                end
+              )
             }>
               <.icon name="hero-chat-bubble-left" class="h-5 w-5" />
             </li>
