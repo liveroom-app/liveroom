@@ -178,10 +178,19 @@ defmodule LiveroomWeb.Components.Playground do
           </button>
         </header>
 
-        <div class="flex gap-4 justify-start w-full p-4">
-          <.card_link />
-          <.card_link />
-          <.card_link />
+        <div class="p-4 flex flex-col gap-4 h-full">
+          <div class="flex gap-4 justify-start">
+            <.card_link />
+            <.card_link />
+            <.card_link />
+          </div>
+
+          <div class="bg-white border border-gray-200 w-full rounded-md flex h-full p-6">
+            <div class="flex flex-col gap-4">
+              <.squeleton class="bg-slate-300 w-12" />
+              <.squeleton class="bg-gray-200 w-36" />
+            </div>
+          </div>
         </div>
       </div>
 
