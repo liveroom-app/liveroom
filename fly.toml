@@ -3,7 +3,7 @@
 app = "liveroom"
 kill_signal = "SIGTERM"
 kill_timeout = 5
-primary_region = "cdg"
+primary_region = "mad"
 processes = []
 
 [deploy]
