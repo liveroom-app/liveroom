@@ -66,67 +66,6 @@ defmodule LiveroomWeb.Components.Playground do
 
   ### Components
 
-  attr :msg, :string, required: true
-  attr :current_msg, :string, required: true
-  attr :class, :string, default: nil
-
-  def msg_form(assigns) do
-    ~H"""
-    <form
-      id="msg-form"
-      phx-change="message_updated"
-      phx-submit={js_send_message()}
-      phx-keyup={js_send_message()}
-      phx-key="Enter"
-      class={[
-        "w-fit mx-auto flex justify-center items-stretch p-5",
-        @class
-      ]}
-    >
-      <input
-        id="msg-form-input"
-        name="msg"
-        type="text"
-        tabindex="1"
-        placeholder="Say something"
-        aria-label="Your message"
-        class={[
-          "flex-1 min-w-[12.2rem] appearance-none py-1 px-2",
-          "text-white bg-brand/80 placeholder-white/50",
-          "border-4 border-brand outline-none rounded-l-md resize-none",
-          "focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2",
-          @msg == "" && "bg-gray-100/50",
-          "text-sm"
-        ]}
-      />
-
-      <button
-        id="msg-form-submit-button"
-        type="submit"
-        disabled={disabled = @msg == "" && @current_msg == ""}
-        tabindex="2"
-        class={[
-          "flex justify-center items-center py-1 px-2",
-          "text-gray-100 text-base font-semibold",
-          "rounded-r",
-          "focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2",
-          disabled && "bg-brand",
-          !disabled && "bg-brand"
-        ]}
-      >
-        <%= cond do %>
-          <% @msg == "" && @current_msg != "" -> %>
-            <.icon name="hero-backspace-mini" class="h-4 w-4" />
-          <% @msg == "" && @current_msg == "" -> %>
-            <.icon name="hero-paper-airplane-mini" class="h-4 w-4" />
-          <% true -> %>
-            <.icon name="hero-paper-airplane-mini" class="h-4 w-4" />
-        <% end %>
-      </button>
-    </form>
-    """
-  end
-
   attr :class, :string, default: nil
 
   def cursor(assigns) do
@@ -164,7 +103,7 @@ defmodule LiveroomWeb.Components.Playground do
 
   def dashboard(assigns) do
     ~H"""
-    <div class="relative bg-zinc-50 h-full grid grid-cols-[minmax(150px,_25%)_1fr] border-4 border-violet-500 rounded-3xl overflow-hidden">
+    <div class="relative bg-zinc-50 h-full grid grid-cols-[minmax(150px,_25%)_1fr] border-4 border-violet-500 shadow rounded-3xl overflow-hidden">
       <nav class="bg-background px-4 py-6 border-r-gray-200 border-r">
         <p class="uppercase text-gray-300 font-semibold">Menu</p>
 
@@ -212,34 +151,31 @@ defmodule LiveroomWeb.Components.Playground do
         </button>
       </div> --%>
 
-      <div class="absolute bottom-2 inset-x-0 flex justify-center items-center">
-        <div class="p-2 bg-brand text-white flex justify-around items-stretch gap-6 rounded-full">
+      <div class="absolute bottom-4 inset-x-0 flex justify-center items-center">
+        <div class="p-2 bg-violet-500 text-white flex justify-around items-stretch gap-6 rounded-full shadow-lg">
           <video
             loop
             muted
             autoplay
             playsinline
-            class="w-10 aspect-ratio bg-gray-400 rounded-full shadow-2xl"
+            class="w-12 h-12 bg-gray-400 rounded-full shadow-2xl"
             src={LiveroomWeb.Endpoint.static_url() <> ~p"/videos/alex_avatar_video.webm"}
           />
 
-          <ul class={[
-            "flex justify-between items-center gap-4",
-            "[&>li]:rounded [&>li]:md:hover:bg-dark-100"
-          ]}>
-            <li :if={!@camera_on} phx-click="camera_on">
-              <.icon name="hero-video-camera" class="h-5 w-5" />
-            </li>
+          <ul class="flex justify-between items-center gap-4">
+            <button :if={!@camera_on} phx-click="camera_on">
+              <.icon name="hero-video-camera" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
+            </button>
 
-            <li :if={@camera_on} phx-click="camera_off">
-              <.icon name="hero-video-camera-slash" class="h-5 w-5" />
-            </li>
+            <button :if={@camera_on} phx-click="camera_off">
+              <.icon name="hero-video-camera-slash" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
+            </button>
 
-            <li>
-              <.icon name="hero-microphone" class="h-5 w-5" />
-            </li>
+            <button>
+              <.icon name="hero-microphone" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
+            </button>
 
-            <li phx-click={
+            <button phx-click={
               %JS{}
               |> JS.toggle(to: "#msg-form", display: "flex")
               |> then(
@@ -250,13 +186,13 @@ defmodule LiveroomWeb.Components.Playground do
               )
             }>
               <.icon name="hero-chat-bubble-left" class="h-5 w-5" />
-            </li>
+            </button>
           </ul>
 
           <div
             :if={!@camera_on}
             style={"background-color: #{@color};"}
-            class="w-10 aspect-ratio flex justify-center items-center font-bold text-white bg-gray-200/25 rounded-full shadow-2xl"
+            class="w-12 h-12 flex justify-center items-center font-bold text-white bg-gray-200/25 rounded-full shadow-2xl"
           >
             <%= String.at(@name, 0) %>
           </div>
@@ -268,7 +204,7 @@ defmodule LiveroomWeb.Components.Playground do
             phx-click="join_call"
             width="600"
             style="transform: rotateY(180deg);"
-            class="w-10 aspect-ratio flex justify-center items-center rounded-full shadow-2xl"
+            class="w-12 h-12 flex justify-center items-center rounded-full shadow-2xl"
             playsinline
             autoplay
             muted
@@ -276,13 +212,79 @@ defmodule LiveroomWeb.Components.Playground do
           </video>
         </div>
 
-        <.msg_form
-          msg={@msg}
-          current_msg={@current_msg}
-          class="hidden absolute bottom-[44px] inset-x-0"
-        />
+        <.msg_form msg={@msg} current_msg={@current_msg} class=" absolute bottom-[55px] inset-x-0" />
       </div>
     </div>
+    """
+  end
+
+  attr :msg, :string, required: true
+  attr :current_msg, :string, required: true
+  attr :class, :string, default: nil
+
+  def msg_form(assigns) do
+    ~H"""
+    <form
+      id="msg-form"
+      phx-change="message_updated"
+      phx-submit={js_send_message()}
+      phx-keyup={js_send_message()}
+      phx-key="Enter"
+      class={[
+        "w-fit mx-auto flex justify-center items-stretch p-5",
+        @class
+      ]}
+    >
+      <input
+        id="msg-form-input"
+        name="msg"
+        type="text"
+        tabindex="1"
+        placeholder="Say something"
+        aria-label="Your message"
+        class={[
+          "flex-1 min-w-[12.2rem] appearance-none py-1 px-2",
+          "text-white bg-violet-500/80 placeholder-violet-200",
+          "border-4 border-violet-500 outline-none rounded-l-md resize-none",
+          "focus:!border-violet-500 focus:outline-none focus:ring-none",
+          @msg == "" && "bg-gray-100/50",
+          "text-sm"
+        ]}
+      />
+
+      <button
+        id="msg-form-submit-button"
+        type="submit"
+        disabled={disabled = @msg == "" && @current_msg == ""}
+        tabindex="2"
+        class={[
+          "flex justify-center items-center py-1 px-2",
+          "text-gray-100 text-base font-semibold",
+          "rounded-r",
+          "focus:outline-none group",
+          disabled && "bg-violet-500",
+          !disabled && "bg-violet-500"
+        ]}
+      >
+        <%= cond do %>
+          <% @msg == "" && @current_msg != "" -> %>
+            <.icon
+              name="hero-backspace-mini"
+              class="h-4 w-4 group-focus:-translate-x-1 transition-transform duration-300"
+            />
+          <% @msg == "" && @current_msg == "" -> %>
+            <.icon
+              name="hero-paper-airplane-mini"
+              class="h-4 w-4 group-focus:translate-x-1 group-focus:-translate-y-1 group-focus:rotate-[-25deg] transition-transform duration-300"
+            />
+          <% true -> %>
+            <.icon
+              name="hero-paper-airplane-mini"
+              class="h-4 w-4 group-focus:translate-x-1 group-focus:-translate-y-1 group-focus:rotate-[-25deg] transition-transform duration-300"
+            />
+        <% end %>
+      </button>
+    </form>
     """
   end
 
