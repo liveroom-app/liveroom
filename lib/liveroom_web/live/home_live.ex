@@ -117,6 +117,9 @@ defmodule LiveroomWeb.HomeLive do
     <div class="w-[75%] sm:w-full">
       <ul class="mx-auto grid grid-cols-[repeat(auto-fit,_minmax(min(13rem,_100%),1fr))] max-w-3xl gap-14">
         <.feature_card class="bg-green-50">
+          <:illustration>
+            <img src={LiveroomWeb.Endpoint.static_url() <> ~p"/images/cursor_left.svg"} class="w-28" />
+          </:illustration>
           <:title>Live interactions</:title>
           <:description>
             Everyone has their own live cursor and can interact with the app. As if you were in the same room.
