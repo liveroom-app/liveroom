@@ -154,14 +154,14 @@ defmodule LiveroomWeb.HomeLive do
 
     <div class="w-full">
       <ul class="mx-auto grid grid-cols-[repeat(auto-fit,_minmax(min(13rem,_100%),1fr))] max-w-3xl gap-14">
-        <.feature_card>
+        <.feature_card class="bg-white">
           <:title>For Sales teams</:title>
           <:description>
             Drop the boring slides and passive screenshares. Bring the customer along with you in your product demos.
           </:description>
         </.feature_card>
 
-        <.feature_card>
+        <.feature_card class="bg-white">
           <:title>For Customer support teams</:title>
           <:description>Get the perfect context and troubleshoot in real time.</:description>
         </.feature_card>
