@@ -24,7 +24,7 @@ defmodule Liveroom.OrganizerTest do
       valid_attrs = %{slug: "some slug", title: "some title"}
 
       assert {:ok, %Room{} = room} = Organizer.create_room(valid_attrs)
-      assert room.slug == "some slug"
+      assert room.slug == "some-slug"
       assert room.title == "some title"
     end
 
@@ -37,7 +37,7 @@ defmodule Liveroom.OrganizerTest do
       update_attrs = %{slug: "some updated slug", title: "some updated title"}
 
       assert {:ok, %Room{} = room} = Organizer.update_room(room, update_attrs)
-      assert room.slug == "some updated slug"
+      assert room.slug == "some-updated-slug"
       assert room.title == "some updated title"
     end
 
