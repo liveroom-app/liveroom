@@ -12,9 +12,9 @@ export const HandleOfferRequestHook = {
 export const HandleIceCandidateOfferHook = {
   mounted() {
     const data = this.el.dataset;
-
     const from_user = data.fromUserUuid;
     const ice_candidate = JSON.parse(data.iceCandidate);
+
     const peer_connection = users[from_user]?.peer_connection;
 
     console.log("new ice candidate from", from_user, ice_candidate);
@@ -40,9 +40,10 @@ export const HandleSdpOfferHook = {
 export const HandleAnswerHook = {
   mounted() {
     const data = this.el.dataset;
-    const from_user = data.fromUserUuid;
     const sdp = data.sdp;
-    const peer_connection = users[from_user]?.peerConnection;
+    const from_user = data.fromUserUuid;
+
+    const peer_connection = users[from_user]?.peer_connection;
 
     if (sdp != "") {
       console.log("new sdp ANSWER from", from_user, sdp);

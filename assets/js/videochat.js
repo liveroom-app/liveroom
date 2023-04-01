@@ -2,7 +2,7 @@ export const users = {};
 
 export function add_user_connection(user_uuid) {
   if (users[user_uuid] === undefined) {
-    users[user_uuid] = { peerConnection: null };
+    users[user_uuid] = { peer_connection: null };
   }
 
   return users;
@@ -34,7 +34,7 @@ export function create_peer_connection(lv, from_user, offer) {
 
   // Add this new peer connection to our `users` object.
   if (users[from_user] && new_peer_connection)
-    users[from_user].peerConnection = new_peer_connection;
+    users[from_user].peer_connection = new_peer_connection;
 
   // Add each local track to the RTCPeerConnection.
   localStream

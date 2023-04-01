@@ -38,10 +38,12 @@ defmodule LiveroomWeb.Room.ShowLive do
         :for={uuid <- @connected_users}
         :if={@show_webcams}
         id={"remote-video-#{uuid}"}
+        width="600"
         phx-hook="InitUserHook"
         data-user-uuid={uuid}
         playsinline
         autoplay
+        muted
       >
       </video>
     </div>
