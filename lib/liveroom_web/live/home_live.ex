@@ -114,26 +114,26 @@ defmodule LiveroomWeb.HomeLive do
 
   def features(assigns) do
     ~H"""
-    <div class="w-full">
+    <div class="w-[75%] sm:w-full">
       <ul class="mx-auto grid grid-cols-[repeat(auto-fit,_minmax(min(13rem,_100%),1fr))] max-w-3xl gap-14">
-        <.feature_card>
-          <:illustration>
-            <div class="bg-[url('../../../priv/static/images/liveroom_screenshot.png')] h-full w-full debug" />
-          </:illustration>
-
+        <.feature_card class="bg-green-50">
           <:title>Live interactions</:title>
-
           <:description>
             Everyone has their own live cursor and can interact with the app. As if you were in the same room.
           </:description>
         </.feature_card>
 
-        <.feature_card>
+        <.feature_card class="bg-teal-50">
+          <:illustration>
+            <video autoplay loop muted playsinline class="w-32 rounded-full">
+              <source src="https://framerusercontent.com/modules/assets/ge2Me0IRiwzCbzbHBSqNP1Jy8~mzJIzKX21b2-SoRj68_OWjTBqUgxuWGnqWrSsHztBGU.webm" />
+            </video>
+          </:illustration>
           <:title>Video chat</:title>
           <:description>See and talk to each other in a click.</:description>
         </.feature_card>
 
-        <.feature_card>
+        <.feature_card class="bg-purple-50">
           <:title>Direct links</:title>
           <:description>Easily join anyone anywhere in your product.</:description>
         </.feature_card>
@@ -177,11 +177,12 @@ defmodule LiveroomWeb.HomeLive do
   slot :title, required: true
   slot :description, required: true
   slot :illustration, default: nil
+  attr :class, :string, default: nil
 
   def feature_card(assigns) do
     ~H"""
     <li class="flex flex-col gap-8">
-      <div class="h-52 rounded-[20px] grid place-items-center bg-card-pattern">
+      <div class={["h-52 rounded-[20px] grid place-items-center", @class]}>
         <%= render_slot(@illustration) %>
       </div>
 
