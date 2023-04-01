@@ -9,25 +9,17 @@ defmodule LiveroomWeb.HomeLive do
     <.section class="bg-zinc-50 w-full">
       <.hero />
 
-      <div
-        id="playground_container"
-        class="hidden w-full max-w-4xl border-4 border-black rounded-3xl sm:flex flex-col"
-      >
-        <div class="px-5 py-5">
-          <%= live_render(@socket, Playground, id: "playground-#{@socket.id}") %>
-        </div>
+      <div id="playground_container" class="hidden w-full max-w-4xl sm:flex flex-col">
+        <%= live_render(@socket, Playground, id: "playground-#{@socket.id}") %>
+      </div>
 
-        <div class="flex flex-col-reverse sm:flex-row border-t-4 w-full border-black py-4 px-7 justify-between gap-2">
-          <p class="uppercase tracking-widest font-bold">Playground</p>
+      <div class="flex items-center gap-2 shrink-0">
+        <span class="relative flex h-3 w-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75" />
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-300" />
+        </span>
 
-          <div class="flex items-center gap-2 shrink-0">
-            <span class="relative flex h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75" />
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-300" />
-            </span>
-            <p class="">2 users live in the room</p>
-          </div>
-        </div>
+        <p class="">2 users live in the room</p>
       </div>
     </.section>
 

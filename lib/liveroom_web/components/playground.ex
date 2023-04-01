@@ -12,9 +12,9 @@ defmodule LiveroomWeb.Components.Playground do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="max-w-screen-md mx-auto flex flex-col items-stretch space-y-4">
-      <div class="aspect-video w-full rounded-lg bg-gray-100 border border-gray-300">
-        <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none p-8">
+    <div class="w-full flex flex-col items-stretch space-y-4">
+      <div class="aspect-video w-full">
+        <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none ">
           <li
             :for={user <- @users}
             :if={user.socket_id != @socket_id}
@@ -53,10 +53,12 @@ defmodule LiveroomWeb.Components.Playground do
               </span>
             <% end %>
           </li>
+
+          <.dashboard />
         </ul>
       </div>
 
-      <.msg_form msg={@msg} current_msg={@current_msg} class="" />
+      <.msg_form msg={@msg} current_msg={@current_msg} />
     </div>
     """
   end
@@ -76,7 +78,7 @@ defmodule LiveroomWeb.Components.Playground do
       phx-keyup={js_send_message()}
       phx-key="Enter"
       class={[
-        "flex items-stretch space-x-4 text-xs",
+        "flex items-stretch space-x-4 text-xs p-5",
         @class
       ]}
     >
@@ -151,6 +153,77 @@ defmodule LiveroomWeb.Components.Playground do
       <%!-- <polygon filter="url(#shadow)" points="8.2,20.9 8.2,4.9 19.8,16.5 13,16.5 12.6,16.6" />
       <polygon filter="url(#shadow)" points="9.2,7.3 9.2,18.5 12.2,15.6 12.6,15.5 17.4,15.5" /> --%>
     </svg>
+    """
+  end
+
+  def dashboard(assigns) do
+    ~H"""
+    <div class="relative bg-zinc-50 h-full grid grid-cols-[minmax(150px,_25%)_1fr] border-4 border-violet-500 rounded-3xl overflow-hidden">
+      <nav class="bg-background px-4 py-6 border-r-gray-200 border-r">
+        <p class="uppercase text-gray-300 font-semibold">Menu</p>
+
+        <ul class="flex flex-col items-start gap-1 mt-8">
+          <.sidebar_navigation_link />
+          <.sidebar_navigation_link />
+          <.sidebar_navigation_link />
+          <.sidebar_navigation_link />
+        </ul>
+      </nav>
+
+      <div class="flex flex-col">
+        <header class="p-4 flex items-center justify-between border-b-gray-200 border-b">
+          <p class="text-2xl font-semibold text-gray-400">Your product</p>
+
+          <button class="bg-black px-8 py-3 rounded-md hover:bg-zinc-600 duration-300 transition-colors">
+            <.squeleton class="bg-white" />
+          </button>
+        </header>
+
+        <div class="flex gap-4 justify-start w-full p-4">
+          <.card_link />
+          <.card_link />
+          <.card_link />
+        </div>
+      </div>
+
+      <div class="absolute bottom-8 p-2 bg-indigo-600 flex items-center gap-4 rounded-lg left-1/2 -translate-x-1/2">
+        <div class="bg-slate-500 w-8 h-8" />
+        <div class="bg-slate-500 w-8 h-8" />
+        <div class="bg-slate-500 w-8 h-8" />
+        <div class="bg-slate-500 w-8 h-8" />
+
+        <button class="border border-white px-4 py-2 text-white rounded-[4px]">
+          Leave
+        </button>
+      </div>
+    </div>
+    """
+  end
+
+  def sidebar_navigation_link(assigns) do
+    ~H"""
+    <li class=" hover:bg-violet-50 duration-300 transition-colors p-4 w-full cursor-pointer border-l-2 border-transparent hover:border-gray-500">
+      <.squeleton class="bg-slate-300" />
+    </li>
+    """
+  end
+
+  attr :class, :string, default: nil
+
+  def card_link(assigns) do
+    ~H"""
+    <a class="bg-white border border-gray-200 rounded-md flex flex-col p-6 items-start gap-4">
+      <.squeleton class="bg-gray-200 w-10" />
+      <.squeleton class="bg-slate-300 w-24" />
+    </a>
+    """
+  end
+
+  attr :class, :string, default: nil
+
+  def squeleton(assigns) do
+    ~H"""
+    <div class={["w-12 h-2 rounded-full", @class]} />
     """
   end
 
