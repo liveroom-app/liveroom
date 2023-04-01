@@ -18,8 +18,8 @@ defmodule Liveroom.Application do
       {Finch, name: Liveroom.Finch},
       LiveroomWeb.Presence,
       # Start the Endpoint (http/https)
-      LiveroomWeb.Endpoint,
-      LiveroomWeb.Stun
+      LiveroomWeb.Endpoint
+      # LiveroomWeb.Stun
       # Start a worker by calling: Liveroom.Worker.start_link(arg)
       # {Liveroom.Worker, arg}
     ]

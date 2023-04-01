@@ -115,7 +115,7 @@ defmodule LiveroomWeb.Room.ShowLive do
            slug: slug,
            connected_users: [],
            offer_requests: [],
-           ice_candidates_offers: [],
+           ice_candidate_offers: [],
            sdp_offers: [],
            answers: []
          )}

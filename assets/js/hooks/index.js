@@ -1,13 +1,19 @@
 import { JoinCallHook } from "./joinCallHook";
 import { InitUserHook } from "./initUserHook";
 import { TrackCursorsHook } from "./trackCursorsHook";
-import { HandleOfferRequestHook } from "./handleOfferRequestHook";
-import { HandleIceCandidateOffer } from "./handleIceCandidateOffer";
+import {
+  HandleAnswerHook,
+  HandleSdpOfferHook,
+  HandleOfferRequestHook,
+  HandleIceCandidateOfferHook,
+} from "./videochatHooks";
 
 export const Hooks = {
   JoinCallHook,
   InitUserHook,
   TrackCursorsHook,
+  HandleAnswerHook,
+  HandleSdpOfferHook,
   HandleOfferRequestHook,
-  HandleIceCandidateOffer,
+  HandleIceCandidateOfferHook,
 };
