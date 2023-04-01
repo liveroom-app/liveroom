@@ -201,7 +201,7 @@ defmodule LiveroomWeb.Components.Playground do
 
   def sidebar_navigation_link(assigns) do
     ~H"""
-    <li class=" hover:bg-violet-50 duration-300 transition-colors p-4 w-full cursor-pointer border-l-2 border-transparent hover:border-gray-500">
+    <li class="hover:bg-violet-50 duration-300 transition-colors p-4 w-full cursor-pointer border-l-2 border-transparent hover:border-gray-500">
       <.squeleton class="bg-slate-300" />
     </li>
     """
@@ -211,9 +211,11 @@ defmodule LiveroomWeb.Components.Playground do
 
   def card_link(assigns) do
     ~H"""
-    <a class="bg-white border border-gray-200 rounded-md flex flex-col p-6 items-start gap-4">
+    <a class="relative cursor-pointer bg-white border border-gray-200 hover:border-slate-500 ring-inset hover:ring-[3px] ring-slate-500 rounded-md flex flex-col p-6 items-start gap-4 group duration-300 transition-colors">
       <.squeleton class="bg-gray-200 w-10" />
       <.squeleton class="bg-slate-300 w-24" />
+
+      <div class="absolute opacity-0 top-2 right-2 w-4 h-4 bg-slate-500 rounded-full group-hover:opacity-100 duration-150 transition-opacity" />
     </a>
     """
   end
