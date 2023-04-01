@@ -12,7 +12,8 @@ processes = []
 [env]
   ECTO_IPV6 = "true"
   ERL_AFLAGS = "-proto_dist inet6_tcp"
-  PHX_HOST = "liveroom.app"
+  PHX_HOST = "liveroom.fly.dev"
+  # PHX_HOST = "liveroom.app"
   PORT = "8080"
   UMAMI_ENABLED = "true"
   UMAMI_BASE_URL = "https://liveroom-umami.fly.dev"
