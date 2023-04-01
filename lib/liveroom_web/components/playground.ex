@@ -119,7 +119,10 @@ defmodule LiveroomWeb.Components.Playground do
         <header class="p-4 flex items-center justify-between border-b-gray-200 border-b">
           <p class="text-2xl font-semibold text-gray-400">Your product</p>
 
-          <button class="bg-black px-8 py-3 rounded-md hover:bg-zinc-600 duration-300 transition-colors">
+          <button
+            tabindex="-1"
+            class="bg-black px-8 py-3 rounded-md hover:bg-zinc-600 duration-300 transition-colors"
+          >
             <.squeleton class="bg-white" />
           </button>
         </header>
@@ -163,28 +166,45 @@ defmodule LiveroomWeb.Components.Playground do
           />
 
           <ul class="flex justify-between items-center gap-4">
-            <button :if={!@camera_on} phx-click="camera_on">
+            <button
+              :if={!@camera_on}
+              id="camera-on-button"
+              class="py-1.5 px-2 rounded focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+              phx-click="camera_on"
+            >
               <.icon name="hero-video-camera" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
             </button>
 
-            <button :if={@camera_on} phx-click="camera_off">
+            <button
+              :if={@camera_on}
+              id="camera-off-button"
+              class="py-1.5 px-2 rounded focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+              phx-click="camera_off"
+            >
               <.icon name="hero-video-camera-slash" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
             </button>
 
-            <button>
+            <button
+              id="mic-button"
+              class="py-1.5 px-2 rounded focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+            >
               <.icon name="hero-microphone" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
             </button>
 
-            <button phx-click={
-              %JS{}
-              |> JS.toggle(to: "#msg-form", display: "flex")
-              |> then(
-                &case @current_msg == "" do
-                  true -> JS.focus(&1, to: "#msg-form-input")
-                  false -> JS.focus(&1, to: "#msg-form-submit-button")
-                end
-              )
-            }>
+            <button
+              id="chat-button"
+              class="py-1.5 px-2 rounded focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+              phx-click={
+                %JS{}
+                |> JS.toggle(to: "#msg-form", display: "flex")
+                |> then(
+                  &case @current_msg == "" do
+                    true -> JS.focus(&1, to: "#msg-form-input")
+                    false -> JS.focus(&1, to: "#msg-form-submit-button")
+                  end
+                )
+              }
+            >
               <.icon name="hero-chat-bubble-left" class="h-5 w-5" />
             </button>
           </ul>
@@ -212,7 +232,11 @@ defmodule LiveroomWeb.Components.Playground do
           </video>
         </div>
 
-        <.msg_form msg={@msg} current_msg={@current_msg} class=" absolute bottom-[55px] inset-x-0" />
+        <.msg_form
+          msg={@msg}
+          current_msg={@current_msg}
+          class="hidden absolute bottom-[55px] inset-x-0"
+        />
       </div>
     </div>
     """
@@ -236,6 +260,7 @@ defmodule LiveroomWeb.Components.Playground do
       ]}
     >
       <input
+        :if={@msg != "" || @current_msg == ""}
         id="msg-form-input"
         name="msg"
         type="text"
@@ -246,7 +271,7 @@ defmodule LiveroomWeb.Components.Playground do
           "flex-1 min-w-[12.2rem] appearance-none py-1 px-2",
           "text-white bg-violet-500/80 placeholder-violet-200",
           "border-4 border-violet-500 outline-none rounded-l-md resize-none",
-          "focus:!border-violet-500 focus:outline-none focus:ring-none",
+          "focus:border-violet-500 focus:outline-none focus:ring-none focus:shadow-2xl",
           @msg == "" && "bg-gray-100/50",
           "text-sm"
         ]}
@@ -261,7 +286,8 @@ defmodule LiveroomWeb.Components.Playground do
           "flex justify-center items-center py-1 px-2",
           "text-gray-100 text-base font-semibold",
           "rounded-r",
-          "focus:outline-none group",
+          @msg == "" && @current_msg != "" && "rounded-l",
+          "focus-visible:outline-none focus:outline-none focus:ring-violet-500 group",
           disabled && "bg-violet-500",
           !disabled && "bg-violet-500"
         ]}
@@ -270,7 +296,7 @@ defmodule LiveroomWeb.Components.Playground do
           <% @msg == "" && @current_msg != "" -> %>
             <.icon
               name="hero-backspace-mini"
-              class="h-4 w-4 group-focus:-translate-x-1 transition-transform duration-300"
+              class="h-4 w-4 m-1 group-focus:-translate-x-1 transition-transform duration-300"
             />
           <% @msg == "" && @current_msg == "" -> %>
             <.icon
