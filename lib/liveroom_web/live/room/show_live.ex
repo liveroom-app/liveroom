@@ -36,6 +36,7 @@ defmodule LiveroomWeb.Room.ShowLive do
 
       <video
         :for={uuid <- @connected_users}
+        :if={@show_webcams}
         id={"remote-video-#{uuid}"}
         phx-hook="InitUserHook"
         data-user-uuid={uuid}
@@ -118,7 +119,8 @@ defmodule LiveroomWeb.Room.ShowLive do
            offer_requests: [],
            ice_candidate_offers: [],
            sdp_offers: [],
-           answers: []
+           answers: [],
+           show_webcams: false
          )}
     end
   end
@@ -134,7 +136,7 @@ defmodule LiveroomWeb.Room.ShowLive do
       )
     end
 
-    {:noreply, socket}
+    {:noreply, assign(socket, show_webcams: true)}
   end
 
   def handle_event("new_ice_candidate", payload, socket) do
