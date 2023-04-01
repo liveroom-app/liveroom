@@ -37,6 +37,7 @@ defmodule LiveroomWeb.Components.Playground do
 
             <%= if user.msg == "" do %>
               <span
+                :if={user.socket_id != @socket_id}
                 style={"background-color: #{user.color};"}
                 class="z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
               >
