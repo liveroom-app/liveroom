@@ -51,7 +51,13 @@ defmodule LiveroomWeb.Components.Playground do
             <% end %>
           </li>
 
-          <.dashboard name={@name} color={@color} msg={@msg} current_msg={@current_msg} />
+          <.dashboard
+            name={@name}
+            color={@color}
+            msg={@msg}
+            current_msg={@current_msg}
+            camera_on={@camera_on}
+          />
         </ul>
       </div>
     </div>
@@ -152,6 +158,7 @@ defmodule LiveroomWeb.Components.Playground do
 
   attr :name, :string, required: true
   attr :color, :string, required: true
+  attr :camera_on, :boolean, required: true
   attr :msg, :string, required: true
   attr :current_msg, :string, required: true
 
@@ -216,9 +223,22 @@ defmodule LiveroomWeb.Components.Playground do
             src={LiveroomWeb.Endpoint.static_url() <> ~p"/videos/alex_avatar_video.webm"}
           />
 
-          <ul class="flex justify-between items-center gap-4">
-            <li><.icon name="hero-video-camera" class="h-5 w-5" /></li>
-            <li><.icon name="hero-microphone" class="h-5 w-5" /></li>
+          <ul class={[
+            "flex justify-between items-center gap-4",
+            "[&>li]:rounded [&>li]:md:hover:bg-dark-100"
+          ]}>
+            <li :if={!@camera_on} phx-click="camera_on">
+              <.icon name="hero-video-camera" class="h-5 w-5" />
+            </li>
+
+            <li :if={@camera_on} phx-click="camera_off">
+              <.icon name="hero-video-camera-slash" class="h-5 w-5" />
+            </li>
+
+            <li>
+              <.icon name="hero-microphone" class="h-5 w-5" />
+            </li>
+
             <li phx-click={
               %JS{}
               |> JS.toggle(to: "#msg-form", display: "flex")
@@ -234,11 +254,26 @@ defmodule LiveroomWeb.Components.Playground do
           </ul>
 
           <div
+            :if={!@camera_on}
             style={"background-color: #{@color};"}
             class="w-10 aspect-ratio flex justify-center items-center font-bold text-white bg-gray-200/25 rounded-full shadow-2xl"
           >
             <%= String.at(@name, 0) %>
           </div>
+
+          <video
+            :if={@camera_on}
+            id="local-video"
+            phx-hook="JoinCallHook"
+            phx-click="join_call"
+            width="600"
+            style="transform: rotateY(180deg);"
+            class="w-10 aspect-ratio flex justify-center items-center rounded-full shadow-2xl"
+            playsinline
+            autoplay
+            muted
+          >
+          </video>
         </div>
 
         <.msg_form
@@ -295,6 +330,7 @@ defmodule LiveroomWeb.Components.Playground do
           socket_id: socket_id,
           name: name,
           color: color,
+          camera_on: false,
           msg: "",
           x: 50,
           y: 50,
@@ -313,6 +349,7 @@ defmodule LiveroomWeb.Components.Playground do
       socket_id: socket_id,
       name: name,
       color: color,
+      camera_on: false,
       msg: "",
       current_msg: "",
       users: initial_users
@@ -343,6 +380,14 @@ defmodule LiveroomWeb.Components.Playground do
 
   def handle_event("message_updated", %{"msg" => msg}, socket) do
     {:noreply, assign(socket, msg: msg)}
+  end
+
+  def handle_event("camera_on", _, socket) do
+    {:noreply, assign(socket, camera_on: true)}
+  end
+
+  def handle_event("camera_off", _, socket) do
+    {:noreply, assign(socket, camera_on: false)}
   end
 
   @impl true
