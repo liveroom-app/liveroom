@@ -22,7 +22,7 @@ defmodule LiveroomWeb.Components.Playground do
             ]}
           >
             <div
-              id="cursor_blink"
+              id={"cursor_blink_#{user.socket_id}"}
               style={"background-color: #{user.color}25; border-color: #{user.color};"}
               class={[
                 not user.is_halo_key_pressed && "scale-0",
@@ -52,6 +52,8 @@ defmodule LiveroomWeb.Components.Playground do
           </li>
 
           <.dashboard
+            socket_id={@socket_id}
+            users={@users}
             name={@name}
             color={@color}
             msg={@msg}
@@ -83,7 +85,7 @@ defmodule LiveroomWeb.Components.Playground do
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <filter id="shadow" color-interpolation-filters="sRGB">
+      <filter color-interpolation-filters="sRGB">
         <feDropShadow dx="1" dy="1" stdDeviation="0.5" flood-opacity="0.2" />
       </filter>
 
@@ -95,6 +97,8 @@ defmodule LiveroomWeb.Components.Playground do
     """
   end
 
+  attr :socket_id, :string, required: true
+  attr :users, :list, required: true
   attr :name, :string, required: true
   attr :color, :string, required: true
   attr :camera_on, :boolean, required: true
@@ -108,10 +112,26 @@ defmodule LiveroomWeb.Components.Playground do
         <p class="uppercase text-gray-300 font-semibold">Menu</p>
 
         <ul class="flex flex-col items-start gap-1 mt-8">
-          <.sidebar_navigation_link />
-          <.sidebar_navigation_link />
-          <.sidebar_navigation_link />
-          <.sidebar_navigation_link />
+          <.sidebar_navigation_link
+            id="sidebar_navigation_link_1"
+            socket_id={@socket_id}
+            users={@users}
+          />
+          <.sidebar_navigation_link
+            id="sidebar_navigation_link_2"
+            socket_id={@socket_id}
+            users={@users}
+          />
+          <.sidebar_navigation_link
+            id="sidebar_navigation_link_3"
+            socket_id={@socket_id}
+            users={@users}
+          />
+          <.sidebar_navigation_link
+            id="sidebar_navigation_link_4"
+            socket_id={@socket_id}
+            users={@users}
+          />
         </ul>
       </nav>
 
@@ -120,18 +140,24 @@ defmodule LiveroomWeb.Components.Playground do
           <p class="text-2xl font-semibold text-gray-400">Your product</p>
 
           <button
-            tabindex="-1"
+            id="header_button_1"
+            phx-hook="BroadcastHoveredHook"
+            data-hovered-by={
+              (hovered_by = hovered_by_user(@socket_id, @users, "header_button_1"))[:name]
+            }
             class="bg-black px-8 py-3 rounded-md hover:bg-zinc-600 duration-300 transition-colors"
+            style={hovered_by && "background-color: #{hovered_by.color};"}
+            tabindex="-1"
           >
-            <.squeleton class="bg-white" />
+            <.squeleton class="bg-white pointer-events-none" />
           </button>
         </header>
 
         <div class="p-4 flex flex-col gap-4 h-full">
           <div class="flex gap-4 justify-start">
-            <.card_link />
-            <.card_link />
-            <.card_link />
+            <.card_link id="card_link_1" users={@users} socket_id={@socket_id} />
+            <.card_link id="card_link_2" users={@users} socket_id={@socket_id} />
+            <.card_link id="card_link_3" users={@users} socket_id={@socket_id} />
           </div>
 
           <div class="bg-white border border-gray-200 w-full rounded-md flex h-full p-6">
@@ -320,25 +346,72 @@ defmodule LiveroomWeb.Components.Playground do
     """
   end
 
+  attr :id, :string, required: true
+  attr :socket_id, :string, required: true
+  attr :users, :list, required: true
+
   def sidebar_navigation_link(assigns) do
     ~H"""
-    <li class="hover:bg-violet-50 duration-300 transition-colors p-4 w-full cursor-pointer border-l-2 border-transparent hover:border-gray-500">
+    <li
+      id={@id}
+      phx-hook="BroadcastHoveredHook"
+      data-hovered-by={(hovered_by = hovered_by_user(@socket_id, @users, @id))[:name]}
+      style={
+        hovered_by && "border-color: #{hovered_by.color}; background-color: #{hovered_by.color}50;"
+      }
+      class={[
+        "w-full p-4 cursor-pointer",
+        "border-l-2 border-transparent hover:border-gray-500 hover:bg-violet-50",
+        "transition-colors duration-300"
+      ]}
+    >
       <.squeleton class="bg-slate-300" />
     </li>
     """
   end
 
+  attr :id, :string, required: true
+  attr :socket_id, :string, required: true
+  attr :users, :list, required: true
   attr :class, :string, default: nil
+  attr :rest, :global, default: %{}
 
   def card_link(assigns) do
     ~H"""
-    <a class="relative cursor-pointer bg-white border border-gray-200 hover:border-slate-500 ring-inset hover:ring-[3px] ring-slate-500 rounded-md flex flex-col p-6 items-start gap-4 group duration-300 transition-colors">
-      <.squeleton class="bg-gray-200 w-10" />
-      <.squeleton class="bg-slate-300 w-24" />
+    <button
+      id={@id}
+      phx-hook="BroadcastHoveredHook"
+      data-hovered-by={(hovered_by = hovered_by_user(@socket_id, @users, @id))[:name]}
+      style={hovered_by && "border-color: #{hovered_by.color}; --tw-ring-color: #{hovered_by.color};"}
+      class={[
+        "relative cursor-pointer",
+        "bg-white border border-gray-200 hover:border-slate-500",
+        "ring-inset hover:ring-[3px] ring-slate-500",
+        "rounded-md",
+        "flex flex-col p-6 items-start gap-4",
+        "transition-colors duration-150 group",
+        hovered_by && "ring-[3px]"
+      ]}
+      {@rest}
+    >
+      <.squeleton class="bg-gray-200 w-10 pointer-events-none" />
+      <.squeleton class="bg-slate-300 w-24 pointer-events-none" />
 
-      <div class="absolute opacity-0 top-2 right-2 w-4 h-4 bg-slate-500 rounded-full group-hover:opacity-100 duration-150 transition-opacity" />
-    </a>
+      <div
+        class={[
+          "absolute top-2 right-2 w-4 h-4 bg-transparent rounded-full",
+          "opacity-0 group-hover:opacity-100",
+          hovered_by && "opacity-100",
+          "transition duration-150"
+        ]}
+        style={"background-color: #{hovered_by && hovered_by.color || "rgb(100 116 139)" };"}
+      />
+    </button>
     """
+  end
+
+  defp hovered_by_user(socket_id, users, el_id) do
+    Enum.find(users, &(MapSet.member?(&1.hovered_elements, el_id) && &1.socket_id != socket_id))
   end
 
   attr :class, :string, default: nil
@@ -368,7 +441,8 @@ defmodule LiveroomWeb.Components.Playground do
           msg: "",
           x: 50,
           y: 50,
-          is_halo_key_pressed: false
+          is_halo_key_pressed: false,
+          hovered_elements: MapSet.new()
         })
 
         LiveroomWeb.Endpoint.subscribe(@cursorview)
@@ -394,6 +468,16 @@ defmodule LiveroomWeb.Components.Playground do
   @impl true
   def handle_event("cursor-move", %{"x" => x, "y" => y}, socket) do
     send_event(:cursor_moved, socket.id, x, y)
+    {:noreply, socket}
+  end
+
+  def handle_event("element-hovered", %{"id" => id}, socket) do
+    send_event(:element_hovered, socket.id, id)
+    {:noreply, socket}
+  end
+
+  def handle_event("element-not-hovered", %{"id" => id}, socket) do
+    send_event(:element_not_hovered, socket.id, id)
     {:noreply, socket}
   end
 
@@ -443,16 +527,34 @@ defmodule LiveroomWeb.Components.Playground do
     Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{x: x, y: y}))
   end
 
+  defp send_event(:element_hovered, socket_id, el_id) do
+    Presence.update(
+      self(),
+      @cursorview,
+      socket_id,
+      &Map.merge(&1, %{hovered_elements: MapSet.put(&1.hovered_elements, el_id)})
+    )
+  end
+
+  defp send_event(:element_not_hovered, socket_id, el_id) do
+    Presence.update(
+      self(),
+      @cursorview,
+      socket_id,
+      &Map.merge(&1, %{hovered_elements: MapSet.delete(&1.hovered_elements, el_id)})
+    )
+  end
+
+  defp send_event(:message_sent, socket_id, msg) do
+    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{msg: msg}))
+  end
+
   defp send_event(:halo_key_down, socket_id) do
     Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{is_halo_key_pressed: true}))
   end
 
   defp send_event(:halo_key_up, socket_id) do
     Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{is_halo_key_pressed: false}))
-  end
-
-  defp send_event(:message_sent, socket_id, msg) do
-    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{msg: msg}))
   end
 
   defp list_users do
