@@ -108,7 +108,7 @@ defmodule LiveroomWeb.Room.ShowLive do
         {:ok,
          socket
          |> put_flash(:error, "That room does not exist.")
-         |> push_navigate(to: ~p"/room/new")}
+         |> push_navigate(to: ~p"/new")}
 
       room ->
         {:ok,
