@@ -243,7 +243,7 @@ defmodule LiveroomWeb.Components.Playground do
       <button
         :if={!@camera_on}
         id="camera-on-button"
-        class="py-1.5 px-2 rounded md:hover:scale-105 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+        class="py-1.5 px-2 rounded md:hover:bg-gray-100/25 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-colors duration-300"
         phx-click="camera_on"
       >
         <.icon name="hero-video-camera" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
@@ -252,7 +252,7 @@ defmodule LiveroomWeb.Components.Playground do
       <button
         :if={@camera_on}
         id="camera-off-button"
-        class="py-1.5 px-2 rounded md:hover:scale-105 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+        class="py-1.5 px-2 rounded md:hover:bg-gray-100/25 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-colors duration-300"
         phx-click="camera_off"
       >
         <.icon name="hero-video-camera-slash" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
@@ -260,14 +260,14 @@ defmodule LiveroomWeb.Components.Playground do
 
       <button
         id="mic-button"
-        class="py-1.5 px-2 rounded md:hover:scale-105 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+        class="py-1.5 px-2 rounded md:hover:bg-gray-100/25 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-colors duration-300"
       >
         <.icon name="hero-microphone" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
       </button>
 
       <button
         id="chat-button"
-        class="py-1.5 px-2 rounded md:hover:scale-105 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+        class="py-1.5 px-2 rounded md:hover:bg-gray-100/25 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-colors duration-300"
         phx-click={
           %JS{}
           |> JS.toggle(to: "#msg-form", display: "flex")
@@ -312,8 +312,8 @@ defmodule LiveroomWeb.Components.Playground do
         class={[
           "flex-1 min-w-[12.2rem] appearance-none py-1 px-2",
           "text-white bg-violet-800/50 placeholder-violet-200",
-          "border-4 border-violet-800/50 outline-none rounded-l-md resize-none",
-          "focus:border-violet-800/50 focus:outline-none focus:ring-none focus:shadow-2xl",
+          "border-4 border-violet-600/10 outline-none rounded-l-md resize-none",
+          "focus:border-violet-600/10 focus:outline-none focus:ring-0 focus:shadow-2xl",
           @msg == "" && "bg-gray-100/50",
           "text-sm"
         ]}
@@ -328,7 +328,6 @@ defmodule LiveroomWeb.Components.Playground do
           "flex justify-center items-center py-1 px-2",
           "text-gray-100 text-base font-semibold",
           "rounded-r",
-          @msg == "" && @current_msg != "" && "rounded-l",
           "focus-visible:outline-none focus:outline-none focus:ring-violet-500 group",
           disabled && "bg-violet-800/20",
           !disabled && "bg-violet-800/50"
