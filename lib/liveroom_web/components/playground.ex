@@ -149,7 +149,7 @@ defmodule LiveroomWeb.Components.Playground do
             style={hovered_by && "background-color: #{hovered_by.color};"}
             tabindex="-1"
           >
-            <.squeleton class="bg-white pointer-events-none" />
+            <.squeleton class="bg-white" />
           </button>
         </header>
 
@@ -394,8 +394,8 @@ defmodule LiveroomWeb.Components.Playground do
       ]}
       {@rest}
     >
-      <.squeleton class="bg-gray-200 w-10 pointer-events-none" />
-      <.squeleton class="bg-slate-300 w-24 pointer-events-none" />
+      <.squeleton class="bg-gray-200 w-10" />
+      <.squeleton class="bg-slate-300 w-24" />
 
       <div
         class={[
@@ -418,7 +418,7 @@ defmodule LiveroomWeb.Components.Playground do
 
   def squeleton(assigns) do
     ~H"""
-    <div class={["w-12 h-2 rounded-full", @class]} />
+    <div class={["w-12 h-2 rounded-full pointer-events-none", @class]} />
     """
   end
 
