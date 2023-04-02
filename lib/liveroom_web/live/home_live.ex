@@ -18,15 +18,6 @@ defmodule LiveroomWeb.HomeLive do
           }
         ) %>
       </div>
-
-      <div class="flex items-center gap-2 shrink-0">
-        <span class="relative flex h-3 w-3">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75" />
-          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-300" />
-        </span>
-
-        <p class="">2 users live in the room</p>
-      </div>
     </.section>
 
     <.section>
