@@ -103,7 +103,7 @@ defmodule LiveroomWeb.Components.Playground do
 
   def dashboard(assigns) do
     ~H"""
-    <div class="relative bg-zinc-50 h-full grid grid-cols-[minmax(150px,_25%)_1fr] border-4 border-violet-500 shadow rounded-3xl overflow-hidden">
+    <div class="relative bg-zinc-50 h-full grid grid-cols-[minmax(150px,_25%)_1fr] border-4 border-violet-700/60 shadow rounded-3xl overflow-hidden">
       <nav class="bg-background px-4 py-6 border-r-gray-200 border-r">
         <p class="uppercase text-gray-300 font-semibold">Menu</p>
 
@@ -143,102 +143,108 @@ defmodule LiveroomWeb.Components.Playground do
         </div>
       </div>
 
-      <%!-- <div class="absolute bottom-8 p-2 bg-indigo-600 flex items-center gap-4 rounded-lg left-1/2 -translate-x-1/2">
-        <div class="bg-slate-500 w-8 h-8" />
-        <div class="bg-slate-500 w-8 h-8" />
-        <div class="bg-slate-500 w-8 h-8" />
-        <div class="bg-slate-500 w-8 h-8" />
+      <.pill name={@name} color={@color} camera_on={@camera_on} msg={@msg} current_msg={@current_msg} />
+    </div>
+    """
+  end
 
-        <button class="border border-white px-4 py-2 text-white rounded-[4px]">
-          Leave
-        </button>
-      </div> --%>
+  attr :name, :string, required: true
+  attr :color, :string, required: true
+  attr :camera_on, :boolean, required: true
+  attr :msg, :string, required: true
+  attr :current_msg, :string, required: true
 
-      <div class="absolute bottom-4 inset-x-0 flex justify-center items-center">
-        <div class="p-2 bg-violet-500 text-white flex justify-around items-stretch gap-6 rounded-full shadow-lg">
-          <video
-            loop
-            muted
-            autoplay
-            playsinline
-            class="w-12 h-12 bg-gray-400 rounded-full shadow-2xl"
-            src={LiveroomWeb.Endpoint.static_url() <> ~p"/videos/alex_avatar_video.webm"}
-          />
+  def pill(assigns) do
+    ~H"""
+    <div class="absolute bottom-4 inset-x-0 flex justify-center items-center">
+      <div class="p-1 bg-violet-800/50 backdrop-blur-sm text-white flex justify-around items-stretch gap-6 rounded-full shadow-lg">
+        <video
+          loop
+          muted
+          autoplay
+          playsinline
+          class="w-16 h-16 bg-gray-400 rounded-full shadow-2xl"
+          src={LiveroomWeb.Endpoint.static_url() <> ~p"/videos/alex_avatar_video.webm"}
+        />
 
-          <ul class="flex justify-between items-center gap-4">
-            <button
-              :if={!@camera_on}
-              id="camera-on-button"
-              class="py-1.5 px-2 rounded focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
-              phx-click="camera_on"
-            >
-              <.icon name="hero-video-camera" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
-            </button>
+        <.pill_toolbar camera_on={@camera_on} current_msg={@current_msg} />
 
-            <button
-              :if={@camera_on}
-              id="camera-off-button"
-              class="py-1.5 px-2 rounded focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
-              phx-click="camera_off"
-            >
-              <.icon name="hero-video-camera-slash" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
-            </button>
-
-            <button
-              id="mic-button"
-              class="py-1.5 px-2 rounded focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
-            >
-              <.icon name="hero-microphone" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
-            </button>
-
-            <button
-              id="chat-button"
-              class="py-1.5 px-2 rounded focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
-              phx-click={
-                %JS{}
-                |> JS.toggle(to: "#msg-form", display: "flex")
-                |> then(
-                  &case @current_msg == "" do
-                    true -> JS.focus(&1, to: "#msg-form-input")
-                    false -> JS.focus(&1, to: "#msg-form-submit-button")
-                  end
-                )
-              }
-            >
-              <.icon name="hero-chat-bubble-left" class="h-5 w-5" />
-            </button>
-          </ul>
-
-          <div
-            :if={!@camera_on}
-            style={"background-color: #{@color};"}
-            class="w-12 h-12 flex justify-center items-center font-bold text-white bg-gray-200/25 rounded-full shadow-2xl"
-          >
-            <%= String.at(@name, 0) %>
-          </div>
-
+        <div
+          style={"background-color: #{@color};"}
+          class="w-16 h-16 flex justify-center items-center font-bold text-white bg-gray-200/25 rounded-full shadow-2xl overflow-hidden"
+        >
           <video
             :if={@camera_on}
             id="local-video"
             phx-hook="JoinCallHook"
             phx-click="join_call"
-            width="600"
-            style="transform: rotateY(180deg);"
-            class="w-12 h-12 flex justify-center items-center rounded-full shadow-2xl"
+            style="transform: rotateY(180deg) scale(1.5);"
             playsinline
             autoplay
             muted
-          >
-          </video>
-        </div>
+          />
 
-        <.msg_form
-          msg={@msg}
-          current_msg={@current_msg}
-          class="hidden absolute bottom-[55px] inset-x-0"
-        />
+          <span :if={!@camera_on}><%= String.at(@name, 0) %></span>
+        </div>
       </div>
+
+      <.msg_form
+        msg={@msg}
+        current_msg={@current_msg}
+        class="hidden absolute bottom-[55px] inset-x-0"
+      />
     </div>
+    """
+  end
+
+  attr :camera_on, :boolean, required: true
+  attr :current_msg, :string, required: true
+
+  def pill_toolbar(assigns) do
+    ~H"""
+    <ul class="flex justify-between items-center gap-4">
+      <button
+        :if={!@camera_on}
+        id="camera-on-button"
+        class="py-1.5 px-2 rounded md:hover:scale-105 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+        phx-click="camera_on"
+      >
+        <.icon name="hero-video-camera" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
+      </button>
+
+      <button
+        :if={@camera_on}
+        id="camera-off-button"
+        class="py-1.5 px-2 rounded md:hover:scale-105 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+        phx-click="camera_off"
+      >
+        <.icon name="hero-video-camera-slash" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
+      </button>
+
+      <button
+        id="mic-button"
+        class="py-1.5 px-2 rounded md:hover:scale-105 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+      >
+        <.icon name="hero-microphone" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
+      </button>
+
+      <button
+        id="chat-button"
+        class="py-1.5 px-2 rounded md:hover:scale-105 focus-visible:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+        phx-click={
+          %JS{}
+          |> JS.toggle(to: "#msg-form", display: "flex")
+          |> then(
+            &case @current_msg == "" do
+              true -> JS.focus(&1, to: "#msg-form-input")
+              false -> JS.focus(&1, to: "#msg-form-submit-button")
+            end
+          )
+        }
+      >
+        <.icon name="hero-chat-bubble-left" class="h-5 w-5" />
+      </button>
+    </ul>
     """
   end
 
