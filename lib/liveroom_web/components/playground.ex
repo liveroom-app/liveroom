@@ -10,6 +10,25 @@ defmodule LiveroomWeb.Components.Playground do
   @impl true
   def render(assigns) do
     ~H"""
+    <div class="w-full flex justify-center items-center">
+      <div class="my-4 mx-4 text-sm flex items-center gap-2 shrink-0">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75" />
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-300" />
+        </span>
+
+        <p class="font-semibold">
+          <%= case length(@users) do %>
+            <% 1 -> %>
+              1 user
+            <% n -> %>
+              <%= n %> users
+          <% end %>
+          live in the room
+        </p>
+      </div>
+    </div>
+
     <div class="w-full flex flex-col items-stretch space-y-4">
       <div class="aspect-video w-full">
         <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none ">
@@ -62,15 +81,6 @@ defmodule LiveroomWeb.Components.Playground do
           />
         </ul>
       </div>
-    </div>
-
-    <div class="flex items-center gap-2 shrink-0">
-      <span class="relative flex h-3 w-3">
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75" />
-        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-300" />
-      </span>
-
-      <p class="font-semibold"><%= length(@users) %> users live in the room</p>
     </div>
     """
   end
