@@ -155,15 +155,26 @@ defmodule LiveroomWeb.Components.Playground do
 
         <div class="p-4 flex flex-col gap-4 h-full">
           <div class="flex gap-4 justify-start">
-            <.card_link id="card_link_1" users={@users} socket_id={@socket_id} />
-            <.card_link id="card_link_2" users={@users} socket_id={@socket_id} />
-            <.card_link id="card_link_3" users={@users} socket_id={@socket_id} />
+            <.card_link id="card_link_1" socket_id={@socket_id} users={@users} />
+            <.card_link id="card_link_2" socket_id={@socket_id} users={@users} />
+            <.card_link id="card_link_3" socket_id={@socket_id} users={@users} />
           </div>
 
           <div class="bg-white border border-gray-200 w-full rounded-md flex h-full p-6">
             <div class="flex flex-col gap-4">
               <.squeleton class="bg-slate-300 w-12" />
               <.squeleton class="bg-gray-200 w-36" />
+              <input
+                id="search_input_1"
+                phx-hook="BroadcastFocusedHook"
+                data-focused-by={
+                  (focused_by = focused_by_user(@socket_id, @users, "search_input_1"))[:name]
+                }
+                type="text"
+                class="py-1 px-2 text-xs text-gray-500 font-medium rounded outline-none focus:outline-none focus:ring-0 border-2 border-gray-300 focus:border-slate-500 placeholder-gray-300"
+                style={focused_by && "border-color: #{focused_by.color};"}
+                placeholder="search..."
+              />
             </div>
           </div>
         </div>
@@ -410,6 +421,10 @@ defmodule LiveroomWeb.Components.Playground do
     Enum.find(users, &(MapSet.member?(&1.hovered_elements, el_id) && &1.socket_id != socket_id))
   end
 
+  defp focused_by_user(socket_id, users, el_id) do
+    Enum.find(users, &(MapSet.member?(&1.focused_elements, el_id) && &1.socket_id != socket_id))
+  end
+
   attr :class, :string, default: nil
 
   def squeleton(assigns) do
@@ -439,7 +454,8 @@ defmodule LiveroomWeb.Components.Playground do
           y: 50,
           is_cursor_pressed: false,
           is_halo_key_pressed: false,
-          hovered_elements: MapSet.new()
+          hovered_elements: MapSet.new(),
+          focused_elements: MapSet.new()
         })
 
         LiveroomWeb.Endpoint.subscribe(@cursorview)
@@ -485,6 +501,16 @@ defmodule LiveroomWeb.Components.Playground do
 
   def handle_event("element-not-hovered", %{"id" => id}, socket) do
     send_event(:element_not_hovered, socket.id, id)
+    {:noreply, socket}
+  end
+
+  def handle_event("element-focused", %{"id" => id}, socket) do
+    send_event(:element_focused, socket.id, id)
+    {:noreply, socket}
+  end
+
+  def handle_event("element-not-focused", %{"id" => id}, socket) do
+    send_event(:element_not_focused, socket.id, id)
     {:noreply, socket}
   end
 
@@ -549,6 +575,24 @@ defmodule LiveroomWeb.Components.Playground do
       @cursorview,
       socket_id,
       &Map.merge(&1, %{hovered_elements: MapSet.delete(&1.hovered_elements, el_id)})
+    )
+  end
+
+  defp send_event(:element_focused, socket_id, el_id) do
+    Presence.update(
+      self(),
+      @cursorview,
+      socket_id,
+      &Map.merge(&1, %{focused_elements: MapSet.put(&1.focused_elements, el_id)})
+    )
+  end
+
+  defp send_event(:element_not_focused, socket_id, el_id) do
+    Presence.update(
+      self(),
+      @cursorview,
+      socket_id,
+      &Map.merge(&1, %{focused_elements: MapSet.delete(&1.focused_elements, el_id)})
     )
   end
 

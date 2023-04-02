@@ -1,7 +1,7 @@
 import { JoinCallHook } from "./joinCallHook";
 import { InitUserHook } from "./initUserHook";
 import { TrackCursorsHook } from "./trackCursorsHook";
-import { BroadcastHoveredHook } from "./broadcastHoveredHook";
+import { BroadcastHoveredHook, BroadcastFocusedHook } from "./broadcastHooks";
 import {
   HandleAnswerHook,
   HandleSdpOfferHook,
@@ -16,6 +16,7 @@ export const Hooks = {
   HandleAnswerHook,
   HandleSdpOfferHook,
   BroadcastHoveredHook,
+  BroadcastFocusedHook,
   HandleOfferRequestHook,
   HandleIceCandidateOfferHook,
 };
