@@ -292,7 +292,6 @@ defmodule LiveroomWeb.Components.Playground do
       ]}
     >
       <input
-        :if={@msg != "" || @current_msg == ""}
         id="msg-form-input"
         name="msg"
         type="text"
@@ -301,9 +300,9 @@ defmodule LiveroomWeb.Components.Playground do
         aria-label="Your message"
         class={[
           "flex-1 min-w-[12.2rem] appearance-none py-1 px-2",
-          "text-white bg-violet-500/80 placeholder-violet-200",
-          "border-4 border-violet-500 outline-none rounded-l-md resize-none",
-          "focus:border-violet-500 focus:outline-none focus:ring-none focus:shadow-2xl",
+          "text-white bg-violet-800/50 placeholder-violet-200",
+          "border-4 border-violet-800/50 outline-none rounded-l-md resize-none",
+          "focus:border-violet-800/50 focus:outline-none focus:ring-none focus:shadow-2xl",
           @msg == "" && "bg-gray-100/50",
           "text-sm"
         ]}
@@ -320,16 +319,13 @@ defmodule LiveroomWeb.Components.Playground do
           "rounded-r",
           @msg == "" && @current_msg != "" && "rounded-l",
           "focus-visible:outline-none focus:outline-none focus:ring-violet-500 group",
-          disabled && "bg-violet-500",
-          !disabled && "bg-violet-500"
+          disabled && "bg-violet-800/20",
+          !disabled && "bg-violet-800/50"
         ]}
       >
         <%= cond do %>
           <% @msg == "" && @current_msg != "" -> %>
-            <.icon
-              name="hero-backspace-mini"
-              class="h-4 w-4 m-1 group-focus:-translate-x-1 transition-transform duration-300"
-            />
+            <.icon name="hero-backspace-mini" class="h-4 w-4 m-1" />
           <% @msg == "" && @current_msg == "" -> %>
             <.icon
               name="hero-paper-airplane-mini"
