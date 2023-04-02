@@ -7,20 +7,45 @@ defmodule LiveroomWeb.Room.NewLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <h1>Create a New Room</h1>
+    <div class="min-h-screen w-full flex flex-col justify-center items-center">
+      <div class="max-w-xs w-full flex flex-col items-center gap-12 rounded-lg bg-brand/5 border border-gray-400 shadow-lg p-8">
+        <h1 class="font-semibold text-brand text-lg">Create a New Room</h1>
 
-    <form id="room_form" phx-change="validate" phx-submit="save">
-      <input type="text" name="title" label="Title" />
-      <input type="text" name="slug" label="Slug" />
+        <form
+          id="room_form"
+          phx-change="validate"
+          phx-submit="save"
+          class="w-full flex flex-col gap-4"
+        >
+          <input
+            class="rounded bg-brand/5"
+            type="text"
+            name="title"
+            label="Title"
+            placeholder="Title"
+          />
+          <input
+            class="rounded bg-brand/5"
+            type="text"
+            name="slug"
+            label="Slug"
+            placeholder="Slug (5 letters is enough)"
+          />
 
-      <button type="submit" class="group" phx-disable-with="Entering...">
-        Enter
-        <.icon
-          name="hero-arrow-right-mini"
-          class="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform"
-        />
-      </button>
-    </form>
+          <button
+            type="submit"
+            class="bg-brand text-white font-semibold py-2 px-4 rounded shadow group"
+            phx-disable-with="Entering..."
+          >
+            Enter
+            <.icon
+              name="hero-arrow-right-mini"
+              class="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform"
+            />
+          </button>
+        </form>
+      </div>
+    </div>
     """
   end
 
