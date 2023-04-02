@@ -25,7 +25,7 @@ defmodule LiveroomWeb.Components.Playground do
               id={"cursor_blink_#{user.socket_id}"}
               style={"background-color: #{user.color}25; border-color: #{user.color};"}
               class={[
-                not user.is_halo_key_pressed && "scale-0",
+                not user.is_halo_key_pressed && not user.is_cursor_pressed && "scale-0",
                 "z-40 absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-md",
                 "transition-transform duration-100 ease-out"
               ]}
@@ -441,6 +441,7 @@ defmodule LiveroomWeb.Components.Playground do
           msg: "",
           x: 50,
           y: 50,
+          is_cursor_pressed: false,
           is_halo_key_pressed: false,
           hovered_elements: MapSet.new()
         })
@@ -468,6 +469,16 @@ defmodule LiveroomWeb.Components.Playground do
   @impl true
   def handle_event("cursor-move", %{"x" => x, "y" => y}, socket) do
     send_event(:cursor_moved, socket.id, x, y)
+    {:noreply, socket}
+  end
+
+  def handle_event("cursor-click-down", _, socket) do
+    send_event(:cursor_click_down, socket.id)
+    {:noreply, socket}
+  end
+
+  def handle_event("cursor-click-up", _, socket) do
+    send_event(:cursor_click_up, socket.id)
     {:noreply, socket}
   end
 
@@ -547,6 +558,14 @@ defmodule LiveroomWeb.Components.Playground do
 
   defp send_event(:message_sent, socket_id, msg) do
     Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{msg: msg}))
+  end
+
+  defp send_event(:cursor_click_down, socket_id) do
+    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{is_cursor_pressed: true}))
+  end
+
+  defp send_event(:cursor_click_up, socket_id) do
+    Presence.update(self(), @cursorview, socket_id, &Map.merge(&1, %{is_cursor_pressed: false}))
   end
 
   defp send_event(:halo_key_down, socket_id) do

@@ -8,15 +8,23 @@ export const TrackCursorsHook = {
       this.pushEvent("cursor-move", { x, y });
     });
 
+    // Mouse click
+    document.addEventListener("mousedown", (e) => {
+      this.pushEvent("cursor-click-down");
+    });
+    document.addEventListener("mouseup", (e) => {
+      this.pushEvent("cursor-click-up");
+    });
+
     // Keyboard press
     document.addEventListener("keydown", (e) => {
-      if (e.key === HALO_KEY) this.pushEvent("halo-key-down");
-      if (e.keyCode === HALO_KEY_CODE) this.pushEvent("halo-key-down");
+      if (e.key === HALO_KEY || e.keyCode === HALO_KEY_CODE)
+        this.pushEvent("halo-key-down");
     });
 
     document.addEventListener("keyup", (e) => {
-      if (e.key === HALO_KEY) this.pushEvent("halo-key-up");
-      if (e.keyCode === HALO_KEY_CODE) this.pushEvent("halo-key-up");
+      if (e.key === HALO_KEY || e.keyCode === HALO_KEY_CODE)
+        this.pushEvent("halo-key-up");
     });
   },
 };
