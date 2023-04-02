@@ -41,7 +41,7 @@ defmodule LiveroomWeb.Layouts do
           property="og:image"
           content={
             assigns[:page_image] ||
-              LiveroomWeb.Endpoint.static_url() <> ~p"/images/liveroom_screenshot.jpg"
+              LiveroomWeb.Endpoint.static_url() <> ~p"/images/liveroom_og_image.jpg"
           }
         />
 
