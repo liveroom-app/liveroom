@@ -8,7 +8,7 @@ defmodule LiveroomWeb.Room.NewLive do
   def render(assigns) do
     ~H"""
     <div class="min-h-screen w-full flex flex-col justify-center items-center">
-      <div class="max-w-xs w-full flex flex-col items-center gap-12 rounded-lg bg-brand/5 border border-gray-400 shadow-lg p-8">
+      <div class="max-w-xs w-full flex flex-col items-center gap-14 rounded-lg bg-brand/5 border border-gray-400 shadow-lg p-8">
         <h1 class="font-semibold text-brand text-lg">Create a New Room</h1>
 
         <form
@@ -18,14 +18,14 @@ defmodule LiveroomWeb.Room.NewLive do
           class="w-full flex flex-col gap-4"
         >
           <input
-            class="rounded bg-brand/5"
+            class="rounded bg-brand/5 placeholder-gray-400/75 border-gray-400/20"
             type="text"
             name="title"
             label="Title"
             placeholder="Title"
           />
           <input
-            class="rounded bg-brand/5"
+            class="rounded bg-brand/5 placeholder-gray-400/75 border-gray-400/20"
             type="text"
             name="slug"
             label="Slug"
@@ -34,7 +34,7 @@ defmodule LiveroomWeb.Room.NewLive do
 
           <button
             type="submit"
-            class="bg-brand text-white font-semibold py-2 px-4 rounded shadow group"
+            class="mt-4 bg-brand text-white font-semibold py-2 px-4 rounded shadow group"
             phx-disable-with="Entering..."
           >
             Enter
