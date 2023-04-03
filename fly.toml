@@ -12,12 +12,12 @@ processes = []
 [env]
   ECTO_IPV6 = "true"
   ERL_AFLAGS = "-proto_dist inet6_tcp"
-  PHX_HOST = "liveroom.fly.dev"
+  PHX_HOST = "liveroom.app"
   PORT = "8080"
   UMAMI_ENABLED = "true"
   UMAMI_BASE_URL = "https://liveroom-umami.fly.dev"
   # UMAMI_BASE_URL = "http://liveroom-umami.internal:3000" # Does not work...
-  UMAMI_WEBSITE_ID = "e4ec3606-efa4-4b30-a5a1-f70cb8d2f412"
+  UMAMI_WEBSITE_ID = "1f24bbdc-a074-4cd7-8832-dfc76e58016a"
 
 [experimental]
   auto_rollback = true

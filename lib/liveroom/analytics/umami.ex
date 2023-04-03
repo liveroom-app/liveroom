@@ -1,7 +1,7 @@
 defmodule Liveroom.Analytics.Umami do
   require Logger
 
-  @domain "liveroom.fly.dev"
+  @domain "liveroom.app"
 
   def send_event(event, url, user_agent, ip, opts \\ []) do
     if is_enabled?() do

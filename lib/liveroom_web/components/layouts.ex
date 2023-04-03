@@ -36,7 +36,7 @@ defmodule LiveroomWeb.Layouts do
           property="og:description"
           content={assigns[:page_description] || "Collaborate live with your users."}
         />
-        <meta property="og:url" content={assigns[:current_url] || "https://liveroom.fly.dev"} />
+        <meta property="og:url" content={assigns[:current_url] || "https://liveroom.app"} />
         <meta
           property="og:image"
           content={
@@ -47,7 +47,7 @@ defmodule LiveroomWeb.Layouts do
 
         <%!-- Twitter Card meta tags --%>
         <meta name="twitter:card" content={assigns[:page_twitter_card] || "summary_large_image"} />
-        <meta name="twitter:domain" content="liveroom.fly.dev" />
+        <meta name="twitter:domain" content="liveroom.app" />
 
         <.live_title><%= assigns[:page_title] || "Liveroom" %></.live_title>
 
