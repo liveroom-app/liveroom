@@ -159,8 +159,14 @@ defmodule LiveroomWeb.Components.Playground do
       </nav>
 
       <div class="flex flex-col">
-        <header class="p-4 flex items-center justify-between border-b-gray-200 border-b">
-          <p class="text-2xl font-semibold text-gray-400">Your product</p>
+        <header class="p-4 flex items-start justify-between border-b-gray-200 border-b">
+          <div class="flex flex-col gap-4">
+            <p class="text-2xl font-semibold text-gray-400">Your product</p>
+
+            <div class="pl-1 flex items-center gap-4">
+              <.squeleton :for={_i <- 1..4} class="bg-gray-300 w-12" />
+            </div>
+          </div>
 
           <button
             id="header_button_1"
@@ -183,11 +189,9 @@ defmodule LiveroomWeb.Components.Playground do
             <.card_link id="card_link_3" socket_id={@socket_id} users={@users} />
           </div>
 
-          <div class="bg-white border border-gray-200 w-full rounded-md flex h-full p-6">
+          <div class="bg-white border border-gray-200 w-full rounded-md shadow-md flex h-full p-6">
             <div class="flex flex-col gap-4">
               <.squeleton class="bg-slate-300 w-12" />
-              <.squeleton class="bg-gray-200 w-36" />
-
               <.text_input id="search_input_1" socket_id={@socket_id} users={@users} />
             </div>
           </div>
@@ -408,7 +412,7 @@ defmodule LiveroomWeb.Components.Playground do
         "relative cursor-pointer",
         "bg-white border border-gray-200 md:hover:border-slate-500",
         "ring-inset md:hover:ring-[3px] ring-slate-500",
-        "rounded-md",
+        "rounded-md shadow-md",
         "flex flex-col p-6 items-start gap-4",
         "transition-colors duration-150 group",
         hovered_by && "ring-[3px]"
@@ -446,7 +450,7 @@ defmodule LiveroomWeb.Components.Playground do
       class={[
         "py-1 px-2 text-xs text-gray-500 font-medium rounded",
         "outline-none focus:outline-none",
-        "border border-gray-200 md:hover:border-gray-200 focus:border-slate-500",
+        "border border-gray-200 md:hover:border-slate-500 focus:border-slate-500",
         "ring-inset focus:ring-[3px] ring-slate-500 focus:ring-slate-500",
         focused_by && "ring-[3px]",
         @class
