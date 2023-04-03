@@ -168,7 +168,7 @@ defmodule LiveroomWeb.Components.Playground do
             data-hovered-by={
               (hovered_by = hovered_by_user(@socket_id, @users, "header_button_1"))[:name]
             }
-            class="bg-black px-8 py-3 rounded-md hover:bg-zinc-600 duration-300 transition-colors"
+            class="bg-black px-8 py-3 rounded-md md:hover:bg-zinc-600 transition-colors duration-300"
             style={hovered_by && "background-color: #{hovered_by.color};"}
             tabindex="-1"
           >
@@ -187,17 +187,8 @@ defmodule LiveroomWeb.Components.Playground do
             <div class="flex flex-col gap-4">
               <.squeleton class="bg-slate-300 w-12" />
               <.squeleton class="bg-gray-200 w-36" />
-              <input
-                id="search_input_1"
-                phx-hook="BroadcastFocusedHook"
-                data-focused-by={
-                  (focused_by = focused_by_user(@socket_id, @users, "search_input_1"))[:name]
-                }
-                type="text"
-                class="py-1 px-2 text-xs text-gray-500 font-medium rounded outline-none focus:outline-none focus:ring-0 border-2 border-gray-300 focus:border-slate-500 placeholder-gray-300"
-                style={focused_by && "border-color: #{focused_by.color};"}
-                placeholder="search..."
-              />
+
+              <.text_input id="search_input_1" socket_id={@socket_id} users={@users} />
             </div>
           </div>
         </div>
@@ -389,9 +380,10 @@ defmodule LiveroomWeb.Components.Playground do
         hovered_by && "border-color: #{hovered_by.color}; background-color: #{hovered_by.color}50;"
       }
       class={[
-        "w-full p-4 cursor-pointer",
-        "border-l-2 border-transparent hover:border-gray-500 hover:bg-violet-50",
-        "transition-colors duration-300"
+        "relative w-full p-4",
+        "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-transparent before:md:hover:bg-gray-500",
+        "rounded md:hover:bg-violet-50 overflow-hidden",
+        "cursor-pointer transition-colors duration-300"
       ]}
     >
       <.squeleton class="bg-slate-300" />
@@ -414,8 +406,8 @@ defmodule LiveroomWeb.Components.Playground do
       style={hovered_by && "border-color: #{hovered_by.color}; --tw-ring-color: #{hovered_by.color};"}
       class={[
         "relative cursor-pointer",
-        "bg-white border border-gray-200 hover:border-slate-500",
-        "ring-inset hover:ring-[3px] ring-slate-500",
+        "bg-white border border-gray-200 md:hover:border-slate-500",
+        "ring-inset md:hover:ring-[3px] ring-slate-500",
         "rounded-md",
         "flex flex-col p-6 items-start gap-4",
         "transition-colors duration-150 group",
@@ -429,13 +421,41 @@ defmodule LiveroomWeb.Components.Playground do
       <div
         class={[
           "absolute top-2 right-2 w-4 h-4 bg-transparent rounded-full",
-          "opacity-0 group-hover:opacity-100",
+          "opacity-0 md:group-hover:opacity-100",
           hovered_by && "opacity-100",
           "transition duration-150"
         ]}
         style={"background-color: #{hovered_by && hovered_by.color || "rgb(100 116 139)" };"}
       />
     </button>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :users, :list, required: true
+  attr :socket_id, :string, required: true
+  attr :class, :string, default: nil
+
+  def text_input(assigns) do
+    ~H"""
+    <input
+      id={@id}
+      phx-hook="BroadcastFocusedHook"
+      data-focused-by={(focused_by = focused_by_user(@socket_id, @users, @id))[:name]}
+      type="text"
+      class={[
+        "py-1 px-2 text-xs text-gray-500 font-medium rounded",
+        "outline-none focus:outline-none",
+        "border border-gray-200 md:hover:border-gray-200 focus:border-slate-500",
+        "ring-inset focus:ring-[3px] ring-slate-500 focus:ring-slate-500",
+        focused_by && "ring-[3px]",
+        @class
+      ]}
+      style={
+        focused_by &&
+          "border-color: #{focused_by.color}; --tw-ring-color: #{focused_by.color};"
+      }
+    />
     """
   end
 
