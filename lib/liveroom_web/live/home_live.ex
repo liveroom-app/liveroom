@@ -6,7 +6,7 @@ defmodule LiveroomWeb.HomeLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <.section class="bg-zinc-50 w-full">
+    <.section class="relative bg-zinc-50 w-full pt-0">
       <.hero />
 
       <div id="playground_container" class="w-full max-w-4xl flex flex-col">
@@ -34,7 +34,7 @@ defmodule LiveroomWeb.HomeLive do
 
   def hero(assigns) do
     ~H"""
-    <header class="flex relative flex-col items-center gap-20 w-full md:max-w-7xl">
+    <header class="relative w-full md:max-w-7xl flex flex-col items-center gap-20 pt-8">
       <h1 class="text-3xl font-bold text-accent flex items-center gap-3">
         <img src={LiveroomWeb.Endpoint.static_url() <> ~p"/images/liveroom_logo.png"} class="w-6 h-6" />
         Liveroom
@@ -63,7 +63,80 @@ defmodule LiveroomWeb.HomeLive do
       <.button_link>
         Join waitlist
       </.button_link>
+
+      <.ellipse_1 class="absolute top-0 mx-auto -translate-x-16 -translate-y-8 opacity-40 mix-blend-multiply" />
+      <.ellipse_2 class="absolute -bottom-[400px] mx-auto -translate-x-28 opacity-20" />
+      <.ellipse_3 class="absolute -bottom-72 mx-auto translate-x-32 opacity-20" />
     </header>
+    """
+  end
+
+  attr :class, :string, default: nil
+
+  def ellipse_1(assigns) do
+    ~H"""
+    <svg
+      class={["w-[441px] h-[130px]", @class]}
+      viewBox="0 0 441 130"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <ellipse
+        opacity="0.4"
+        cx="220.806"
+        cy="2.47565"
+        rx="98.8922"
+        ry="233.666"
+        transform="rotate(-68.09 220.806 2.47565)"
+        fill="#CE72EF"
+      />
+    </svg>
+    """
+  end
+
+  attr :class, :string, default: nil
+
+  def ellipse_2(assigns) do
+    ~H"""
+    <svg
+      class={["w-[538px] h-[397px]", @class]}
+      viewBox="0 0 538 397"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <ellipse
+        opacity="0.2"
+        cx="269.28"
+        cy="202.62"
+        rx="159.413"
+        ry="296.111"
+        transform="rotate(120 269.28 202.62)"
+        fill="#4F46E5"
+      />
+    </svg>
+    """
+  end
+
+  attr :class, :string, default: nil
+
+  def ellipse_3(assigns) do
+    ~H"""
+    <svg
+      class={["w-[205px] h-[278px]", @class]}
+      viewBox="0 0 205 278"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <ellipse
+        cx="102.454"
+        cy="139.043"
+        rx="76.8538"
+        ry="153.804"
+        transform="rotate(-150 102.454 139.043)"
+        fill="#0E62FE"
+        fill-opacity="0.16"
+      />
+    </svg>
     """
   end
 
