@@ -135,7 +135,7 @@ defmodule LiveroomWeb.Components.Playground do
     ~H"""
     <div class={[
       "hidden relative sm:grid grid-cols-[minmax(150px,_25%)_1fr]",
-      "bg-zinc-50 border-4 border-accent shadow rounded-3xl overflow-hidden",
+      "bg-zinc-50 border-4 border-accent shadow-lg rounded-xl overflow-hidden",
       @class
     ]}>
       <nav class="bg-background px-4 py-6 border-r-gray-200 border-r">
@@ -218,7 +218,7 @@ defmodule LiveroomWeb.Components.Playground do
 
   def pill(assigns) do
     ~H"""
-    <div class="absolute bottom-4 inset-x-0 flex justify-center items-center">
+    <div class="absolute bottom-2 inset-x-0 flex justify-center items-center">
       <div class="p-1 bg-accent backdrop-blur-sm text-white flex justify-around items-stretch gap-6 rounded-full shadow-lg">
         <video
           loop
@@ -246,7 +246,7 @@ defmodule LiveroomWeb.Components.Playground do
             muted
           />
 
-          <span :if={!@camera_on}><%= String.at(@name, 0) %></span>
+          <span :if={!@camera_on} class="text-lg"><%= String.at(@name, 0) %></span>
         </div>
       </div>
 

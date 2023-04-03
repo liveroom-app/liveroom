@@ -6,7 +6,8 @@ defmodule LiveroomWeb.HomeLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <.section class="relative bg-[url('/images/texture.png')] w-full !pt-0">
+    <%!-- <.section class="relative bg-[url('/images/texture.png')] w-full !pt-0"> --%>
+    <.section class="relative w-full !pt-0">
       <.hero />
 
       <div id="playground_container" class="w-full max-w-4xl flex flex-col">
