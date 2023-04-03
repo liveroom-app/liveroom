@@ -9,7 +9,7 @@ defmodule LiveroomWeb.HomeLive do
     <.section class="bg-zinc-50 w-full">
       <.hero />
 
-      <div id="playground_container" class="w-full max-w-4xl sm:flex flex-col">
+      <div id="playground_container" class="w-full max-w-4xl flex flex-col">
         <%= live_render(@socket, Playground,
           id: "playground-#{@socket.id}",
           session: %{

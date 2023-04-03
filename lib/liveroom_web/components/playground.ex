@@ -30,57 +30,56 @@ defmodule LiveroomWeb.Components.Playground do
     </div>
 
     <div class="w-full flex flex-col items-stretch space-y-4">
-      <div class="aspect-video w-full">
-        <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="w-full h-full list-none ">
-          <li
-            :for={user <- @users}
-            style={"color: #{user.color}; left: calc(#{user.x}% - 11px); top: calc(#{user.y}% - 10px);"}
+      <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="list-none ">
+        <li
+          :for={user <- @users}
+          style={"color: #{user.color}; left: calc(#{user.x}% - 11px); top: calc(#{user.y}% - 10px);"}
+          class={[
+            "absolute flex flex-col justify-start items-start pt-[24px]",
+            "pointer-events-none select-none"
+          ]}
+        >
+          <div
+            id={"cursor_blink_#{user.socket_id}"}
+            style={"background-color: #{user.color}25; border-color: #{user.color};"}
             class={[
-              "absolute flex flex-col justify-start items-start pt-[24px]",
-              "pointer-events-none select-none"
+              not user.is_halo_key_pressed && not user.is_cursor_pressed && "scale-0",
+              "z-40 absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-md",
+              "transition-transform duration-100 ease-out"
             ]}
-          >
-            <div
-              id={"cursor_blink_#{user.socket_id}"}
-              style={"background-color: #{user.color}25; border-color: #{user.color};"}
-              class={[
-                not user.is_halo_key_pressed && not user.is_cursor_pressed && "scale-0",
-                "z-40 absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-md",
-                "transition-transform duration-100 ease-out"
-              ]}
-            />
-
-            <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
-
-            <%= if user.msg == "" do %>
-              <span
-                :if={user.socket_id != @socket_id}
-                style={"background-color: #{user.color};"}
-                class="z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
-              >
-                <%= user.name %>
-              </span>
-            <% else %>
-              <span
-                style={"background-color: #{user.color};"}
-                class="z-50 ml-[30px] max-w-[50ch] py-1 px-3 text-sm truncate text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
-              >
-                <%= user.msg %>
-              </span>
-            <% end %>
-          </li>
-
-          <.dashboard
-            socket_id={@socket_id}
-            users={@users}
-            name={@name}
-            color={@color}
-            msg={@msg}
-            current_msg={@current_msg}
-            camera_on={@camera_on}
           />
-        </ul>
-      </div>
+
+          <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
+
+          <%= if user.msg == "" do %>
+            <span
+              :if={user.socket_id != @socket_id}
+              style={"background-color: #{user.color};"}
+              class="z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
+            >
+              <%= user.name %>
+            </span>
+          <% else %>
+            <span
+              style={"background-color: #{user.color};"}
+              class="z-50 ml-[30px] max-w-[50ch] py-1 px-3 text-sm truncate text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
+            >
+              <%= user.msg %>
+            </span>
+          <% end %>
+        </li>
+      </ul>
+
+      <.dashboard
+        socket_id={@socket_id}
+        users={@users}
+        name={@name}
+        color={@color}
+        msg={@msg}
+        current_msg={@current_msg}
+        camera_on={@camera_on}
+        class="aspect-video w-full h-full"
+      />
     </div>
     """
   end
@@ -123,10 +122,15 @@ defmodule LiveroomWeb.Components.Playground do
   attr :camera_on, :boolean, required: true
   attr :msg, :string, required: true
   attr :current_msg, :string, required: true
+  attr :class, :string, default: nil
 
   def dashboard(assigns) do
     ~H"""
-    <div class="relative bg-zinc-50 h-full grid grid-cols-[minmax(150px,_25%)_1fr] border-4 border-violet-700/60 shadow rounded-3xl overflow-hidden">
+    <div class={[
+      "hidden relative sm:grid grid-cols-[minmax(150px,_25%)_1fr]",
+      "bg-zinc-50 border-4 border-violet-700/60 shadow rounded-3xl overflow-hidden",
+      @class
+    ]}>
       <nav class="bg-background px-4 py-6 border-r-gray-200 border-r">
         <p class="uppercase text-gray-300 font-semibold">Menu</p>
 
