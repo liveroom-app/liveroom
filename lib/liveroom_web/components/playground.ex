@@ -33,9 +33,9 @@ defmodule LiveroomWeb.Components.Playground do
       <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="list-none ">
         <li
           :for={user <- @users}
-          style={"color: #{user.color}; left: calc(#{user.x}% - 11px); top: calc(#{user.y}% - 10px);"}
+          style={"color: #{user.color}; left: calc(#{user.x}%); top: calc(#{user.y}%);"}
           class={[
-            "absolute flex flex-col justify-start items-start pt-[24px]",
+            "z-[100] fixed flex flex-col justify-start items-start pt-[24px]",
             "pointer-events-none select-none"
           ]}
         >
@@ -44,12 +44,13 @@ defmodule LiveroomWeb.Components.Playground do
             style={"background-color: #{user.color}25; border-color: #{user.color};"}
             class={[
               not user.is_halo_key_pressed && not user.is_cursor_pressed && "scale-0",
-              "z-40 absolute -top-14 -left-14 h-32 w-32 border rounded-full shadow-md",
-              "transition-transform duration-100 ease-out"
+              "z-40 absolute -top-16 -left-16 h-32 w-32 border rounded-full shadow-md",
+              "transition-transform duration-150 ease-out"
             ]}
           />
 
           <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
+          <%!-- <.cursor class="z-50 absolute top-0 left-0 shadow-2xl" /> --%>
 
           <%= if user.msg == "" do %>
             <span
@@ -59,6 +60,12 @@ defmodule LiveroomWeb.Components.Playground do
             >
               <%= user.name %>
             </span>
+            <%!-- <span
+              style={"background-color: #{user.color};"}
+              class="z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
+            >
+              <%= user.name %>
+            </span> --%>
           <% else %>
             <span
               style={"background-color: #{user.color};"}
