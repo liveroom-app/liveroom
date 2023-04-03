@@ -6,7 +6,7 @@ defmodule LiveroomWeb.HomeLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <.section class="relative bg-zinc-50 w-full pt-0">
+    <.section class="relative bg-[url('/images/texture.png')] w-full !pt-0">
       <.hero />
 
       <div id="playground_container" class="w-full max-w-4xl flex flex-col">
@@ -64,9 +64,9 @@ defmodule LiveroomWeb.HomeLive do
         Join waitlist
       </.button_link>
 
-      <.ellipse_1 class="absolute top-0 mx-auto -translate-x-16 -translate-y-8 opacity-40 mix-blend-multiply" />
-      <.ellipse_2 class="absolute -bottom-[400px] mx-auto -translate-x-28 opacity-20" />
-      <.ellipse_3 class="absolute -bottom-72 mx-auto translate-x-32 opacity-20" />
+      <.ellipse_1 class="absolute top-0 mx-auto -translate-x-16 -translate-y-8 blur-xl opacity-50 mix-blend-multiply" />
+      <.ellipse_2 class="absolute -bottom-[400px] mx-auto -translate-x-28 blur-xl opacity-50" />
+      <.ellipse_3 class="absolute -bottom-72 mx-auto translate-x-32 blur-xl opacity-50" />
     </header>
     """
   end
