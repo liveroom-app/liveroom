@@ -52,8 +52,7 @@ defmodule LiveroomWeb.Layouts do
         <.live_title><%= assigns[:page_title] || "Liveroom" %></.live_title>
 
         <%!-- <link rel="manifest" href={~p"/manifest.json"} /> --%>
-        <link rel="icon" href={~p"/favicon.ico"} />
-        <%!-- <link rel="icon" href={~p"/favicon.ico"} sizes="any" /> --%>
+        <link rel="icon" href={~p"/favicon.ico"} sizes="any" />
         <%!-- <link rel="icon" href={~p"/images/icons/icon.svg"} type="image/svg+xml" /> --%>
         <link rel="apple-touch-icon" href={~p"/images/icons/apple-touch-icon.png"} />
 

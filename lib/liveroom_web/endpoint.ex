@@ -31,8 +31,9 @@ defmodule LiveroomWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :liveroom,
-    gzip: false,
-    only: LiveroomWeb.static_paths()
+    gzip: true,
+    # only: LiveroomWeb.static_paths()
+    only_matching: LiveroomWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
