@@ -373,8 +373,12 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
       phx-change={JS.push("search_change_" <> @input_id, target: @myself)}
       phx-throttle="300"
     >
+      <!-- Prevent implicit submission of the form when hitting the Enter key -->
+      <button type="submit" disabled style="display: none" aria-hidden="true"></button>
+
       <%!-- NOTE: Weird bug with that, the form keeps reloading in the dom --%>
       <%!-- <input hidden type="text" name="id" value={@input_id} /> --%>
+
       <input
         id={@input_id}
         name="search"
