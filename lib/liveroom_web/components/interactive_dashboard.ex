@@ -211,8 +211,8 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
     <form
       id="msg-form"
       phx-change={JS.push("message_updated", target: @myself)}
-      phx-submit={js_send_message()}
-      phx-keyup={js_send_message()}
+      phx-submit={js_send_message(@myself)}
+      phx-keyup={js_send_message(@myself)}
       phx-key="Enter"
       class={[
         "w-fit mx-auto flex justify-center items-stretch p-5",
@@ -428,9 +428,9 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
     Enum.find(users, &(MapSet.member?(&1.focused_elements, el_id) && &1.socket_id != socket_id))
   end
 
-  defp js_send_message(js \\ %JS{}) do
+  defp js_send_message(js \\ %JS{}, myself) do
     js
-    |> JS.push("send_message")
+    |> JS.push("send_message", target: myself)
     |> JS.hide(to: "#msg-form")
   end
 
