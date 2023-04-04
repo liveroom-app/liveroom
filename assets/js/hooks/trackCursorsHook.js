@@ -5,26 +5,26 @@ export const TrackCursorsHook = {
       const x = Number((e.pageX / window.innerWidth) * 100).toFixed(2); // in %
       const y = Number((e.pageY / window.innerHeight) * 100).toFixed(2); // in %
 
-      this.pushEvent("cursor-move", { x, y });
+      this.pushEvent("liveroom-cursor-moved", { x, y });
     });
 
     // Mouse click
     document.addEventListener("mousedown", (e) => {
-      this.pushEvent("cursor-click-down");
+      this.pushEvent("liveroom-cursor-click-down");
     });
     document.addEventListener("mouseup", (e) => {
-      this.pushEvent("cursor-click-up");
+      this.pushEvent("liveroom-cursor-click-up");
     });
 
     // Keyboard press
     document.addEventListener("keydown", (e) => {
       if (e.key === HALO_KEY || e.keyCode === HALO_KEY_CODE)
-        this.pushEvent("halo-key-down");
+        this.pushEvent("liveroom-halo-key-down");
     });
 
     document.addEventListener("keyup", (e) => {
       if (e.key === HALO_KEY || e.keyCode === HALO_KEY_CODE)
-        this.pushEvent("halo-key-up");
+        this.pushEvent("liveroom-halo-key-up");
     });
   },
 };

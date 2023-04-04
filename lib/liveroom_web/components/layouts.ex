@@ -1,14 +1,16 @@
 defmodule LiveroomWeb.Layouts do
   use LiveroomWeb, :html
 
+  alias LiveroomWeb.Components.Cursors
+
   def render("app.html", assigns) do
     ~H"""
-    <div class="min-h-[100dvh] grid grid-cols-1 grid-rows-[auto_1fr_auto] overflow-hidden">
+    <div class="relative min-h-[100dvh] grid grid-cols-1 grid-rows-[auto_1fr_auto] overflow-hidden">
       <.flash_group flash={@flash} />
 
-      <%!-- <LiveroomWeb.Header.render /> --%>
+      <Cursors.render socket_id={@socket.id} users={@liveroom.users} />
 
-      <main class="h-full overflow-x-hidden flex-col flex items-center">
+      <main class="h-full flex flex-col items-center overflow-x-hidden">
         <%= @inner_content %>
       </main>
     </div>

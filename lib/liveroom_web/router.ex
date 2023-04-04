@@ -25,7 +25,7 @@ defmodule LiveroomWeb.Router do
   scope "/", LiveroomWeb do
     pipe_through :browser
 
-    live_session :default, on_mount: [Hooks.Analytics] do
+    live_session :default, on_mount: [Hooks.Analytics, Hooks.Liveroom] do
       live "/", HomeLive, :index
       live "/new", Room.NewLive, :new
       live "/room/:room_slug", Room.ShowLive, :new
