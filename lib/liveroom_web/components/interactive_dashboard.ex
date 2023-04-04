@@ -85,7 +85,14 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
         </div>
       </div>
 
-      <.pill name={@name} color={@color} camera_on={@camera_on} msg={@msg} current_msg={@current_msg} />
+      <.pill
+        name={@name}
+        color={@color}
+        camera_on={@camera_on}
+        msg={@msg}
+        current_msg={@current_msg}
+        myself={@myself}
+      />
     </div>
     """
   end
@@ -97,6 +104,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
   attr :camera_on, :boolean, required: true
   attr :msg, :string, required: true
   attr :current_msg, :string, required: true
+  attr :myself, :any, required: true
 
   def pill(assigns) do
     ~H"""
@@ -111,7 +119,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
           src={LiveroomWeb.Endpoint.static_url() <> ~p"/videos/alex_avatar_video.webm"}
         />
 
-        <.pill_toolbar camera_on={@camera_on} current_msg={@current_msg} />
+        <.pill_toolbar camera_on={@camera_on} current_msg={@current_msg} myself={@myself} />
 
         <div
           style={"background-color: #{@color};"}
@@ -121,7 +129,6 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
             :if={@camera_on}
             id="local-video"
             phx-hook="JoinCallHook"
-            phx-click="join_call"
             style="transform: rotateY(180deg) scale(1.5);"
             playsinline
             autoplay
@@ -135,6 +142,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
       <.msg_form
         msg={@msg}
         current_msg={@current_msg}
+        myself={@myself}
         class="hidden absolute bottom-[55px] inset-x-0"
       />
     </div>
@@ -143,6 +151,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
 
   attr :camera_on, :boolean, required: true
   attr :current_msg, :string, required: true
+  attr :myself, :any, required: true
 
   def pill_toolbar(assigns) do
     ~H"""
@@ -151,7 +160,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
         :if={!@camera_on}
         id="camera-on-button"
         class="py-1.5 px-2 rounded md:hover:bg-gray-100/25 outline-none focus:outline-none focus:ring focus:ring-gray-100 transition-colors duration-300"
-        phx-click="camera_on"
+        phx-click={JS.push("camera_on", target: @myself)}
       >
         <.icon name="hero-video-camera" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
       </button>
@@ -160,7 +169,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
         :if={@camera_on}
         id="camera-off-button"
         class="py-1.5 px-2 rounded md:hover:bg-gray-100/25 outline-none focus:outline-none focus:ring focus:ring-gray-100 transition-colors duration-300"
-        phx-click="camera_off"
+        phx-click={JS.push("camera_off", target: @myself)}
       >
         <.icon name="hero-video-camera-slash" class="h-5 w-5 rounded md:hover:bg-dark-100 p-2" />
       </button>
@@ -195,12 +204,13 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
   attr :msg, :string, required: true
   attr :current_msg, :string, required: true
   attr :class, :string, default: nil
+  attr :myself, :any, required: true
 
   def msg_form(assigns) do
     ~H"""
     <form
       id="msg-form"
-      phx-change="message_updated"
+      phx-change={JS.push("message_updated", target: @myself)}
       phx-submit={js_send_message()}
       phx-keyup={js_send_message()}
       phx-key="Enter"
@@ -364,14 +374,20 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
   ### Server
 
   @impl true
-  def update(assigns, socket) do
+  def mount(socket) do
     socket
-    |> assign(assigns)
     |> assign(
       msg: "",
       current_msg: "",
       camera_on: false
     )
+    |> ok()
+  end
+
+  @impl true
+  def update(assigns, socket) do
+    socket
+    |> assign(assigns)
     |> ok()
   end
 
