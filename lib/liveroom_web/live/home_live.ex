@@ -35,7 +35,6 @@ defmodule LiveroomWeb.HomeLive do
           users={@liveroom.users}
           name={@liveroom.name}
           color={@liveroom.color}
-          msg={@liveroom.msg}
           class="aspect-video w-full h-full max-w-screen-lg"
         />
       </div>

@@ -228,40 +228,31 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
         aria-label="Your message"
         class={[
           "flex-1 min-w-[12.2rem] appearance-none py-1 px-2",
-          "text-white bg-accent placeholder-violet-200",
+          "text-sm text-white bg-accent placeholder-violet-200",
           "border-4 border-accent outline-none rounded-l-md resize-none",
-          "focus:border-accent focus:outline-none focus:ring-0 focus:shadow-2xl",
-          @msg == "" && "bg-gray-100/50",
-          "text-sm"
+          "focus:border-accent focus:outline-none focus:ring-0 focus:shadow-2xl"
         ]}
       />
 
       <button
         id="msg-form-submit-button"
         type="submit"
-        disabled={disabled = @msg == "" && @current_msg == ""}
+        disabled={@msg == "" && @current_msg == ""}
         tabindex="2"
         class={[
-          "flex justify-center items-center py-1 px-2",
+          "flex justify-center items-center py-1 px-2 rounded-r",
           "text-gray-100 text-base font-semibold",
-          "rounded-r",
           "focus-visible:outline-none focus:outline-none focus:ring-accent group",
-          disabled && "bg-accent/20",
-          !disabled && "bg-accent"
+          "bg-accent disabled:bg-accent/50"
         ]}
       >
         <%= cond do %>
           <% @msg == "" && @current_msg != "" -> %>
             <.icon name="hero-backspace-mini" class="h-4 w-4 m-1" />
-          <% @msg == "" && @current_msg == "" -> %>
-            <.icon
-              name="hero-paper-airplane-mini"
-              class="h-4 w-4 group-focus:translate-x-1 group-focus:-translate-y-1 group-focus:rotate-[-25deg] transition-transform duration-300"
-            />
           <% true -> %>
             <.icon
               name="hero-paper-airplane-mini"
-              class="h-4 w-4 group-focus:translate-x-1 group-focus:-translate-y-1 group-focus:rotate-[-25deg] transition-transform duration-300"
+              class="h-4 w-4 group-focus:-translate-x-0.5 group-focus:rotate-[-25deg] transition-transform duration-300"
             />
         <% end %>
       </button>
