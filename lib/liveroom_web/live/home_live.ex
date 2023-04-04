@@ -214,7 +214,7 @@ defmodule LiveroomWeb.HomeLive do
 
         <.feature_card class="bg-teal-50">
           <:illustration>
-            <video autoplay loop muted playsinline class="w-32 rounded-full">
+            <video muted playsinline class="w-32 rounded-full">
               <source src="https://framerusercontent.com/modules/assets/ge2Me0IRiwzCbzbHBSqNP1Jy8~mzJIzKX21b2-SoRj68_OWjTBqUgxuWGnqWrSsHztBGU.webm" />
             </video>
           </:illustration>
