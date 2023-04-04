@@ -12,9 +12,9 @@ defmodule LiveroomWeb.HomeLive do
 
       <div class="w-full flex flex-col items-center">
         <div class="my-4 mx-4 text-sm flex items-center gap-2 shrink-0">
-          <span class="relative flex h-2 w-2">
+          <span class="relative flex h-2.5 w-2.5">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75" />
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-300" />
+            <span class="relative inline-flex rounded-full h-full w-full bg-emerald-300" />
           </span>
 
           <p class="font-semibold">
@@ -24,7 +24,7 @@ defmodule LiveroomWeb.HomeLive do
               <% n -> %>
                 <%= n %> users
             <% end %>
-            live in the room
+            following Sarra in the liveroom
           </p>
         </div>
 
