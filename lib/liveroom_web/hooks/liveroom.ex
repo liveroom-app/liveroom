@@ -118,7 +118,8 @@ defmodule LiveroomWeb.Hooks.Liveroom do
           is_cursor_pressed: false,
           is_halo_key_pressed: false,
           hovered_elements: MapSet.new(),
-          focused_elements: MapSet.new()
+          focused_elements: MapSet.new(),
+          inputs: %{}
         })
 
         LiveroomWeb.Endpoint.subscribe(@cursorview)
@@ -127,8 +128,6 @@ defmodule LiveroomWeb.Hooks.Liveroom do
       else
         []
       end
-
-    dbg(initial_users)
 
     assign(socket, :liveroom, %{
       socket_id: socket_id,

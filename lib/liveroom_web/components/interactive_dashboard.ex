@@ -24,23 +24,19 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
         <ul class="flex flex-col items-start gap-1 mt-8">
           <.sidebar_navigation_link
             id="sidebar_navigation_link_1"
-            socket_id={@socket_id}
-            users={@users}
+            hovered_by={hovered_by_user(@socket_id, @users, "sidebar_navigation_link_1")}
           />
           <.sidebar_navigation_link
             id="sidebar_navigation_link_2"
-            socket_id={@socket_id}
-            users={@users}
+            hovered_by={hovered_by_user(@socket_id, @users, "sidebar_navigation_link_2")}
           />
           <.sidebar_navigation_link
             id="sidebar_navigation_link_3"
-            socket_id={@socket_id}
-            users={@users}
+            hovered_by={hovered_by_user(@socket_id, @users, "sidebar_navigation_link_3")}
           />
           <.sidebar_navigation_link
             id="sidebar_navigation_link_4"
-            socket_id={@socket_id}
-            users={@users}
+            hovered_by={hovered_by_user(@socket_id, @users, "sidebar_navigation_link_4")}
           />
         </ul>
       </nav>
@@ -55,31 +51,39 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
             </div>
           </div>
 
-          <button
+          <.header_button
             id="header_button_1"
-            phx-hook="BroadcastHoveredHook"
-            data-hovered-by={
-              (hovered_by = hovered_by_user(@socket_id, @users, "header_button_1"))[:name]
-            }
-            class="bg-black px-8 py-3 rounded-md md:hover:bg-zinc-600 transition-colors duration-300"
-            style={hovered_by && "background-color: #{hovered_by.color};"}
-            tabindex="-1"
-          >
-            <.squeleton class="bg-white" />
-          </button>
+            hovered_by={hovered_by_user(@socket_id, @users, "header_button_1")}
+          />
         </header>
 
         <div class="p-4 flex flex-col gap-4 h-full">
           <div class="flex gap-4 justify-start">
-            <.card_link id="card_link_1" socket_id={@socket_id} users={@users} />
-            <.card_link id="card_link_2" socket_id={@socket_id} users={@users} />
-            <.card_link id="card_link_3" socket_id={@socket_id} users={@users} />
+            <.card_link
+              id="card_link_1"
+              hovered_by={hovered_by_user(@socket_id, @users, "card_link_1")}
+            />
+            <.card_link
+              id="card_link_2"
+              hovered_by={hovered_by_user(@socket_id, @users, "card_link_2")}
+            />
+            <.card_link
+              id="card_link_3"
+              hovered_by={hovered_by_user(@socket_id, @users, "card_link_3")}
+            />
           </div>
 
           <div class="bg-white border border-gray-200 w-full rounded-md shadow-md flex h-full p-6">
             <div class="flex flex-col gap-4">
               <.squeleton class="bg-slate-300 w-12" />
-              <.text_input id="search_input_1" socket_id={@socket_id} users={@users} />
+              <.interactive_text_input
+                id="interactive_form"
+                input_id="search_input_1"
+                focused_by={focused_by_user(@socket_id, @users, "search_input_1")}
+                inputs_by={inputs_by_user(@socket_id, @users, "search_input_1")}
+                search={@search}
+                myself={@myself}
+              />
             </div>
           </div>
         </div>
@@ -261,17 +265,16 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
   end
 
   attr :id, :string, required: true
-  attr :socket_id, :string, required: true
-  attr :users, :list, required: true
+  attr :hovered_by, :map, required: true
 
   def sidebar_navigation_link(assigns) do
     ~H"""
     <li
       id={@id}
       phx-hook="BroadcastHoveredHook"
-      data-hovered-by={(hovered_by = hovered_by_user(@socket_id, @users, @id))[:name]}
+      data-hovered-by={@hovered_by[:name]}
       style={
-        hovered_by && "border-color: #{hovered_by.color}; background-color: #{hovered_by.color}50;"
+        @hovered_by && "border-color: #{@hovered_by.color}; background-color: #{@hovered_by.color}50;"
       }
       class={[
         "relative w-full p-4",
@@ -286,8 +289,27 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
   end
 
   attr :id, :string, required: true
-  attr :socket_id, :string, required: true
-  attr :users, :list, required: true
+  attr :hovered_by, :map, required: true
+  attr :class, :string, default: nil
+  attr :rest, :global, default: %{}
+
+  def header_button(assigns) do
+    ~H"""
+    <button
+      id={@id}
+      phx-hook="BroadcastHoveredHook"
+      data-hovered-by={@hovered_by[:name]}
+      class="py-3 px-8 bg-black md:hover:bg-zinc-600 rounded-md transition-colors duration-300"
+      style={@hovered_by && "background-color: #{@hovered_by.color};"}
+      tabindex="-1"
+    >
+      <.squeleton class="bg-white" />
+    </button>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :hovered_by, :map, required: true
   attr :class, :string, default: nil
   attr :rest, :global, default: %{}
 
@@ -296,8 +318,10 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
     <button
       id={@id}
       phx-hook="BroadcastHoveredHook"
-      data-hovered-by={(hovered_by = hovered_by_user(@socket_id, @users, @id))[:name]}
-      style={hovered_by && "border-color: #{hovered_by.color}; --tw-ring-color: #{hovered_by.color};"}
+      data-hovered-by={@hovered_by[:name]}
+      style={
+        @hovered_by && "border-color: #{@hovered_by.color}; --tw-ring-color: #{@hovered_by.color};"
+      }
       class={[
         "relative cursor-pointer",
         "bg-white border border-gray-200 md:hover:border-slate-500 focus:border-slate-500 focus-visible:border-slate-500",
@@ -306,7 +330,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
         "rounded-md shadow-md",
         "flex flex-col p-6 items-start gap-4",
         "transition-colors duration-150 group",
-        hovered_by && "ring-[3px]"
+        @hovered_by && "ring-[3px]"
       ]}
       {@rest}
     >
@@ -317,40 +341,71 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
         class={[
           "absolute top-2 right-2 w-4 h-4 bg-transparent rounded-full",
           "opacity-0 md:group-hover:opacity-100",
-          hovered_by && "opacity-100",
-          "transition duration-150"
+          @hovered_by && "opacity-100",
+          "transition duration-150 pointer-events-none"
         ]}
-        style={"background-color: #{hovered_by && hovered_by.color || "rgb(100 116 139)" };"}
+        style={"background-color: #{@hovered_by && @hovered_by.color || "rgb(100 116 139)" };"}
       />
     </button>
     """
   end
 
   attr :id, :string, required: true
-  attr :users, :list, required: true
-  attr :socket_id, :string, required: true
+  attr :input_id, :string, required: true
+  attr :focused_by, :map, required: true
+  attr :inputs_by, :map, required: true
+  attr :search, :string, required: true
+  attr :myself, :any, required: true
   attr :class, :string, default: nil
 
-  def text_input(assigns) do
+  def interactive_text_input(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :inputs_by_input,
+        assigns.inputs_by && assigns.inputs_by.inputs[assigns.input_id]
+      )
+
     ~H"""
-    <input
+    <form
       id={@id}
-      phx-hook="BroadcastFocusedHook"
-      data-focused-by={(focused_by = focused_by_user(@socket_id, @users, @id))[:name]}
-      type="text"
-      class={[
-        "py-1 px-2 text-xs text-gray-500 font-medium rounded",
-        "outline-none focus:outline-none",
-        "border border-gray-200 md:hover:border-slate-500 focus:border-slate-500",
-        "ring-inset focus:ring-[3px] ring-slate-500 focus:ring-slate-500",
-        focused_by && "ring-[3px]",
-        @class
-      ]}
-      style={
-        focused_by &&
-          "border-color: #{focused_by.color}; --tw-ring-color: #{focused_by.color};"
-      }
-    />
+      class={["relative", @class]}
+      phx-change={JS.push("search_change_" <> @input_id, target: @myself)}
+      phx-throttle="300"
+    >
+      <%!-- NOTE: Weird bug with that, the form keeps reloading in the dom --%>
+      <%!-- <input hidden type="text" name="id" value={@input_id} /> --%>
+      <input
+        id={@input_id}
+        name="search"
+        phx-hook="BroadcastFocusedHook"
+        data-focused-by={@focused_by[:name]}
+        data-inputs-by={@inputs_by[:name]}
+        type="text"
+        class={[
+          "py-1 px-2",
+          "text-xs text-gray-500 font-medium placeholder:text-gray-300 rounded",
+          "outline-none focus:outline-none focus:ring-0",
+          "border border-gray-200 md:hover:border-slate-500 focus:border-slate-500",
+          "ring-inset focus:ring-[3px] ring-slate-500 focus:ring-slate-500",
+          @focused_by && "ring-[3px]"
+        ]}
+        style={
+          @focused_by && "border-color: #{@focused_by.color}; --tw-ring-color: #{@focused_by.color};"
+        }
+      />
+      <span
+        :if={
+          @inputs_by_input &&
+            @inputs_by_input.type == :text &&
+            @search == ""
+        }
+        class="absolute left-0 inset-y-0 text-xs px-2 flex items-center"
+        style={"background-color: #{@inputs_by.color}15; color: #{@inputs_by.color};"}
+      >
+        <%= @inputs_by_input.value %>
+      </span>
+    </form>
     """
   end
 
@@ -368,6 +423,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
   def mount(socket) do
     socket
     |> assign(
+      search: "",
       msg: "",
       current_msg: "",
       camera_on: false
@@ -383,6 +439,15 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
   end
 
   @impl true
+  def handle_event("search_change_" <> input_id, %{"search" => search}, socket) do
+    Hooks.Liveroom.broadcast_user_changes(
+      socket,
+      &%{inputs: Map.put(&1.inputs, input_id, %{type: :text, value: search})}
+    )
+
+    {:noreply, assign(socket, search: search)}
+  end
+
   def handle_event("send_message", %{"msg" => msg}, socket) do
     Hooks.Liveroom.broadcast_user_changes(socket, %{msg: msg})
 
@@ -417,6 +482,10 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
 
   defp focused_by_user(socket_id, users, el_id) do
     Enum.find(users, &(MapSet.member?(&1.focused_elements, el_id) && &1.socket_id != socket_id))
+  end
+
+  defp inputs_by_user(socket_id, users, el_id) do
+    Enum.find(users, &(&1.inputs[el_id] && &1.socket_id != socket_id))
   end
 
   defp js_send_message(js \\ %JS{}, myself) do
