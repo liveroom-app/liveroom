@@ -402,6 +402,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
         :if={
           @inputs_by_input &&
             @inputs_by_input.type == :text &&
+            @inputs_by_input.value != "" &&
             @search == ""
         }
         class="absolute left-0 inset-y-0 text-xs px-2 flex items-center"
