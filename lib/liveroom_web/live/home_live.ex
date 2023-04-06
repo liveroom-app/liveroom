@@ -57,9 +57,11 @@ defmodule LiveroomWeb.HomeLive do
   def hero(assigns) do
     ~H"""
     <header class="relative w-full md:max-w-7xl flex flex-col items-center gap-20 pt-8">
-      <h1 class="text-3xl font-bold text-accent flex items-center gap-3">
-        <img src={LiveroomWeb.Endpoint.static_url() <> ~p"/images/liveroom_logo.png"} class="w-6 h-6" />
-        Liveroom
+      <h1 class="text-3xl font-bold text-accent flex items-center gap-1">
+        <img
+          src={LiveroomWeb.Endpoint.static_url() <> ~p"/images/liveroom_logo.png"}
+          class="w-10 h-10 pt-1"
+        /> Liveroom
       </h1>
 
       <img
