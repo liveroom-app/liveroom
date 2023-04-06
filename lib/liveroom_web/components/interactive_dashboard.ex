@@ -14,7 +14,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
   def render(assigns) do
     ~H"""
     <div class={[
-      "hidden relative sm:grid grid-cols-[minmax(150px,_25%)_1fr]",
+      "relative grid grid-cols-[minmax(150px,_25%)_1fr]",
       "bg-zinc-50 border-4 border-accent shadow-lg rounded-xl overflow-hidden",
       @class
     ]}>

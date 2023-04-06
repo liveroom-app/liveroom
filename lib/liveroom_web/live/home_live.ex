@@ -10,7 +10,28 @@ defmodule LiveroomWeb.HomeLive do
     <.section class="relative w-full !pt-0">
       <.hero />
 
-      <div class="w-full flex flex-col items-center">
+      <%!-- Video on mobile --%>
+      <%!-- NOTE: Please don't look at this CSS for too long, it hurts the eyes.
+                  I had to do it quickly, CSS video cropping was faster than proper cropping in a video editor.
+                  I apologize.
+      --%>
+      <div class="sm:hidden mt-12 rounded shadow overflow-hidden w-[110%]">
+        <video
+          autoplay
+          loop
+          muted
+          playsinline
+          controls
+          controlslist="nofullscreen nodownload noremoteplayback noplaybackrate"
+          disablepictureinpicture
+          class="scale-[1.01475] -mt-[3.8%] -mb-[2%]"
+        >
+          <source src={~p"/videos/demo.webm"} />
+        </video>
+      </div>
+
+      <%!-- Playground on desktop --%>
+      <div class="hidden sm:flex w-full flex-col items-center">
         <div class="my-4 mx-4 text-sm flex items-center gap-2 shrink-0">
           <span class="relative flex h-2.5 w-2.5">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75" />
