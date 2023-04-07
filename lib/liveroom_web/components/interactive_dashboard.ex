@@ -280,7 +280,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
         "relative w-full p-4",
         "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-transparent before:md:hover:bg-gray-500",
         "rounded md:hover:bg-violet-50 overflow-hidden",
-        "cursor-pointer transition-colors duration-300"
+        "cursor-pointer transition-colors duration-300 before:transition-colors before:duration-300"
       ]}
     >
       <.squeleton class="bg-slate-300" />
