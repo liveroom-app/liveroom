@@ -1,9 +1,7 @@
-# fly.toml file generated for liveroom on 2023-03-30T15:20:55+01:00
-
 app = "liveroom"
 kill_signal = "SIGTERM"
 kill_timeout = 5
-primary_region = "mad"
+primary_region = "cdg"
 processes = []
 
 [deploy]
