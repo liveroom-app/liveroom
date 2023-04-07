@@ -24,9 +24,9 @@ defmodule LiveroomWeb.HomeLive do
           controls
           controlslist="nofullscreen nodownload noremoteplayback noplaybackrate"
           disablepictureinpicture
-          class="scale-[1.01475] -mt-[3.8%] -mb-[2%]"
+          class="bg-white"
         >
-          <source src={~p"/videos/demo.webm"} />
+          <source src={~p"/videos/demo.mp4"} />
         </video>
       </div>
 
