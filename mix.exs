@@ -35,6 +35,7 @@ defmodule Liveroom.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:libcluster, "~> 3.3.2"},
       # {:stun, "~> 1.2.7"},
       {:req, "~> 0.3.6"},
       {:plug_canonical_host, "~> 2.0"},

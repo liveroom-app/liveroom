@@ -7,6 +7,8 @@ defmodule Liveroom.Application do
 
   @impl true
   def start(_type, _args) do
+    topologies = Application.get_env(:libcluster, :topologies) || []
+
     children = [
       # Start the Telemetry supervisor
       LiveroomWeb.Telemetry,
@@ -18,10 +20,12 @@ defmodule Liveroom.Application do
       {Finch, name: Liveroom.Finch},
       LiveroomWeb.Presence,
       # Start the Endpoint (http/https)
-      LiveroomWeb.Endpoint
+      LiveroomWeb.Endpoint,
       # LiveroomWeb.Stun
       # Start a worker by calling: Liveroom.Worker.start_link(arg)
       # {Liveroom.Worker, arg}
+      # setup for clustering
+      {Cluster.Supervisor, [topologies, [name: Liveroom.ClusterSupervisor]]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
