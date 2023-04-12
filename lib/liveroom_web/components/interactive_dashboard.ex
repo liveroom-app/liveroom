@@ -120,7 +120,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
           autoplay
           playsinline
           class="w-16 h-16 bg-gray-400 rounded-full shadow-2xl"
-          src={LiveroomWeb.Endpoint.static_url() <> ~p"/videos/alex_avatar_video.webm"}
+          src={LiveroomWeb.Endpoint.static_url() <> ~p"/videos/alex_avatar_video.mp4"}
         />
 
         <.pill_toolbar camera_on={@camera_on} current_msg={@current_msg} myself={@myself} />
