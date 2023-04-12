@@ -11,10 +11,6 @@ defmodule LiveroomWeb.HomeLive do
       <.hero />
 
       <%!-- Video on mobile --%>
-      <%!-- NOTE: Please don't look at this CSS for too long, it hurts the eyes.
-                  I had to do it quickly, CSS video cropping was faster than proper cropping in a video editor.
-                  I apologize.
-      --%>
       <div class="sm:hidden mt-12 rounded shadow overflow-hidden w-[110%]">
         <video
           autoplay
