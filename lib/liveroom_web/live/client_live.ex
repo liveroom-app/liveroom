@@ -3,7 +3,7 @@ defmodule LiveroomWeb.ClientLive do
 
   alias LiveroomWeb.Components.CursorV1
 
-  @color_opacity 50
+  @reduced_opacity 0.5
 
   def render(assigns) do
     ~H"""
@@ -30,7 +30,11 @@ defmodule LiveroomWeb.ClientLive do
           <.user
             :for={meta <- @_liveroom_v1_metas}
             :if={_is_self = meta.socket_id == @_liveroom_v1_socket_id}
-            meta={meta}
+            socket_id={meta.socket_id}
+            phx_ref={meta.phx_ref}
+            name={meta.name}
+            color={meta.color}
+            type={meta.type}
           />
         </ul>
       </div>
@@ -42,7 +46,11 @@ defmodule LiveroomWeb.ClientLive do
           <.user
             :for={meta <- @_liveroom_v1_metas}
             :if={_is_other_user = meta.socket_id != @_liveroom_v1_socket_id}
-            meta={meta}
+            socket_id={meta.socket_id}
+            phx_ref={meta.phx_ref}
+            name={meta.name}
+            color={meta.color}
+            type={meta.type}
           />
         </ul>
       </div>
@@ -63,23 +71,36 @@ defmodule LiveroomWeb.ClientLive do
 
   ### Components
 
-  attr :meta, :list, required: true
+  attr :socket_id, :string, required: true
+  attr :phx_ref, :string, required: true
+  attr :name, :string, required: true
+  attr :color, :string, required: true
+  attr :type, :string, required: true
 
   def user(assigns) do
     ~H"""
     <li
-      id={"user_" <> @meta.socket_id}
+      id={"user_" <> @socket_id}
       class="flex flex-col md:flex-row md:flex-wrap items-baseline gap-y-2 gap-x-8"
+      phx-hook="AnimateBackgroundHook"
+      data-phxref={@phx_ref}
+      data-opacity={reduced_opacity()}
+      data-opacityanimated={1}
+      data-boxshadow="none"
+      data-boxshadowanimated="none"
+      class="flex flex-col sm:flex-row sm:flex-wrap items-baseline gap-y-2 gap-x-8 transition-all ease-in-out duration-300"
+      style={"opacity: #{reduced_opacity()};"}
     >
       <p
         class="w-fit py-1 p-2.5 font-semibold select-all rounded-full"
-        style={"background-color: #{@meta.color}#{color_opacity()}"}
+        style={"background-color: #{@color};"}
       >
-        <%= @meta.name %>
+        <%= @name %>
       </p>
-      <p class="font-medium font-mono select-all"><%= @meta.type %></p>
-      <p class="font-medium font-mono select-all"><%= @meta.socket_id %></p>
-      <p class="font-medium font-mono select-all"><%= @meta.phx_ref %></p>
+
+      <p class="font-medium font-mono select-all"><%= @type %></p>
+      <p class="font-medium font-mono select-all"><%= @socket_id %></p>
+      <p class="font-medium font-mono select-all"><%= @phx_ref %></p>
     </li>
     """
   end
@@ -92,5 +113,5 @@ defmodule LiveroomWeb.ClientLive do
 
   ### Helpers
 
-  def color_opacity, do: @color_opacity
+  def reduced_opacity, do: @reduced_opacity
 end
