@@ -9,8 +9,7 @@ defmodule LiveroomWeb.AdminLive do
     ~H"""
     <div
       id="admin_live"
-      phx-hook="TrackCursorsHook"
-      class="relative min-h-[100dvh] flex flex-col items-stretch space-y-8 pb-32 bg-slate-50"
+      class="min-h-[100dvh] flex flex-col items-stretch space-y-8 pb-32 bg-slate-50"
     >
       <h1
         class="flex items-baseline gap-1 py-4 px-8 text-xl shadow"
@@ -28,6 +27,7 @@ defmodule LiveroomWeb.AdminLive do
           :for={meta <- @_liveroom_v1_metas}
           :if={meta.socket_id != @_liveroom_v1_socket_id}
           meta={meta}
+          self_meta={Enum.find(@_liveroom_v1_metas, &(&1.socket_id == @_liveroom_v1_socket_id))}
           socket_id={@_liveroom_v1_socket_id}
           inner_width={@analytics_data.inner_width}
         />
@@ -36,10 +36,11 @@ defmodule LiveroomWeb.AdminLive do
     """
   end
 
-  attr(:meta, :map, required: true)
-  attr(:socket_id, :string, required: true)
-  attr(:inner_width, :integer, required: true)
-  attr(:rest, :global)
+  attr :meta, :map, required: true
+  attr :self_meta, :map, required: true
+  attr :socket_id, :string, required: true
+  attr :inner_width, :integer, required: true
+  attr :rest, :global
 
   def presence_card(assigns) do
     assigns =
@@ -104,11 +105,14 @@ defmodule LiveroomWeb.AdminLive do
         <%!-- cursors playground --%>
         <div class="flex flex-col items-center pt-4 pb-2 px-2">
           <div
+            id={"cursors_playground_" <> @meta.socket_id}
+            phx-hook="TrackCursorsHook"
+            data-mode="container"
             style={"width: #{@view_width}px; height: #{@view_height}px;"}
-            class="relative bg-white/80 py-4 px-4 rounded shadow-inner overflow-hidden"
+            class="relative cursor-none bg-white/80 rounded shadow-inner overflow-hidden"
           >
+            <%!-- :if={@meta.socket_id != @socket_id} --%>
             <CursorV1.render
-              :if={@meta.socket_id != @socket_id}
               id={"cursor_v1_" <> @meta.socket_id}
               socket_id={@socket_id}
               meta_socket_id={@meta.socket_id}
@@ -116,6 +120,18 @@ defmodule LiveroomWeb.AdminLive do
               meta_y={@meta.y}
               meta_name={@meta.name}
               meta_color={@meta.color}
+              mode={:container}
+              container_width={@view_width}
+              container_height={@view_height}
+            />
+            <CursorV1.render
+              id={"cursor_v1_" <> @meta.socket_id <> "_self"}
+              socket_id={@socket_id}
+              meta_socket_id={@self_meta.socket_id}
+              meta_x={@self_meta.x}
+              meta_y={@self_meta.y}
+              meta_name={@self_meta.name}
+              meta_color={@self_meta.color}
               mode={:container}
               container_width={@view_width}
               container_height={@view_height}
