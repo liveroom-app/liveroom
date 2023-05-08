@@ -2,6 +2,7 @@ defmodule LiveroomWeb.AdminLive do
   use LiveroomWeb, :live_view
 
   alias LiveroomWeb.Components.CursorV1
+  alias LiveroomWeb.Components.UserBanner
 
   @reduced_opacity 0.5
 
@@ -19,16 +20,7 @@ defmodule LiveroomWeb.AdminLive do
         />
       </div>
 
-      <h1
-        class="fixed bottom-0 inset-x-0 flex items-baseline gap-1 py-4 px-8 text-xl"
-        style={@_liveroom_v1_color && "background-color: #{@_liveroom_v1_color}50"}
-      >
-        <span>Welcome</span>
-        <span class="text-xl font-semibold">
-          <%= @_liveroom_v1_name %>
-        </span>
-        <span>👋</span>
-      </h1>
+      <UserBanner.render class="z-[100]" name={@_liveroom_v1_name} color={@_liveroom_v1_color} />
     </div>
     """
   end
@@ -106,7 +98,7 @@ defmodule LiveroomWeb.AdminLive do
             phx-hook="TrackCursorsHook"
             data-mode="container"
             style={"width: #{@view_width}px; height: #{@view_height}px;"}
-            class="relative cursor-none bg-white/80 rounded shadow-inner overflow-hidden"
+            class="relative bg-white/80 rounded shadow-inner overflow-hidden"
           >
             <%!-- :if={@meta.socket_id != @socket_id} --%>
             <CursorV1.render
