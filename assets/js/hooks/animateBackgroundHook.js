@@ -1,5 +1,3 @@
-const TIMEOUT_DELAY = 10 * 1000;
-
 export const AnimateBackgroundHook = {
   mounted() {
     this.observer = new MutationObserver((mutations) => {
@@ -19,28 +17,26 @@ export const AnimateBackgroundHook = {
   },
 
   destroyed() {
-    this.observer.disconnect();
-    if (this.timeout) clearTimeout(this.timeout);
+    this.observer?.disconnect();
+    clearTimeout(this.timeout);
   },
 
   animate() {
-    const opacity = this.el.dataset.opacity;
-
-    this.el.style.opacity = 1;
-    this.el.style.boxShadow = undefined;
+    this.el.style.opacity = this.el.dataset.opacityanimated;
+    this.el.style.boxShadow = this.el.dataset.boxshadowanimated;
 
     this.restartTimeout(() => {
-      this.el.style.opacity = opacity;
-      this.el.style.boxShadow = "none";
+      this.el.style.opacity = this.el.dataset.opacity;
+      this.el.style.boxShadow = this.el.dataset.boxshadow;
     });
   },
 
   restartTimeout(handler) {
-    if (this.timeout) clearTimeout(this.timeout);
+    clearTimeout(this.timeout);
 
     this.timeout = setTimeout(() => {
-      this.timeout = null;
       handler();
-    }, TIMEOUT_DELAY);
+      this.timeout = null;
+    }, this.el.dataset.timeout || 5000);
   },
 };

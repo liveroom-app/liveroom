@@ -3,7 +3,7 @@ defmodule LiveroomWeb.AdminLive do
 
   alias LiveroomWeb.Components.CursorV1
 
-  @color_opacity 0.5
+  @reduced_opacity 0.5
 
   def render(assigns) do
     ~H"""
@@ -65,9 +65,12 @@ defmodule LiveroomWeb.AdminLive do
       id={"presence_card_" <> @meta.socket_id}
       phx-hook="AnimateBackgroundHook"
       data-phxref={@meta.phx_ref}
-      data-opacity={color_opacity()}
-      class="rounded-xl shadow-xl transition-all ease-in-out duration-300"
-      style={"background-color: #{@meta.color}; opacity: #{color_opacity()};"}
+      data-opacity={reduced_opacity()}
+      data-opacityanimated={1}
+      data-boxshadow="none"
+      data-boxshadowanimated=""
+      class="rounded-xl shadow-md transition-all ease-in-out duration-300"
+      style={"background-color: #{@meta.color}; opacity: #{reduced_opacity()};"}
     >
       <div class="flex flex-col items-stretch">
         <%!-- name & screen size --%>
@@ -81,13 +84,13 @@ defmodule LiveroomWeb.AdminLive do
             />
           </p>
 
-          <p class="text-sm">
+          <p class="text-sm font-mono">
             <%= @meta.inner_width %> x <%= @meta.inner_height %>
           </p>
         </div>
 
         <%!-- socket_id & phx_ref --%>
-        <table class="w-fit my-1 mx-4 text-xs text-neutral-800/75">
+        <table class="w-fit my-1 mx-2 text-xs text-neutral-800/75">
           <tr class="[&_td]:px-2">
             <td class="select-none">socket_id</td>
             <td class="font-medium font-mono select-all"><%= @meta.socket_id %></td>
@@ -132,5 +135,5 @@ defmodule LiveroomWeb.AdminLive do
 
   ### Helpers
 
-  def color_opacity, do: @color_opacity
+  def reduced_opacity, do: @reduced_opacity
 end
