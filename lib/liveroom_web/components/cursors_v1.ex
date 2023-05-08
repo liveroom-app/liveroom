@@ -19,8 +19,9 @@ defmodule LiveroomWeb.Components.CursorV1 do
 
   def render(assigns) do
     assigns =
-      assign(
-        assigns,
+      assigns
+      |> assign(is_self: assigns.socket_id == assigns.meta_socket_id)
+      |> assign(
         case assigns.mode do
           :full_screen ->
             [
@@ -72,12 +73,19 @@ defmodule LiveroomWeb.Components.CursorV1 do
             ]}
           /> --%>
 
-      <.cursor :if={@meta_socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
+      <.cursor class="z-50 absolute top-0 left-0 shadow-2xl" />
 
+      <%!-- data-isself={@is_self} --%>
       <span
-        :if={@meta_socket_id != @socket_id}
         style={"background-color: #{@meta_color};"}
-        class="z-50 mt-[20px] ml-[25px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
+        class={
+          [
+            "z-50 mt-[20px] ml-[25px] py-1 px-3",
+            "text-sm text-brand font-semibold whitespace-nowrap",
+            "rounded-full shadow-2xl"
+            # "data-[isself]:bg-stone-950 data-[isself]:text-stone-50"
+          ]
+        }
       >
         <%= @meta_name %>
       </span>

@@ -10,26 +10,41 @@ export const TrackCursorsHook = {
   mounted() {
     // void import("../../vendor/lodash_debounce.js").then(
     //   ({ default: _debounce }) => {
+
     // Mouse move
-    document.addEventListener(
-      "mousemove",
-      // _debounce((e) => {
-      (e) => {
-        const x = Number((e.pageX / window.innerWidth) * 100).toFixed(2); // in %
-        const y = Number((e.pageY / window.innerHeight) * 100).toFixed(2); // in %
+    switch (this.el.dataset.mode) {
+      case "container": {
+        this.el.addEventListener(
+          "mousemove",
+          // _debounce((e) => {
+          (e) => {
+            const xRatio = e.layerX / this.el.offsetWidth;
+            const x = Number(xRatio * 100).toFixed(2); // in %
 
-        this.pushEvent("liveroom-cursor-moved", { x, y });
+            const yRatio = e.layerY / this.el.offsetHeight;
+            const y = Number(yRatio * 100).toFixed(2); // in %
+
+            this.pushEvent("liveroom-cursor-moved", { x, y });
+          }
+          // }, DEBOUNCE)
+        );
+        break;
       }
-      // }, DEBOUNCE)
-    );
+      case "fullscreen": {
+        document.addEventListener(
+          "mousemove",
+          // _debounce((e) => {
+          (e) => {
+            const x = Number((e.pageX / window.innerWidth) * 100).toFixed(2); // in %
+            const y = Number((e.pageY / window.innerHeight) * 100).toFixed(2); // in %
 
-    // Mouse click
-    document.addEventListener("mousedown", (e) => {
-      this.pushEvent("liveroom-cursor-click-down");
-    });
-    document.addEventListener("mouseup", (e) => {
-      this.pushEvent("liveroom-cursor-click-up");
-    });
+            this.pushEvent("liveroom-cursor-moved", { x, y });
+          }
+          // }, DEBOUNCE)
+        );
+        break;
+      }
+    }
 
     // Resize window
     window.addEventListener(

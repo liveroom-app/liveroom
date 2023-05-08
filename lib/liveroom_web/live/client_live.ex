@@ -10,6 +10,7 @@ defmodule LiveroomWeb.ClientLive do
     <div
       id="client_live"
       phx-hook="TrackCursorsHook"
+      data-mode="fullscreen"
       class="relative min-h-[100dvh] flex flex-col pb-32 bg-slate-50 overflow-hidden"
     >
       <h1
@@ -57,6 +58,7 @@ defmodule LiveroomWeb.ClientLive do
 
       <CursorV1.render
         :for={meta <- @_liveroom_v1_metas}
+        :if={meta.socket_id != @_liveroom_v1_socket_id}
         id={"cursor_v1_" <> meta.socket_id}
         socket_id={@_liveroom_v1_socket_id}
         meta_socket_id={meta.socket_id}
@@ -81,14 +83,13 @@ defmodule LiveroomWeb.ClientLive do
     ~H"""
     <li
       id={"user_" <> @socket_id}
-      class="flex flex-col md:flex-row md:flex-wrap items-baseline gap-y-2 gap-x-8"
       phx-hook="AnimateBackgroundHook"
       data-phxref={@phx_ref}
       data-opacity={reduced_opacity()}
       data-opacityanimated={1}
       data-boxshadow="none"
       data-boxshadowanimated="none"
-      class="flex flex-col sm:flex-row sm:flex-wrap items-baseline gap-y-2 gap-x-8 transition-all ease-in-out duration-300"
+      class="flex flex-col sm:flex-row sm:flex-wrap items-baseline gap-y-2 gap-x-8 transition-all ease-out duration-300"
       style={"opacity: #{reduced_opacity()};"}
     >
       <p
