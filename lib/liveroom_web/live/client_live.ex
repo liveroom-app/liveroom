@@ -11,19 +11,8 @@ defmodule LiveroomWeb.ClientLive do
       id="client_live"
       phx-hook="TrackCursorsHook"
       data-mode="fullscreen"
-      class="relative min-h-[100dvh] flex flex-col pb-32 bg-slate-50 overflow-hidden"
+      class="relative min-h-[100dvh] flex flex-col bg-slate-50 overflow-hidden"
     >
-      <h1
-        class="flex items-baseline gap-1 py-4 px-8 text-xl shadow"
-        style={"background-color: #{@_liveroom_v1_color}"}
-      >
-        <span>Welcome</span>
-        <span class="text-xl font-semibold">
-          <%= @_liveroom_v1_name %>
-        </span>
-        <span>👋</span>
-      </h1>
-
       <%!-- You --%>
       <div class="space-y-8 mt-8 px-8">
         <h2 class="font-semibold">You</h2>
@@ -41,7 +30,7 @@ defmodule LiveroomWeb.ClientLive do
       </div>
 
       <%!-- Other users --%>
-      <div class="space-y-8 mt-16 px-8">
+      <div class="space-y-8 mt-16 mb-32 px-8">
         <h2 class="font-semibold">Other users in the session</h2>
         <ul id="other_users" class="space-y-8 text-sm text-neutral-800/75">
           <.user
@@ -55,6 +44,17 @@ defmodule LiveroomWeb.ClientLive do
           />
         </ul>
       </div>
+
+      <h1
+        class="fixed bottom-0 inset-x-0 flex items-baseline gap-1 py-4 px-8 text-xl"
+        style={"background-color: #{@_liveroom_v1_color}50"}
+      >
+        <span>Welcome</span>
+        <span class="text-xl font-semibold">
+          <%= @_liveroom_v1_name %>
+        </span>
+        <span>👋</span>
+      </h1>
 
       <CursorV1.render
         :for={meta <- @_liveroom_v1_metas}

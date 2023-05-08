@@ -7,22 +7,8 @@ defmodule LiveroomWeb.AdminLive do
 
   def render(assigns) do
     ~H"""
-    <div
-      id="admin_live"
-      class="min-h-[100dvh] flex flex-col items-stretch space-y-8 pb-32 bg-slate-50"
-    >
-      <h1
-        class="flex items-baseline gap-1 py-4 px-8 text-xl shadow"
-        style={@_liveroom_v1_color && "background-color: #{@_liveroom_v1_color}"}
-      >
-        <span>Welcome</span>
-        <span class="text-xl font-semibold">
-          <%= @_liveroom_v1_name %>
-        </span>
-        <span>👋</span>
-      </h1>
-
-      <div class="flex flex-reverse flex-wrap items-start gap-8 px-8">
+    <div id="admin_live" class="min-h-[100dvh] flex flex-col items-stretch space-y-8 bg-slate-50">
+      <div class="flex flex-reverse flex-wrap items-start gap-8 mt-8 mb-32 px-8">
         <.presence_card
           :for={meta <- @_liveroom_v1_metas}
           :if={meta.socket_id != @_liveroom_v1_socket_id}
@@ -32,6 +18,17 @@ defmodule LiveroomWeb.AdminLive do
           inner_width={@analytics_data.inner_width}
         />
       </div>
+
+      <h1
+        class="fixed bottom-0 inset-x-0 flex items-baseline gap-1 py-4 px-8 text-xl"
+        style={@_liveroom_v1_color && "background-color: #{@_liveroom_v1_color}50"}
+      >
+        <span>Welcome</span>
+        <span class="text-xl font-semibold">
+          <%= @_liveroom_v1_name %>
+        </span>
+        <span>👋</span>
+      </h1>
     </div>
     """
   end
@@ -65,7 +62,7 @@ defmodule LiveroomWeb.AdminLive do
     <div
       id={"presence_card_" <> @meta.socket_id}
       phx-hook="AnimateBackgroundHook"
-      data-phxref={@meta.phx_ref}
+      data-phxref={@meta.phx_ref <> @self_meta.phx_ref}
       data-opacity={reduced_opacity()}
       data-opacityanimated={1}
       data-boxshadow="none"
