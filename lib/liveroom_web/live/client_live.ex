@@ -2,6 +2,7 @@ defmodule LiveroomWeb.ClientLive do
   use LiveroomWeb, :live_view
 
   alias LiveroomWeb.Components.CursorV1
+  alias LiveroomWeb.Components.UserBanner
 
   @reduced_opacity 0.5
 
@@ -45,17 +46,6 @@ defmodule LiveroomWeb.ClientLive do
         </ul>
       </div>
 
-      <h1
-        class="fixed bottom-0 inset-x-0 flex items-baseline gap-1 py-4 px-8 text-xl"
-        style={"background-color: #{@_liveroom_v1_color}50"}
-      >
-        <span>Welcome</span>
-        <span class="text-xl font-semibold">
-          <%= @_liveroom_v1_name %>
-        </span>
-        <span>👋</span>
-      </h1>
-
       <CursorV1.render
         :for={meta <- @_liveroom_v1_metas}
         :if={meta.socket_id != @_liveroom_v1_socket_id}
@@ -67,6 +57,8 @@ defmodule LiveroomWeb.ClientLive do
         meta_name={meta.name}
         meta_color={meta.color}
       />
+
+      <UserBanner.render name={@_liveroom_v1_name} color={@_liveroom_v1_color} />
     </div>
     """
   end
