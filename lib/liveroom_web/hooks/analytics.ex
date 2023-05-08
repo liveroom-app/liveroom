@@ -78,6 +78,8 @@ defmodule LiveroomWeb.Hooks.Analytics do
         user_agent: get_connect_info(socket, :user_agent),
         referrer:
           get_connect_params(socket)["_live_referer"] || get_connect_params(socket)["referrer"],
+        inner_width: get_connect_params(socket)["inner_width"],
+        inner_height: get_connect_params(socket)["inner_height"],
         screen_width: get_connect_params(socket)["screen_width"],
         screen_height: get_connect_params(socket)["screen_height"],
         language: get_connect_params(socket)["language"]

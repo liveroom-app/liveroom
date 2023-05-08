@@ -85,6 +85,10 @@ defmodule LiveroomWeb.Hooks.Liveroom do
            broadcast_user_changes(socket, %{is_halo_key_pressed: false})
            {:halt, socket}
 
+         "liveroom-window-resize", _params, socket ->
+           #  Don-t handle this one for now
+           {:halt, socket}
+
          _event, _params, socket ->
            {:cont, socket}
        end

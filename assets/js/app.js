@@ -35,8 +35,8 @@ let liveSocket = new LiveSocket("/live", Socket, {
     _csrf_token: csrfToken,
     // NOTE: Data needed for analytics.
     referrer: document.referrer,
-    // screen_width: window.innerWidth,
-    // screen_height: window.innerHeight,
+    inner_width: window.innerWidth,
+    inner_height: window.innerHeight,
     screen_width: window.screen.width,
     screen_height: window.screen.height,
     language: window.navigator.language,
