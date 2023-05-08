@@ -27,8 +27,17 @@ defmodule LiveroomWeb.Router do
 
     live_session :default, on_mount: [Hooks.Analytics, Hooks.Liveroom] do
       live "/", HomeLive, :index
+
       live "/new", Room.NewLive, :new
       live "/room/:room_slug", Room.ShowLive, :new
+    end
+
+    live_session :_liveroom_v1_admin, on_mount: [Hooks.Analytics, {Hooks.LiveroomV1, :admin}] do
+      live "/session/:session_id/admin", AdminLive
+    end
+
+    live_session :_liveroom_v1_client, on_mount: [Hooks.Analytics, {Hooks.LiveroomV1, :client}] do
+      live "/session/:session_id/client", ClientLive
     end
   end
 
