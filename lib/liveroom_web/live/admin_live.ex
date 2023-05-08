@@ -84,7 +84,7 @@ defmodule LiveroomWeb.AdminLive do
             />
           </p>
 
-          <p class="text-sm font-mono">
+          <p class="text-xs font-medium font-mono">
             <%= @meta.inner_width %> x <%= @meta.inner_height %>
           </p>
         </div>
