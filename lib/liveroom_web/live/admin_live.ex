@@ -134,8 +134,19 @@ defmodule LiveroomWeb.AdminLive do
 
   ### Server
 
-  def mount(_params, _session, socket) do
-    {:ok, socket, layout: false}
+  def mount(
+        %{"session_id" => session_id} = _params,
+        _session,
+        %{assigns: %{_liveroom_v1_name: name}} = socket
+      ) do
+    {:ok,
+     assign(socket,
+       page_title:
+         case name do
+           nil -> session_id
+           name -> name <> " (admin) - " <> session_id
+         end
+     ), layout: false}
   end
 
   ### Helpers
