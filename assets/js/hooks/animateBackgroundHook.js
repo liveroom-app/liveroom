@@ -37,6 +37,6 @@ export const AnimateBackgroundHook = {
     this.timeout = setTimeout(() => {
       handler();
       this.timeout = null;
-    }, this.el.dataset.timeout || 5000);
+    }, this.el.dataset.timeout || 300);
   },
 };
