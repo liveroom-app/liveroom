@@ -1,92 +1,106 @@
-# Find eligible builder and runner images on Docker Hub. We use Ubuntu/Debian
-# instead of Alpine to avoid DNS resolution issues in production.
-#
-# https://hub.docker.com/r/hexpm/elixir/tags?page=1&name=ubuntu
-# https://hub.docker.com/_/ubuntu?tab=tags
-#
-# This file is based on these images:
-#
-#   - https://hub.docker.com/r/hexpm/elixir/tags - for the build image
-#   - https://hub.docker.com/_/debian?tab=tags&page=1&name=bullseye-20230227-slim - for the release image
-#   - https://pkgs.org/ - resource for finding needed packages
-#   - Ex: hexpm/elixir:1.14.3-erlang-25.3-debian-bullseye-20230227-slim
-#
+
 ARG ELIXIR_VERSION="1.14.3"
 ARG ERLANG_VERSION="25.3"
-ARG DEBIAN_VERSION="bullseye-20230227-slim"
 ARG ALPINE_VERSION="3.17.2"
 
-# ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-debian-${DEBIAN_VERSION}"
+# NOTE: "We use Ubuntu/Debian instead of Alpine to avoid DNS resolution issues in production."
+#       from generated Dockerfile by Phoenix.
+#       For the moment, let's try Alpine anyway.
+#       Check which version is available on https://hub.docker.com/r/hexpm/elixir/tags?page=1&name=1.14.3-erlang-25.3-alpine.
+#
+# ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-debian-bullseye-20210902-slim"
+# ARG RUNNER_IMAGE="debian:bullseye-20210902-slim"
+#
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION}"
 ARG RUNNER_IMAGE="alpine:${ALPINE_VERSION}"
 
-FROM ${BUILDER_IMAGE} as builder
+############
+### deps ###
+############
+FROM ${BUILDER_IMAGE} AS deps
 
-# # install build dependencies
-# RUN apt-get update -y && apt-get install -y build-essential git \
-#   && apt-get clean && rm -f /var/lib/apt/lists/*_*
-
-# prepare build dir
 WORKDIR /app
+RUN apk add --no-progress --update git build-base
 
-# install hex + rebar
-RUN mix local.hex --force && \
-  mix local.rebar --force
+ARG MIX_ENV="prod"
 
-# set build ENV
-ENV MIX_ENV="prod"
+# install rebar & hex
+RUN mix local.rebar --force && \
+    mix local.hex --force
 
-# install mix dependencies
+# install elixir dependencies
 COPY mix.exs mix.lock ./
-RUN mix deps.get --only $MIX_ENV
-RUN mkdir config
+RUN mix deps.get --only ${MIX_ENV}
 
-# copy compile-time config files before we compile dependencies
-# to ensure any relevant config change will trigger the dependencies
-# to be re-compiled.
+# compile elixir dependencies
 COPY config/config.exs config/${MIX_ENV}.exs config/
 RUN mix deps.compile
-RUN mix assets.setup
 
-COPY priv priv
+####################
+### build-elixir ###
+####################
+FROM deps AS build-elixir
 
 COPY lib lib
 
-COPY assets assets
-
-# compile assets
-RUN mix assets.deploy
-
-# Compile the release
+ARG MIX_ENV="prod"
 RUN mix compile
 
-# Changes to config/runtime.exs don't require recompiling the code
-COPY config/runtime.exs config/
+####################
+### build-assets ###
+####################
+FROM deps AS build-assets
+
+# # install Nodejs
+# ARG NODE_VERSION="17.9.0"
+# RUN apk add --update nodejs-current=~${NODE_VERSION} npm && npm i -g npm
+
+# # install npm dependencies
+# COPY assets/package.json assets/package-lock.json assets/
+# RUN npm install --prefix assets --no-fund --no-audit
+
+ARG MIX_ENV="prod"
+
+# install Tailwind & Esbuild
+RUN mix assets.setup
+
+COPY priv priv
+# NOTE: 'lib' is needed to see Tailwind classes usage in the code
+COPY lib lib
+COPY assets assets
+
+RUN mix assets.deploy
+
+###############
+### release ###
+###############
+FROM build-elixir AS release
 
 COPY rel rel
+COPY --from=build-assets /app/priv priv
+# NOTE: Changes to config/runtime.exs don't require recompiling the code
+COPY config/runtime.exs config/
+
+ARG MIX_ENV="prod"
 RUN mix release
 
-# start a new build stage so that the final image will only contain
-# the compiled release and other runtime necessities
+############################
+### runner (final image) ###
+############################
 FROM ${RUNNER_IMAGE}
-
-# RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales \
-#   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 WORKDIR /app
 RUN chown nobody /app
 RUN apk add --no-cache libstdc++ openssl ncurses-libs
 
-# Set the locale
+# NOTE: Set the locale
 # RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-ENV MIX_ENV="prod"
-
-# Only copy the final release from the build stage
-COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/liveroom ./
+ARG MIX_ENV="prod"
+COPY --from=release --chown=nobody:root /app/_build/${MIX_ENV}/rel/liveroom .
 
 USER nobody
 CMD ["/app/bin/server"]

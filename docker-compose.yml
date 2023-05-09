@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+    restart: always
+    ports:
+      - "${PORT:-4001}:4000"
+    environment:
+      PORT: 4000
+      # PHX_HOST: localhost
+      PHX_HOST: liveroom.eu.ngrok.io
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      DATABASE_URL: postgres://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      # UMAMI_TRACKING_ENABLED: ${UMAMI_TRACKING_ENABLED}
+      UMAMI_TRACKING_ENABLED: "true"
+      UMAMI_BASE_URL: http://analytics:3000
+      UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID}
+      # DISCORD_ENABLED: ${DISCORD_ENABLED}
+      # DISCORD_WEBHOOK_URL_APP_LOGS: ${DISCORD_WEBHOOK_URL_APP_LOGS}
+      # DISCORD_WEBHOOK_URL_APP_NOTIFICATIONS: ${DISCORD_WEBHOOK_URL_APP_NOTIFICATIONS}
+      # SENDINBLUE_API_KEY: ${SENDINBLUE_API_KEY}
+      # ADMIN_BASIC_AUTH_USERNAME: ${ADMIN_BASIC_AUTH_USERNAME}
+      # ADMIN_BASIC_AUTH_PASSWORD: ${ADMIN_BASIC_AUTH_PASSWORD}
+
+  db:
+    image: postgres:14-alpine
+    restart: always
+    ports:
+      - "${DATABASE_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      # POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_MULTIPLE_DATABASES: ${DATABASE_NAME},${DATABASE_NAME}_umami
+
+  analytics:
+    image: ghcr.io/umami-software/umami:postgresql-v1.40.0
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      REMOVE_TRAILING_SLASH: 1
+      DATABASE_TYPE: postgresql
+      DATABASE_URL: postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}_umami
+      HASH_SALT: gsXU6goHkGClTgDdrot7p+gpV687P6U1/H6MLbewfNDY2n+PeUpqQvDExyFbu7lU
+      CLIENT_IP_HEADER: "umami-client-ip"
+
+volumes:
+  postgres-data:
