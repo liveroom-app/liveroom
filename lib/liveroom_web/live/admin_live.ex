@@ -8,7 +8,7 @@ defmodule LiveroomWeb.AdminLive do
 
   def render(assigns) do
     ~H"""
-    <div id="admin_live" class="min-h-[100dvh] flex flex-col items-stretch space-y-8 bg-slate-50">
+    <div id="admin_live" class="min-h-[100dvh] flex flex-col items-stretch space-y-8 bg-slate-100">
       <div class="flex flex-reverse flex-wrap items-start gap-8 mt-8 mb-32 px-8">
         <.presence_card
           :for={meta <- @_liveroom_v1_metas}
@@ -39,10 +39,10 @@ defmodule LiveroomWeb.AdminLive do
         # view_width: min(max(assigns.meta.inner_width, min_width), max_width)
         #
         # NOTE: Formula is `client_width * final_ratio` with
-        #        - final_ratio = 90vw / 3840
+        #        - final_ratio = 90vw / 3200
         #        - 1vw = admin_width / 100
         view_width:
-          (assigns.meta.inner_width * (90 / 1200) * (assigns.inner_width / 100))
+          (assigns.meta.inner_width * (90 / 3200) * (assigns.inner_width / 100))
           |> max(_min_width = 150)
           |> min(_max_width = 90 / 100 * assigns.inner_width)
           |> round()
@@ -59,46 +59,46 @@ defmodule LiveroomWeb.AdminLive do
       data-opacityanimated={1}
       data-boxshadow="none"
       data-boxshadowanimated=""
-      class="rounded-xl shadow-md transition-all ease-in-out duration-300"
-      style={"background-color: #{@meta.color}; opacity: #{reduced_opacity()};"}
+      class="bg-white rounded-xl shadow-md overflow-hidden transition-all ease-in-out duration-300"
+      style={"opacity: #{reduced_opacity()};"}
     >
       <div class="flex flex-col items-stretch">
-        <%!-- name & screen size --%>
-        <div class="flex flex-wrap justify-between items-baseline gap-x-16 py-3 px-4">
-          <p class="flex items-center space-x-1">
-            <span class="font-semibold select-all"><%= @meta.name %></span>
-            <.icon
-              :if={@meta.type == :admin}
-              name="hero-shield-check-solid"
-              class="block w-[18px] h-[18px] bg-neutral-800"
-            />
-          </p>
-
-          <p class="text-xs font-medium font-mono">
-            <%= @meta.inner_width %> x <%= @meta.inner_height %>
-          </p>
+        <div class="pb-2">
+          <%!-- name & screen size --%>
+          <div class="flex flex-wrap justify-between items-baseline gap-x-16 py-3 px-4">
+            <p class="flex items-center space-x-1">
+              <span class="font-semibold select-all"><%= @meta.name %></span>
+              <.icon
+                :if={@meta.type == :admin}
+                name="hero-shield-check-solid"
+                class="block w-[18px] h-[18px] bg-neutral-800"
+              />
+            </p>
+            <p class="text-xs font-medium font-mono">
+              <%= @meta.inner_width %> x <%= @meta.inner_height %>
+            </p>
+          </div>
+          <%!-- socket_id & phx_ref --%>
+          <table class="w-fit my-1 mx-2 text-xs text-neutral-800/75">
+            <tr class="[&_td]:px-2">
+              <td class="select-none">socket_id</td>
+              <td class="font-medium font-mono select-all"><%= @meta.socket_id %></td>
+            </tr>
+            <tr class="[&_td]:px-2">
+              <td class="select-none">phx_ref</td>
+              <td class="font-medium font-mono select-all"><%= @meta.phx_ref %></td>
+            </tr>
+          </table>
         </div>
 
-        <%!-- socket_id & phx_ref --%>
-        <table class="w-fit my-1 mx-2 text-xs text-neutral-800/75">
-          <tr class="[&_td]:px-2">
-            <td class="select-none">socket_id</td>
-            <td class="font-medium font-mono select-all"><%= @meta.socket_id %></td>
-          </tr>
-          <tr class="[&_td]:px-2">
-            <td class="select-none">phx_ref</td>
-            <td class="font-medium font-mono select-all"><%= @meta.phx_ref %></td>
-          </tr>
-        </table>
-
         <%!-- cursors playground --%>
-        <div class="flex flex-col items-center pt-4 pb-2 px-2">
+        <div class="flex flex-col items-center p-2">
           <div
             id={"cursors_playground_" <> @meta.socket_id}
             phx-hook="TrackCursorsHook"
             data-mode="container"
-            style={"width: #{@view_width}px; height: #{@view_height}px;"}
-            class="relative bg-white/80 rounded shadow-inner overflow-hidden"
+            style={"width: #{@view_width}px; height: #{@view_height}px; background-color: #{@meta.color}30; border: solid 2px #{@meta.color};"}
+            class="relative rounded overflow-hidden"
           >
             <%!-- :if={@meta.socket_id != @socket_id} --%>
             <CursorV1.render
