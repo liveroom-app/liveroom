@@ -4,7 +4,7 @@ defmodule LiveroomWeb.AdminLive do
   alias LiveroomWeb.Components.CursorV1
   alias LiveroomWeb.Components.UserBanner
 
-  @reduced_opacity 0.5
+  @reduced_opacity 0.75
 
   def render(assigns) do
     ~H"""
@@ -59,7 +59,7 @@ defmodule LiveroomWeb.AdminLive do
       data-opacityanimated={1}
       data-boxshadow="none"
       data-boxshadowanimated=""
-      class="bg-white rounded-xl shadow-md overflow-hidden transition-all ease-in-out duration-300"
+      class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300"
       style={"opacity: #{reduced_opacity()};"}
     >
       <div class="flex flex-col items-stretch">

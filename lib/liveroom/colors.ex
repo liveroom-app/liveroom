@@ -50,11 +50,13 @@ defmodule Liveroom.Colors do
   end
 
   def get_random_color(type) when type in [:admin, "admin"] do
-    Enum.random(@admin_colors)
+    # Enum.random(@admin_colors)
+    Enum.random(@colors)
   end
 
   def get_random_color(type) when type in [:client, "client"] do
-    Enum.random(@client_colors)
+    # Enum.random(@client_colors)
+    Enum.random(@colors)
   end
 
   # def get_hsl(string) do
