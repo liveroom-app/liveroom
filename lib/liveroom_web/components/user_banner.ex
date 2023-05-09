@@ -10,7 +10,7 @@ defmodule LiveroomWeb.Components.UserBanner do
     <div class={[
       "fixed bottom-0 inset-x-0",
       "flex justify-center items-center py-6 px-6",
-      "bg-slate-100 border-t border-slate-200",
+      "bg-white border-t border-slate-200",
       "shadow-2xl",
       @class
     ]}>
