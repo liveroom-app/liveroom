@@ -44,7 +44,7 @@ defmodule LiveroomWeb.AdminLive do
         #        - final_ratio = 90vw / 3200
         #        - 1vw = admin_width / 100
         view_width:
-          (assigns.meta.inner_width * (90 / 2500) * (assigns.inner_width / 100))
+          (assigns.meta.inner_width * (90 / 1920) * (assigns.inner_width / 100))
           |> max(_min_width = 150)
           |> min(_max_width = 90 / 100 * assigns.inner_width)
           |> round()
