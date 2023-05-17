@@ -1,0 +1,164 @@
+<!-- SaaS B2B product landing page demo -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liveroom Demo</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=SF+Pro+Text"
+    />
+
+    <style>
+      body {
+        font-family: "SF Pro Text", sans-serif;
+      }
+      .text-gray-900 {
+        color: #1d1d1f;
+      }
+      .text-gray-500 {
+        color: #8e8e93;
+      }
+      .bg-gray-900 {
+        background-color: #1d1d1f;
+      }
+      .bg-blue-500 {
+        background-color: #007aff;
+      }
+      .bg-blue-600 {
+        background-color: #0a84ff;
+      }
+      .border-gray-300 {
+        border-color: #d1d1d6;
+      }
+    </style>
+  </head>
+
+  <body class="h-screen w-screen flex flex-col items-stretch">
+    <header class="bg-white shadow-sm">
+      <div
+        class="container mx-auto flex justify-between items-center py-4 px-6"
+      >
+        <h1 class="text-lg font-medium text-gray-900">B2B SaaS Product</h1>
+        <nav class="hidden md:block">
+          <ul class="flex">
+            <li>
+              <a
+                href="#"
+                class="px-4 text-sm font-medium text-gray-500 hover:text-gray-900"
+                >Features</a
+              >
+            </li>
+            <li>
+              <a
+                href="#"
+                class="px-4 text-sm font-medium text-gray-500 hover:text-gray-900"
+                >Pricing</a
+              >
+            </li>
+            <li>
+              <a
+                href="#"
+                class="px-4 text-sm font-medium text-gray-500 hover:text-gray-900"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </nav>
+        <button class="md:hidden">
+          <svg class="w-6 h-6 fill-current text-gray-500" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+      <nav class="hidden md:hidden bg-gray-900">
+        <ul class="flex flex-col">
+          <li>
+            <a
+              href="#"
+              class="px-6 py-4 text-sm font-medium text-white hover:text-blue-500"
+              >Features</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              class="px-6 py-4 text-sm font-medium text-white hover:text-blue-500"
+              >Pricing</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              class="px-6 py-4 text-sm font-medium text-white hover:text-blue-500"
+              >Contact</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="flex-1 bg-gray-100 py-12">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div>
+            <h2 class="text-4xl font-medium text-gray-900 mb-4">
+              Welcome to B2B SaaS Product
+            </h2>
+            <p class="text-lg text-gray-500 mb-8">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+              euismod, velit a euismod posuere, tellus metus tristique velit,
+              non tincidunt quam lacus vel nisi.
+            </p>
+            <a
+              href="#"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-lg shadow-md"
+              >Get Started</a
+            >
+          </div>
+          <div>
+            <img
+              src="https://via.placeholder.com/600x400"
+              alt="Product Image"
+              class="rounded-lg shadow-lg"
+            />
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-500 py-8">
+      <div class="container mx-auto px-6">
+        <p class="text-sm">
+          &copy; 2023 B2B SaaS Product. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  </body>
+
+  <!-- Liveroom iframe -->
+  <!-- it seems that ssl is necessary for the iframe to load properly, hence ngrok -->
+  <iframe
+    src="https://liveroom.eu.ngrok.io/session/coucou/client_embed"
+    style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      z-index: 999999;
+    "
+  >
+    Your browser doesn't support iframes
+  </iframe>
+</html>
