@@ -11,13 +11,15 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
+
   <body class="bg-white antialiased">
     <%= @inner_content %>
   </body>
   <!-- Liveroom iframe -->
   <iframe
     src="https://liveroom.app/session/example_app_phoenix/client_embed"
-    class="fixed inset-0 border-none m-0 p-0 overflow-hidden z-[999999]"
+    style="pointer-events: none;"
+    class="fixed inset-0 h-full w-full border-none m-0 p-0 overflow-hidden"
   >
     Your browser doesn't support iframes
   </iframe>

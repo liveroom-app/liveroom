@@ -31,7 +31,8 @@ export const TrackCursorsHook = {
         break;
       }
       case "fullscreen": {
-        document.addEventListener(
+        // document.addEventListener(
+        window.addEventListener(
           "mousemove",
           // _debounce((e) => {
           (e) => {
