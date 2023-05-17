@@ -26,6 +26,11 @@ defmodule LiveroomWeb.Hooks.LiveroomV1 do
     {:cont,
      socket
      |> assign_initial_state(type, params)
+     |> attach_hook(:livebook_v1_current_url, :handle_params, fn
+       _params, url, socket ->
+         update_current_presence(socket, %{current_url: url})
+         {:cont, socket}
+     end)
      |> attach_hook(:liveroom_v1_presence_diff, :handle_info, fn
        %Phoenix.Socket.Broadcast{
          topic: "session:" <> session_id,
@@ -36,7 +41,8 @@ defmodule LiveroomWeb.Hooks.LiveroomV1 do
          {:halt, update_metas(socket, joins, leaves)}
 
        #  Important, catch-all clause to ensure the liveview receives all other messages
-       _msg, socket ->
+       msg, socket ->
+         dbg(msg)
          {:cont, socket}
      end)
      |> attach_hook(
@@ -59,7 +65,9 @@ defmodule LiveroomWeb.Hooks.LiveroomV1 do
          "liveroom-" <> _, _params, socket ->
            {:halt, socket}
 
-         _event, _params, socket ->
+         event, params, socket ->
+           dbg(event)
+           dbg(params)
            {:cont, socket}
        end
      )}
@@ -91,8 +99,9 @@ defmodule LiveroomWeb.Hooks.LiveroomV1 do
               type: type,
               name: name,
               color: color,
-              inner_width: socket.assigns.analytics_data.inner_width,
-              inner_height: socket.assigns.analytics_data.inner_height,
+              current_url: socket.assigns.analytics_data[:url],
+              inner_width: socket.assigns.analytics_data[:inner_width],
+              inner_height: socket.assigns.analytics_data[:inner_height],
               x: 50,
               y: 50
             },

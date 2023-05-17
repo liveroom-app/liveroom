@@ -23,6 +23,8 @@ defmodule LiveroomWeb.AdminLive do
       <UserBanner.render class="z-[100]" name={@_liveroom_v1_name} color={@_liveroom_v1_color} />
     </div>
     """
+
+    # |> tap(&Task.start(fn -> IO.inspect(&1, label: "render") end))
   end
 
   attr :meta, :map, required: true

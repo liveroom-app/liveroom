@@ -10,7 +10,10 @@ defmodule LiveroomWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, {LiveroomWeb.Layouts, :root}
     plug :protect_from_forgery
-    plug :put_secure_browser_headers
+
+    # NOTE: Disable for client embed script
+    # plug :put_secure_browser_headers
+
     # no plug Plugs.Analytics, it is handled by a Liveview hook on mount
   end
 
@@ -32,12 +35,20 @@ defmodule LiveroomWeb.Router do
       live "/room/:room_slug", Room.ShowLive, :new
     end
 
-    live_session :_liveroom_v1_admin, on_mount: [Hooks.Analytics, {Hooks.LiveroomV1, :admin}] do
+    live_session :_liveroom_v1_admin,
+      on_mount: [Hooks.Analytics, {Hooks.LiveroomV1, :admin}] do
       live "/session/:session_id/admin", AdminLive
     end
 
-    live_session :_liveroom_v1_client, on_mount: [Hooks.Analytics, {Hooks.LiveroomV1, :client}] do
+    live_session :_liveroom_v1_client,
+      on_mount: [Hooks.Analytics, {Hooks.LiveroomV1, :client}] do
       live "/session/:session_id/client", ClientLive
+    end
+
+    live_session :_liveroom_v1_client_embed,
+      root_layout: {LiveroomWeb.Layouts, :root_embed},
+      on_mount: [Hooks.Analytics, {Hooks.LiveroomV1, :client}] do
+      live "/session/:session_id/client_embed", ClientEmbedLive
     end
   end
 
