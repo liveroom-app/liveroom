@@ -149,22 +149,22 @@ defmodule LiveroomWeb.Room.ShowLive do
 
   def handle_event("new_ice_candidate", payload, socket) do
     payload = Map.merge(payload, %{"from_user" => socket.assigns.user.uuid})
-
     send_direct_message(socket.assigns.slug, payload["to_user"], "new_ice_candidate", payload)
+
     {:noreply, socket}
   end
 
   def handle_event("new_sdp_offer", payload, socket) do
     payload = Map.merge(payload, %{"from_user" => socket.assigns.user.uuid})
-
     send_direct_message(socket.assigns.slug, payload["to_user"], "new_sdp_offer", payload)
+
     {:noreply, socket}
   end
 
   def handle_event("new_answer", payload, socket) do
     payload = Map.merge(payload, %{"from_user" => socket.assigns.user.uuid})
-
     send_direct_message(socket.assigns.slug, payload["to_user"], "new_answer", payload)
+
     {:noreply, socket}
   end
 
@@ -183,7 +183,7 @@ defmodule LiveroomWeb.Room.ShowLive do
   end
 
   def handle_info(%Broadcast{event: "new_sdp_offer", payload: payload}, socket) do
-    {:noreply, assign(socket, sdp_offers: socket.assigns.ice_candidate_offers ++ [payload])}
+    {:noreply, assign(socket, sdp_offers: socket.assigns.sdp_offers ++ [payload])}
   end
 
   def handle_info(%Broadcast{event: "new_answer", payload: payload}, socket) do

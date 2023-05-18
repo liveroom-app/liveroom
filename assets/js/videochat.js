@@ -57,7 +57,11 @@ export function create_peer_connection(lv, from_user, offer) {
   }
 
   if (new_peer_connection)
-    new_peer_connection.onicecandidate = async ({ candidate }) => {
+    // new_peer_connection.onicecandidate = async ({ candidate }) => {
+    new_peer_connection.onicecandidate = async (e) => {
+      console.log("########### e", e);
+      const candidate = e.candidate;
+
       // from_user is the new value for to_user because we're sending this data back
       // to the sender
       lv.pushEvent("new_ice_candidate", { to_user: from_user, candidate });
