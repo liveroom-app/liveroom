@@ -6,11 +6,11 @@ on:
       elixir-version:
         required: false
         type: string
-        default: "1.14.3"
+        default: "1.14.4"
       otp-version:
         required: false
         type: string
-        default: "25.3"
+        default: "26.0"
 
     # secrets:
     #   CODECOV_TOKEN:
