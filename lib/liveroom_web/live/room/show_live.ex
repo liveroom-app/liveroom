@@ -26,7 +26,7 @@ defmodule LiveroomWeb.Room.ShowLive do
     <div class="streams">
       <video
         id="local-video"
-        width="600"
+        width="300"
         style="transform: rotateY(180deg);"
         playsinline
         autoplay
@@ -38,7 +38,7 @@ defmodule LiveroomWeb.Room.ShowLive do
         :for={uuid <- @connected_users}
         :if={@show_webcams}
         id={"remote-video-#{uuid}"}
-        width="600"
+        width="300"
         phx-hook="InitUserHook"
         data-user-uuid={uuid}
         playsinline
@@ -81,7 +81,7 @@ defmodule LiveroomWeb.Room.ShowLive do
 
     <div id="ice-candidates">
       <span
-        :for={ice_candidate_offer <- Enum.uniq(@ice_candidate_offers)}
+        :for={ice_candidate_offer <- Enum.uniq(@ice_candidate_offers |> dbg())}
         id={"ice-candidate-from-user-#{inspect ice_candidate_offer}"}
         phx-hook="HandleIceCandidateOfferHook"
         data-from-user-uuid={ice_candidate_offer["from_user"]}
@@ -97,11 +97,17 @@ defmodule LiveroomWeb.Room.ShowLive do
   def mount(%{"room_slug" => slug}, _session, socket) do
     user = create_connected_user()
 
-    if connected?(socket) do
-      Phoenix.PubSub.subscribe(Liveroom.PubSub, "room:" <> slug)
-      Phoenix.PubSub.subscribe(Liveroom.PubSub, "room:" <> slug <> ":" <> user.uuid)
-      {:ok, _} = Presence.track(self(), "room:" <> slug, user.uuid, %{})
-    end
+    users =
+      if connected?(socket) do
+        {:ok, _} = Presence.track(self(), topic(slug), user.uuid, %{})
+
+        LiveroomWeb.Endpoint.subscribe(topic(slug))
+        LiveroomWeb.Endpoint.subscribe(topic(slug, user))
+
+        list_present_users(slug)
+      else
+        []
+      end
 
     case Organizer.get_room_by_slug(slug) do
       nil ->
@@ -117,7 +123,7 @@ defmodule LiveroomWeb.Room.ShowLive do
            room: room,
            user: user,
            slug: slug,
-           connected_users: [],
+           connected_users: users,
            offer_requests: [],
            ice_candidate_offers: [],
            sdp_offers: [],
@@ -164,7 +170,7 @@ defmodule LiveroomWeb.Room.ShowLive do
 
   @impl true
   def handle_info(%Broadcast{event: "presence_diff"}, socket) do
-    {:noreply, assign(socket, connected_users: list_present(socket))}
+    {:noreply, assign(socket, connected_users: list_present_users(socket.assigns.slug))}
   end
 
   def handle_info(%Broadcast{event: "request_offers", payload: request}, socket) do
@@ -186,11 +192,15 @@ defmodule LiveroomWeb.Room.ShowLive do
 
   ### Helpers
 
-  defp list_present(socket) do
-    Presence.list("room:" <> socket.assigns.slug)
-    # Phoenix Presence provide nice metadata, but we don't need it
-    |> Enum.map(fn {k, _} -> k end)
+  defp list_present_users(slug) do
+    slug
+    |> topic()
+    |> Presence.list()
+    |> Enum.map(&presence_to_user/1)
   end
+
+  # Phoenix Presence provide nice metadata, but we don't need it
+  defp presence_to_user({user, _}), do: user
 
   defp create_connected_user do
     %ConnectedUser{uuid: Ecto.UUID.generate()}
@@ -199,9 +209,13 @@ defmodule LiveroomWeb.Room.ShowLive do
   defp send_direct_message(slug, to_user, event, payload) do
     LiveroomWeb.Endpoint.broadcast_from(
       self(),
-      "room:" <> slug <> ":" <> to_user,
+      topic(slug, to_user),
       event,
       payload
     )
   end
+
+  defp topic(slug), do: "room:" <> slug
+  defp topic(slug, %{uuid: user_uuid}), do: topic(slug, user_uuid)
+  defp topic(slug, user_uuid) when is_binary(user_uuid), do: topic(slug) <> ":" <> user_uuid
 end

@@ -21,6 +21,8 @@ export function remove_user_connection(user_uuid) {
  * @returns
  */
 export function create_peer_connection(lv, from_user, offer) {
+  console.log("creating peer connection...");
+
   // Creates a variable for our peer connection to reference within
   // this function's scope.
   const new_peer_connection = new RTCPeerConnection({
