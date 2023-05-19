@@ -12,10 +12,11 @@ defmodule LiveroomWeb.ClientLive do
       id="client_live"
       phx-hook="TrackCursorsHook"
       data-mode="fullscreen"
+      data-phantomenabled={inspect(@phantom_enabled)}
       class="relative min-h-[100dvh] flex flex-col bg-slate-50 overflow-hidden"
     >
       <%!-- You --%>
-      <div class="space-y-8 mt-8 px-8">
+      <div :if={not @phantom_enabled} class="space-y-8 mt-8 px-8">
         <h2 class="font-semibold">You</h2>
         <ul id="you" class="space-y-8 text-sm text-neutral-800/75">
           <.user
@@ -31,7 +32,7 @@ defmodule LiveroomWeb.ClientLive do
       </div>
 
       <%!-- Other users --%>
-      <div class="space-y-8 mt-16 mb-32 px-8">
+      <div :if={not @phantom_enabled} class="space-y-8 mt-16 mb-32 px-8">
         <h2 class="font-semibold">Other users in the session</h2>
         <ul id="other_users" class="space-y-8 text-sm text-neutral-800/75">
           <.user
@@ -46,19 +47,25 @@ defmodule LiveroomWeb.ClientLive do
         </ul>
       </div>
 
-      <CursorV1.render
-        :for={meta <- @_liveroom_v1_metas}
-        :if={meta.socket_id != @_liveroom_v1_socket_id}
-        id={"cursor_v1_" <> meta.socket_id}
-        socket_id={@_liveroom_v1_socket_id}
-        meta_socket_id={meta.socket_id}
-        meta_x={meta.x}
-        meta_y={meta.y}
-        meta_name={meta.name}
-        meta_color={meta.color}
-      />
+      <%= if not @phantom_enabled do %>
+        <CursorV1.render
+          :for={meta <- @_liveroom_v1_metas}
+          :if={meta.socket_id != @_liveroom_v1_socket_id}
+          id={"cursor_v1_" <> meta.socket_id}
+          socket_id={@_liveroom_v1_socket_id}
+          meta_socket_id={meta.socket_id}
+          meta_x={meta.x}
+          meta_y={meta.y}
+          meta_name={meta.name}
+          meta_color={meta.color}
+        />
+      <% end %>
 
-      <UserBanner.render name={@_liveroom_v1_name} color={@_liveroom_v1_color} />
+      <UserBanner.render
+        :if={not @phantom_enabled}
+        name={@_liveroom_v1_name}
+        color={@_liveroom_v1_color}
+      />
     </div>
     """
   end
@@ -100,15 +107,12 @@ defmodule LiveroomWeb.ClientLive do
 
   ### Server
 
-  def mount(
-        %{"session_id" => session_id} = _params,
-        _session,
-        %{assigns: %{_liveroom_v1_name: name}} = socket
-      ) do
+  def mount(%{"session_id" => session_id} = _params, _session, %{assigns: assigns} = socket) do
     {:ok,
      assign(socket,
+       phantom_enabled: assigns[:live_action] == :phantom,
        page_title:
-         case name do
+         case assigns[:_liveroom_v1_name] do
            nil -> session_id
            name -> name <> " - " <> session_id
          end

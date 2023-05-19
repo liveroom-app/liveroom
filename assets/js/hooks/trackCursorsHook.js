@@ -11,6 +11,11 @@ export const TrackCursorsHook = {
     // void import("../../vendor/lodash_debounce.js").then(
     //   ({ default: _debounce }) => {
 
+    // no-op if phantom mode enabled
+    console.log("this.el.dataset", this.el.dataset);
+
+    if (this.el.dataset.phantomenabled == "true") return;
+
     // Mouse move
     switch (this.el.dataset.mode) {
       case "container": {

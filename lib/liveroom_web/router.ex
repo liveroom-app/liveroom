@@ -42,7 +42,11 @@ defmodule LiveroomWeb.Router do
 
     live_session :_liveroom_v1_client,
       on_mount: [Hooks.Analytics, {Hooks.LiveroomV1, :client}] do
-      live "/session/:session_id/client", ClientLive
+      live "/session/:session_id/client", ClientLive, :default
+    end
+
+    live_session :_liveroom_v1_client_phantom do
+      live "/session/:session_id/client_phantom", ClientLive, :phantom
     end
 
     live_session :_liveroom_v1_client_embed,
