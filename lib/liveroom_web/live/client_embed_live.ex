@@ -9,8 +9,10 @@ defmodule LiveroomWeb.ClientEmbedLive do
       id="client_embed_live"
       phx-hook="TrackCursorsHook"
       data-mode="fullscreen"
-      class="relative h-0 w-0"
+      class="fixed inset-0 pb-8 flex justify-center items-end"
     >
+      <LiveroomWeb.Components.WebRTC.render room_id={@session_id} class="" />
+
       <CursorV1.render
         :for={meta <- @_liveroom_v1_metas}
         :if={meta.socket_id != @_liveroom_v1_socket_id}
@@ -35,6 +37,7 @@ defmodule LiveroomWeb.ClientEmbedLive do
       ) do
     {:ok,
      assign(socket,
+       session_id: session_id,
        page_title:
          case name do
            nil -> session_id

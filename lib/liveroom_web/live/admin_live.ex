@@ -9,7 +9,7 @@ defmodule LiveroomWeb.AdminLive do
   def render(assigns) do
     ~H"""
     <div id="admin_live" class="min-h-[100dvh] flex flex-col items-stretch space-y-8 bg-slate-100">
-      <LiveroomWeb.Components.WebRTC.render room_id={@session_id} />
+      <LiveroomWeb.Components.WebRTC.render room_id={@session_id} class="my-10" />
 
       <div class="flex flex-reverse flex-wrap items-start gap-8 mt-8 mb-32 px-8">
         <.presence_card

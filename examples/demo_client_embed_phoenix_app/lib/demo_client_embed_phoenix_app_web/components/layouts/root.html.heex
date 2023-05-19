@@ -16,10 +16,12 @@
     <%= @inner_content %>
   </body>
   <!-- Liveroom iframe -->
+  <%!-- src="https://liveroom.app/session/example_app_phoenix/client_embed" --%>
   <iframe
-    src="https://liveroom.app/session/example_app_phoenix/client_embed"
+    src="http://localhost:4000/session/abc/client_embed"
+    allow="camera; microphone"
     style="pointer-events: none;"
-    class="fixed inset-0 h-full w-full border-none m-0 p-0 overflow-hidden"
+    class="fixed inset-0 h-screen w-screen border-none m-0 p-0 overflow-hidden"
   >
     Your browser doesn't support iframes
   </iframe>
