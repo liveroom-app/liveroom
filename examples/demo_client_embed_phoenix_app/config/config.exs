@@ -14,7 +14,10 @@ config :demo_client_embed_phoenix_app,
 config :demo_client_embed_phoenix_app, DemoClientEmbedPhoenixAppWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [
-    formats: [html: DemoClientEmbedPhoenixAppWeb.ErrorHTML, json: DemoClientEmbedPhoenixAppWeb.ErrorJSON],
+    formats: [
+      html: DemoClientEmbedPhoenixAppWeb.ErrorHTML,
+      json: DemoClientEmbedPhoenixAppWeb.ErrorJSON
+    ],
     layout: false
   ],
   pubsub_server: DemoClientEmbedPhoenixApp.PubSub,
@@ -27,7 +30,8 @@ config :demo_client_embed_phoenix_app, DemoClientEmbedPhoenixAppWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :demo_client_embed_phoenix_app, DemoClientEmbedPhoenixApp.Mailer, adapter: Swoosh.Adapters.Local
+config :demo_client_embed_phoenix_app, DemoClientEmbedPhoenixApp.Mailer,
+  adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,

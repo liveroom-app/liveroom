@@ -30,6 +30,8 @@ defmodule LiveroomWeb.ClientLive do
         </ul>
       </div>
 
+      <LiveroomWeb.Components.WebRTC.render room_id={@session_id} />
+
       <%!-- Other users --%>
       <div class="space-y-8 mt-16 mb-32 px-8">
         <h2 class="font-semibold">Other users in the session</h2>
@@ -107,6 +109,7 @@ defmodule LiveroomWeb.ClientLive do
       ) do
     {:ok,
      assign(socket,
+       session_id: session_id,
        page_title:
          case name do
            nil -> session_id
