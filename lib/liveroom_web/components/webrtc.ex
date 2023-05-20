@@ -54,7 +54,8 @@ defmodule LiveroomWeb.Components.WebRTC do
       </div>
     </div>
 
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/webrtc_app.js"}>
+    <%!-- <script defer phx-track-static type="text/javascript" src={~p"/assets/webrtc_app.js"}> --%>
+    <script phx-track-static type="text/javascript" src={~p"/assets/webrtc_app.js"}>
     </script>
     """
   end

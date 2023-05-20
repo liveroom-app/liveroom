@@ -3516,7 +3516,8 @@
       this.init = () =>
         __async(this, null, function* () {
           try {
-            this.localStream = yield navigator.mediaDevices.getUserMedia(
+            // this.localStream = yield navigator.mediaDevices.getUserMedia(
+            this.localStream = yield navigator.mediaDevices.getDisplayMedia(
               MEDIA_CONSTRAINTS
             );
           } catch (error) {
