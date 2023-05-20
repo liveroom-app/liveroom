@@ -41,11 +41,12 @@ defmodule LiveroomWeb.Router do
     end
 
     live_session :_liveroom_v1_client,
+      layout: false,
       on_mount: [Hooks.Analytics, {Hooks.LiveroomV1, :client}] do
       live "/session/:session_id/client", ClientLive, :default
     end
 
-    live_session :_liveroom_v1_client_phantom do
+    live_session :_liveroom_v1_client_phantom, layout: false do
       live "/session/:session_id/client_phantom", ClientLive, :phantom
     end
 

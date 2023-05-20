@@ -41,8 +41,7 @@ defmodule LiveroomWeb.Hooks.LiveroomV1 do
          {:halt, update_metas(socket, joins, leaves)}
 
        #  Important, catch-all clause to ensure the liveview receives all other messages
-       msg, socket ->
-         dbg(msg)
+       _msg, socket ->
          {:cont, socket}
      end)
      |> attach_hook(
@@ -65,9 +64,7 @@ defmodule LiveroomWeb.Hooks.LiveroomV1 do
          "liveroom-" <> _, _params, socket ->
            {:halt, socket}
 
-         event, params, socket ->
-           dbg(event)
-           dbg(params)
+         _event, _params, _socket ->
            {:cont, socket}
        end
      )}

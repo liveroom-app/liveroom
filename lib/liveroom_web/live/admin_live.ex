@@ -9,8 +9,6 @@ defmodule LiveroomWeb.AdminLive do
   def render(assigns) do
     ~H"""
     <div id="admin_live" class="min-h-[100dvh] flex flex-col items-stretch space-y-8 bg-slate-100">
-      <iframe src="http://localhost:4000/session/coucou/client_phantom" frameborder="0"></iframe>
-
       <div class="flex flex-reverse flex-wrap items-start gap-8 mt-8 mb-32 px-8">
         <.presence_card
           :for={meta <- @_liveroom_v1_metas}
@@ -69,7 +67,8 @@ defmodule LiveroomWeb.AdminLive do
       <div class="flex flex-col items-stretch">
         <%!-- <iframe width="600" src={@meta.current_url <> "?cursors=off"} frameborder="0"></iframe> --%>
 
-        <iframe src="http://localhost:4000/session/coucou/client_phantom" frameborder="0"></iframe>
+        <iframe height="200" src="http://localhost:4000/session/coucou/client_phantom" frameborder="0">
+        </iframe>
 
         <div class="pb-2">
           <%!-- name & screen size --%>

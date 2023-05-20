@@ -1,11 +1,13 @@
 defmodule LiveroomWeb.ClientLive do
   use LiveroomWeb, :live_view
 
+  alias LiveroomWeb.Endpoint
   alias LiveroomWeb.Components.CursorV1
   alias LiveroomWeb.Components.UserBanner
 
   @reduced_opacity 0.75
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div
@@ -13,8 +15,31 @@ defmodule LiveroomWeb.ClientLive do
       phx-hook="TrackCursorsHook"
       data-mode="fullscreen"
       data-phantomenabled={inspect(@phantom_enabled)}
-      class="relative min-h-[100dvh] flex flex-col bg-slate-50 overflow-hidden"
+      class="relative min-h-[100dvh] flex flex-col gap-4 p-4 bg-slate-50 overflow-hidden"
     >
+      <p :if={@phantom_enabled} class="text-xl font-semibold">Phantom mode</p>
+
+      <h2 class="font-semibold">Counter</h2>
+
+      <p id="counter" class="text-lg"><%= @counter %></p>
+
+      <div class="flex gap-16">
+        <button
+          id="inc_button"
+          phx-click="inc"
+          class="w-fit py-2 px-4 rounded bg-neutral-300 hover:bg-neutral-400 transition-colors"
+        >
+          Inc
+        </button>
+        <button
+          id="dec_button"
+          phx-click="dec"
+          class="w-fit py-2 px-4 rounded bg-neutral-300 hover:bg-neutral-400 transition-colors"
+        >
+          Dec
+        </button>
+      </div>
+
       <%!-- You --%>
       <div :if={not @phantom_enabled} class="space-y-8 mt-8 px-8">
         <h2 class="font-semibold">You</h2>
@@ -107,16 +132,77 @@ defmodule LiveroomWeb.ClientLive do
 
   ### Server
 
-  def mount(%{"session_id" => session_id} = _params, _session, %{assigns: assigns} = socket) do
-    {:ok,
-     assign(socket,
-       phantom_enabled: assigns[:live_action] == :phantom,
-       page_title:
-         case assigns[:_liveroom_v1_name] do
-           nil -> session_id
-           name -> name <> " - " <> session_id
-         end
-     ), layout: false}
+  @impl true
+  def mount(
+        params,
+        _session,
+        %{assigns: assigns} = socket
+      ) do
+    session_id = params["session_id"]
+    phantom_enabled = assigns[:live_action] == :phantom
+
+    if phantom_enabled && connected?(socket) do
+      :ok = Endpoint.subscribe("room:" <> session_id <> ":phantom")
+    end
+
+    socket =
+      assign(socket,
+        session_id: session_id,
+        counter: 0,
+        phantom_enabled: phantom_enabled,
+        page_title:
+          case assigns[:_liveroom_v1_name] do
+            nil -> session_id
+            name -> name <> " - " <> session_id
+          end
+      )
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_event(event, params, %{assigns: %{session_id: session_id}} = socket) do
+    dbg(socket.assigns)
+    dbg(session_id)
+
+    :ok =
+      Endpoint.broadcast(
+        "room:" <> session_id <> ":phantom",
+        "new_event",
+        {event, params}
+      )
+
+    do_handle_event(event, params, socket)
+  end
+
+  def handle_event(_event, _params, socket), do: {:noreply, socket}
+
+  def do_handle_event("inc", _, socket) do
+    socket = update(socket, :counter, &(&1 + 1))
+
+    {:noreply, socket}
+  end
+
+  def do_handle_event("dec", _, socket) do
+    socket = update(socket, :counter, &(&1 - 1))
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(
+        %Phoenix.Socket.Broadcast{
+          topic: topic,
+          event: "new_event",
+          payload: {event, params}
+        } = _message,
+        %{assigns: %{session_id: session_id}} = socket
+      ) do
+    case String.split(topic, ":", parts: 3) do
+      ["room", ^session_id, "phantom"] -> do_handle_event(event, params, socket)
+      _ -> nil
+    end
+
+    {:noreply, socket}
   end
 
   ### Helpers
