@@ -7,8 +7,8 @@ let csrfToken = document
   .getAttribute("content");
 
 // const url ="/live"
-// const url = "http://localhost:4000/session/abc/client_embed";
-const url = "http://localhost:4000/live";
+const url = "http://localhost:4000/session/abc/client_embed";
+// const url = "http://localhost:4000/live";
 
 let liveSocket = new LiveSocket(url, Socket, {
   params: { _csrf_token: csrfToken },

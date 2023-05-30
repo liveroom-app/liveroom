@@ -10,7 +10,7 @@
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/app_embed.js"}>
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/liveroom.js"}>
     </script>
   </head>
 
@@ -19,12 +19,12 @@
   </body>
   <!-- Liveroom iframe -->
   <%!-- src="https://liveroom.app/session/example_app_phoenix/client_embed" --%>
-  <iframe
+  <%!-- <iframe
     src="http://localhost:4000/session/abc/client_embed"
     allow="camera; microphone; display-capture"
     style="pointer-events: none;"
     class="fixed inset-0 h-screen w-screen border-none m-0 p-0 overflow-hidden"
   >
     Your browser doesn't support iframes
-  </iframe>
+  </iframe> --%>
 </html>

@@ -11,7 +11,7 @@ defmodule LiveroomWeb.ClientEmbedLive do
       data-mode="fullscreen"
       class="fixed inset-0 pb-8 flex justify-center items-end"
     >
-      <LiveroomWeb.Components.WebRTC.render room_id={@session_id} class="" />
+      <%!-- <LiveroomWeb.Components.WebRTC.render room_id={@session_id} class="" /> --%>
 
       <CursorV1.render
         :for={meta <- @_liveroom_v1_metas}
