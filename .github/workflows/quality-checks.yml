@@ -6,7 +6,7 @@ on:
       elixir-version:
         required: false
         type: string
-        default: "1.14.4"
+        default: "1.14.5"
       otp-version:
         required: false
         type: string
