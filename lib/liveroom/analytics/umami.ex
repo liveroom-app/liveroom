@@ -1,4 +1,10 @@
 defmodule Liveroom.Analytics.Umami do
+  @moduledoc """
+  Umami analytics client.
+
+  See https://github.com/umami-software/umami/blob/586529a5ca2913f43a9b14a45ea65f99164abd61/pages/api/send.ts.
+  """
+
   require Logger
 
   @domain "liveroom.app"
@@ -6,7 +12,7 @@ defmodule Liveroom.Analytics.Umami do
   def send_event(event, url, user_agent, ip, opts \\ []) do
     if is_enabled?() do
       Req.post!(
-        "/api/collect",
+        "/api/send",
         body: body(event, url, opts) |> Jason.encode!(),
         base_url: base_url(),
         headers: [
@@ -23,7 +29,7 @@ defmodule Liveroom.Analytics.Umami do
 
   defp body("pageview", url, opts) do
     %{
-      type: "pageview",
+      type: "event",
       payload:
         Map.merge(payload(url, opts), %{
           referrer: Keyword.get(opts, :referrer, nil)
@@ -36,8 +42,8 @@ defmodule Liveroom.Analytics.Umami do
       type: "event",
       payload:
         Map.merge(payload(url, opts), %{
-          event_name: event,
-          event_data: Keyword.get(opts, :props, nil)
+          name: event,
+          data: Keyword.get(opts, :props, nil)
         })
     }
   end
@@ -47,6 +53,7 @@ defmodule Liveroom.Analytics.Umami do
       website: website_id(),
       url: url,
       hostname: @domain,
+      # title: Keyword.get(opts, :title, nil), # TODO: page title ?
       language: Keyword.get(opts, :language, nil),
       screen:
         screen(
