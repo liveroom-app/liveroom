@@ -7,7 +7,8 @@ processes = []
   image = "ghcr.io/umami-software/umami:postgresql-v2.2.0"
 
 [env]
-  REMOVE_TRAILING_SLASH = 1
+  # NOTE: We send the full url to Umami and this breaks the root page url "/" since Umami v2
+  # REMOVE_TRAILING_SLASH = 1
   DATABASE_TYPE = "postgresql"
   CLIENT_IP_HEADER = "umami-client-ip"
 
