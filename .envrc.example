@@ -6,7 +6,6 @@ export DATABASE_PASSWORD="postgres"
 # to test locally prod release
 export DATABASE_URL="postgres://postgres:postgres@localhost:5432/liveroom"
 
-export RELEASE_COOKIE="NOT_NEED_TO_FILL_ME"
 export SECRET_KEY_BASE="FILL_ME" # run `mix phx.gen.secret` to generate one
 
 export UMAMI_ENABLED="true"
