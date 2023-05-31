@@ -6,7 +6,7 @@ defmodule LiveroomWeb.Components.Cursors do
 
   def render(assigns) do
     ~H"""
-    <ul id="playground_cursors" phx-hook="TrackCursorsHook" class="list-none ">
+    <ul id="playground_cursors" phx-hook="TrackCursorsHook" data-mode="fullscreen" class="list-none ">
       <li
         :for={user <- @users}
         style={"color: #{user.color}; transform: translate(calc(#{user.x}vw - 10px), calc(#{user.y}vh - 11px));"}
