@@ -7,19 +7,26 @@ defmodule LiveroomWeb.Components.Cursors do
   def render(assigns) do
     ~H"""
     <ul id="playground_cursors" phx-hook="TrackCursorsHook" data-mode="fullscreen" class="list-none ">
+      <%!-- NOTE: A JS hook + passing color,x,y as data attributes would allow
+                  to further optimize the payload over the wire.
+                  But this feels like a good tradeoff, to have all the logic in one place. --%>
       <li
         :for={user <- @users}
-        style={"color: #{user.color}; transform: translate(calc(#{user.x}vw - 10px), calc(#{user.y}vh - 11px));"}
+        style={"--color: #{user.color}; --x: #{user.x}vw; --y: #{user.y}vh;"}
         class={[
+          "text-[color:var(--color)]",
+          "translate-x-[calc(var(--x)-10px)] translate-y-[calc(var(--y)-11px)]",
           "z-[100] absolute top-0 left-0 flex flex-col justify-start items-start pt-[24px]",
           "pointer-events-none select-none"
         ]}
       >
         <div
           id={"cursor_blink_#{user.socket_id}"}
-          style={"background-color: #{user.color}25; border-color: #{user.color};"}
+          data-hidden={not user.is_halo_key_pressed and not user.is_cursor_pressed}
           class={[
-            not user.is_halo_key_pressed && not user.is_cursor_pressed && "scale-0",
+            "data-[hidden]:scale-0",
+            "bg-[color:var(--color)25]",
+            "border-[color:var(--color)]",
             "z-40 absolute -top-16 -left-16 h-32 w-32 border rounded-full shadow-md",
             "transition-transform duration-150 ease-out"
           ]}
@@ -27,22 +34,30 @@ defmodule LiveroomWeb.Components.Cursors do
 
         <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
 
-        <%= if user.msg == "" do %>
-          <span
-            :if={user.socket_id != @socket_id}
-            style={"background-color: #{user.color};"}
-            class="z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
-          >
-            <%= user.name %>
-          </span>
-        <% else %>
-          <span
-            style={"background-color: #{user.color};"}
-            class="z-50 ml-[30px] max-w-[50ch] py-1 px-3 text-sm truncate text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
-          >
-            <%= user.msg %>
-          </span>
-        <% end %>
+        <%!-- Name --%>
+        <span
+          :if={user.socket_id != @socket_id}
+          data-hidden={user.msg != ""}
+          class={[
+            "data-[hidden]:hidden",
+            "bg-[color:var(--color)]",
+            "z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
+          ]}
+        >
+          <%= user.name %>
+        </span>
+
+        <%!-- Message --%>
+        <span
+          data-hidden={user.msg == ""}
+          class={[
+            "data-[hidden]:hidden",
+            "bg-[color:var(--color)]",
+            "z-50 ml-[30px] max-w-[50ch] py-1 px-3 text-sm truncate text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
+          ]}
+        >
+          <%= user.msg %>
+        </span>
       </li>
     </ul>
     """
