@@ -26,7 +26,6 @@ defmodule LiveroomWeb.Components.Cursors do
         />
 
         <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
-        <%!-- <.cursor class="z-50 absolute top-0 left-0 shadow-2xl" /> --%>
 
         <%= if user.msg == "" do %>
           <span
@@ -36,12 +35,6 @@ defmodule LiveroomWeb.Components.Cursors do
           >
             <%= user.name %>
           </span>
-          <%!-- <span
-            style={"background-color: #{user.color};"}
-            class="z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"
-          >
-            <%= user.name %>
-          </span> --%>
         <% else %>
           <span
             style={"background-color: #{user.color};"}
