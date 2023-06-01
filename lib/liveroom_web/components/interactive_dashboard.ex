@@ -330,7 +330,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
         "rounded-md shadow-md",
         "flex flex-col p-6 items-start gap-4",
         "transition-colors duration-150 group",
-        @hovered_by && "ring-[3px]"
+        "data-[hovered-by]:ring-[3px]"
       ]}
       {@rest}
     >
@@ -338,13 +338,14 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
       <.squeleton class="bg-slate-300 w-24" />
 
       <div
+        data-hovered-by={@hovered_by[:name]}
+        style={"background-color: #{@hovered_by && @hovered_by.color || "rgb(100 116 139)" };"}
         class={[
           "absolute top-2 right-2 w-4 h-4 bg-transparent rounded-full",
           "opacity-0 md:group-hover:opacity-100",
-          @hovered_by && "opacity-100",
+          "data-[hovered-by]:opacity-100",
           "transition duration-150 pointer-events-none"
         ]}
-        style={"background-color: #{@hovered_by && @hovered_by.color || "rgb(100 116 139)" };"}
       />
     </button>
     """
@@ -392,7 +393,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
           "outline-none focus:outline-none focus:ring-0",
           "border border-gray-200 md:hover:border-slate-500 focus:border-slate-500",
           "ring-inset focus:ring-[3px] ring-slate-500 focus:ring-slate-500",
-          @focused_by && "ring-[3px]"
+          "data-[focused-by]:ring-[3px]"
         ]}
         style={
           @focused_by && "border-color: #{@focused_by.color}; --tw-ring-color: #{@focused_by.color};"
