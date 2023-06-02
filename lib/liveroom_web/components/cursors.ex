@@ -6,7 +6,14 @@ defmodule LiveroomWeb.Components.Cursors do
 
   def render(assigns) do
     ~H"""
-    <ul id="playground_cursors" phx-hook="TrackCursorsHook" data-mode="fullscreen" class="list-none ">
+    <ul
+      id="playground_cursors"
+      phx-hook="TrackCursorsHook"
+      data-mode="fullscreen"
+      data-mouseclick="true"
+      data-keyboardpress="true"
+      class="list-none "
+    >
       <%!-- NOTE: A JS hook + passing color,x,y as data attributes would allow
                   to further optimize the payload over the wire.
                   But this feels like a good tradeoff, to have all the logic in one place. --%>
@@ -20,18 +27,21 @@ defmodule LiveroomWeb.Components.Cursors do
           "pointer-events-none select-none"
         ]}
       >
+        <%!-- Halo --%>
         <div
           id={"cursor_blink_#{user.socket_id}"}
           data-hidden={not user.is_halo_key_pressed and not user.is_cursor_pressed}
           class={[
             "data-[hidden]:scale-0",
-            "bg-[color:var(--color)25]",
+            "bg-[color:var(--color)]",
             "border-[color:var(--color)]",
+            "opacity-25",
             "z-40 absolute -top-16 -left-16 h-32 w-32 border rounded-full shadow-md",
             "transition-transform duration-150 ease-out"
           ]}
         />
 
+        <%!-- Cursor --%>
         <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
 
         <%!-- Name --%>

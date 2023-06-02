@@ -6,6 +6,9 @@
 // console.log("MILLISECONDS_PER_FRAME", MILLISECONDS_PER_FRAME);
 // console.log("DEBOUNCE", DEBOUNCE);
 
+const HALO_KEY = "Escape";
+const HALO_KEY_CODE = 27;
+
 export const TrackCursorsHook = {
   mounted() {
     // void import("../../vendor/lodash_debounce.js").then(
@@ -61,5 +64,28 @@ export const TrackCursorsHook = {
     );
     // }
     // );
+
+    // Mouse click
+    if (this.el.dataset.mouseclick) {
+      window.addEventListener("mousedown", (e) => {
+        this.pushEvent("liveroom-cursor-click-down");
+      });
+      window.addEventListener("mouseup", (e) => {
+        this.pushEvent("liveroom-cursor-click-up");
+      });
+    }
+
+    // Keyboard press
+    if (this.el.dataset.keyboardpress) {
+      window.addEventListener("keydown", (e) => {
+        if (e.key === HALO_KEY || e.keyCode === HALO_KEY_CODE)
+          this.pushEvent("liveroom-halo-key-down");
+      });
+
+      window.addEventListener("keyup", (e) => {
+        if (e.key === HALO_KEY || e.keyCode === HALO_KEY_CODE)
+          this.pushEvent("liveroom-halo-key-up");
+      });
+    }
   },
 };
