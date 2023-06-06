@@ -4,39 +4,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Liveroom Demo</title>
 
+    <title>B2B SaaS Product</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=SF+Pro+Text"
-    />
-
-    <style>
-      body {
-        font-family: "SF Pro Text", sans-serif;
-      }
-      .text-gray-900 {
-        color: #1d1d1f;
-      }
-      .text-gray-500 {
-        color: #8e8e93;
-      }
-      .bg-gray-900 {
-        background-color: #1d1d1f;
-      }
-      .bg-blue-500 {
-        background-color: #007aff;
-      }
-      .bg-blue-600 {
-        background-color: #0a84ff;
-      }
-      .border-gray-300 {
-        border-color: #d1d1d6;
-      }
-    </style>
+    <!-- Liveroom -->
+    <script type="module" src="../client/liveroom-client.ts"></script>
   </head>
+
+  <liveroom-client url="wss://localhost:4000/socket"></liveroom-client>
 
   <body class="h-screen w-screen flex flex-col items-stretch">
     <header class="bg-white shadow-sm">
@@ -139,13 +117,4 @@
       </div>
     </footer>
   </body>
-
-  <!-- Liveroom iframe -->
-  <iframe
-    src="https://liveroom.app/session/example_app_html/client_embed"
-    style="pointer-events: none"
-    class="fixed inset-0 border-none m-0 p-0 overflow-hidden"
-  >
-    Your browser doesn't support iframes
-  </iframe>
 </html>

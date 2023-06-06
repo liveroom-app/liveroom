@@ -26,6 +26,10 @@ defmodule LiveroomWeb.Endpoint do
       ]
     ]
 
+  socket "/client_socket", LiveroomWeb.LiveStateSocket,
+    websocket: [timeout: 45_000],
+    longpoll: false
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest
