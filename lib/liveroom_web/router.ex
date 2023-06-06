@@ -25,6 +25,10 @@ defmodule LiveroomWeb.Router do
     plug Plugs.Analytics
   end
 
+  pipeline :client do
+    plug CORSPlug
+  end
+
   scope "/", LiveroomWeb do
     pipe_through :browser
 

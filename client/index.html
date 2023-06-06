@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="./src/index.css" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <title>Liveroom Client Example</title>
+
+    <!-- Liveroom -->
+    <!-- <script type="module" src="/src/my-element.ts"></script> -->
+    <script type="module" src="/src/liveroom-client-element.ts"></script>
+  </head>
+
+  <body style="display: flex; flex-direction: column; gap: 3em">
+    <h1>Welcome</h1>
+
+    <!-- <my-element>
+      <h1>Vite + Lit</h1>
+    </my-element> -->
+
+    <liveroom-client-element url="ws://localhost:4000/client_socket">
+    </liveroom-client-element>
+  </body>
+</html>
