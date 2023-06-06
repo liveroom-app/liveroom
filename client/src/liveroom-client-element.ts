@@ -1,53 +1,31 @@
 import { html, LitElement } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
-import LiveState, { connectElement } from "phx-live-state";
+import LiveState, { liveState, liveStateConfig } from "phx-live-state";
 
 @customElement("liveroom-client-element")
+@liveState({
+  topic: "comments:new",
+  properties: ["comments"],
+  events: {
+    send: ["add_comment"],
+    receive: ["comment_added"],
+  },
+})
 export class LiveroomClientElement extends LitElement {
-  @property()
-  url: string | undefined;
+  @property({ attribute: "url" })
+  @liveStateConfig("url")
+  url!: string;
 
   @state()
   comments: Array<Comment> = [];
 
   liveState: LiveState | undefined;
 
-  connectedCallback() {
-    super.connectedCallback();
-
-    console.log(`connecting to ${this.url}`);
-
-    const liveState = new LiveState({
-      url: this.url,
-      topic: `comments:${window.location.href}`,
-    });
-
-    connectElement(liveState, this, {
-      properties: ["comments"],
-      events: {
-        send: ["add_comment"],
-        receive: ["comment_added"],
-      },
-    });
-  }
-
   @query('input[name="author"]')
   author: HTMLInputElement | undefined;
 
   @query('input[name="text"]')
   text: HTMLInputElement | undefined;
-
-  addComment(e: Event) {
-    this.dispatchEvent(
-      new CustomEvent("add_comment", {
-        detail: {
-          author: this.author?.value,
-          text: this.text?.value,
-        },
-      })
-    );
-    e.preventDefault();
-  }
 
   render() {
     return html`
@@ -74,7 +52,7 @@ export class LiveroomClientElement extends LitElement {
               <div part="comment-text">${comment.text}</div>
 
               <div part="byline">
-                <span part="comment-author">${comment.author}</span> on
+                <span part="comment-author">${comment.author}</span> at
                 <span part="comment-created-at">${comment.inserted_at}</span>
               </div>
             </div>
@@ -82,6 +60,20 @@ export class LiveroomClientElement extends LitElement {
         )}
       </div>
     `;
+  }
+
+  addComment(e: Event) {
+    this.dispatchEvent(
+      new CustomEvent("add_comment", {
+        detail: {
+          author: this.author?.value,
+          text: this.text?.value,
+        },
+      })
+    );
+    // clear text
+    this.text!.value = "";
+    e.preventDefault();
   }
 }
 
