@@ -1,5 +1,6 @@
 defmodule LiveroomWeb.LiveStateChannel do
-  use LiveState.Channel, web_module: LiveroomWeb
+  # use LiveState.Channel, web_module: LiveroomWeb
+  use LiveState.Channel, web_module: LiveroomWeb, json_patch: true
 
   alias LiveState.Event
 
@@ -18,7 +19,7 @@ defmodule LiveroomWeb.LiveStateChannel do
     comment = %{
       author: params["author"],
       text: params["text"],
-      inserted_at: DateTime.utc_now()
+      inserted_at: DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_string()
     }
 
     state = Map.update!(state, :comments, &[comment | &1])
