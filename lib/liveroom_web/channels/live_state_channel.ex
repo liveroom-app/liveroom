@@ -35,7 +35,7 @@ defmodule LiveroomWeb.LiveStateChannel do
 
   @impl true
   def handle_event(event, params, state)
-      when event in ["mouse_moved", "mouse_down", "mouse_up", "key_down", "key_up"] do
+      when event in ["mouse_move", "mouse_down", "mouse_up", "key_down", "key_up"] do
     pubsub_topic = pubsub_topic(state.topic)
     Endpoint.broadcast(pubsub_topic, event, params)
     # NOTE: State will be updated when consuming pubsub message.
@@ -59,7 +59,7 @@ defmodule LiveroomWeb.LiveStateChannel do
   def handle_message(
         %Phoenix.Socket.Broadcast{
           topic: _topic,
-          event: "mouse_moved",
+          event: "mouse_move",
           payload: %{"client_id" => client_id, "x" => x, "y" => y}
         },
         state
