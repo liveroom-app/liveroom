@@ -7,7 +7,7 @@ import { liveState, liveStateConfig } from "phx-live-state";
   topic: "liveroom:test_room",
   properties: ["room", "me", "clients"],
   events: {
-    send: ["mouse_moved", "mouse_down", "mouse_up", "key_down", "key_up"],
+    send: ["mouse_move", "mouse_down", "mouse_up", "key_down", "key_up"],
     receive: [],
   },
 })
@@ -92,7 +92,7 @@ export class LiveroomClientElement extends LitElement {
     super.connectedCallback();
 
     // Mouse move
-    window.addEventListener("mousemove", this._throttledDispatchMouseMoved);
+    window.addEventListener("mousemove", this._throttledDispatchMouseMove);
 
     // Mouse click
     window.addEventListener("mousedown", this._dispatchMouseDown.bind(this));
@@ -107,18 +107,18 @@ export class LiveroomClientElement extends LitElement {
     window.removeEventListener("keydown", this._dispatchKeyDown.bind(this));
     window.removeEventListener("mouseup", this._dispatchMouseUp.bind(this));
     window.removeEventListener("mousedown", this._dispatchMouseDown.bind(this));
-    window.removeEventListener("mousemove", this._throttledDispatchMouseMoved);
+    window.removeEventListener("mousemove", this._throttledDispatchMouseMove);
     super.disconnectedCallback();
   }
 
-  _throttledDispatchMouseMoved = throttle(
-    this._dispatchMouseMoved.bind(this),
+  _throttledDispatchMouseMove = throttle(
+    this._dispatchMouseMove.bind(this),
     10 // 10ms throttle interval means 100 fps
   );
-  _dispatchMouseMoved(e: MouseEvent) {
+  _dispatchMouseMove(e: MouseEvent) {
     if (this.me) {
       this.dispatchEvent(
-        new CustomEvent("mouse_moved", {
+        new CustomEvent("mouse_move", {
           detail: {
             client_id: this.me.id,
             x: e.pageX,
