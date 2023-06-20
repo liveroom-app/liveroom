@@ -113,7 +113,8 @@ export class LiveroomClientElement extends LitElement {
 
   _throttledDispatchMouseMove = throttle(
     this._dispatchMouseMove.bind(this),
-    10 // 10ms throttle interval means 100 fps
+    15 // 15ms throttle interval means ~66.6 fps
+    // 10 // 10ms throttle interval means 100 fps
   );
   _dispatchMouseMove(e: MouseEvent) {
     if (this.me) {
