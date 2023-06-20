@@ -44,7 +44,7 @@ export class LiveroomClientElement extends LitElement {
                   stroke="currentColor"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  version="1.1"
+                  aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <polygon points="1,99 1,1 69.3,69.3 29.1,69.3" />
@@ -58,7 +58,6 @@ export class LiveroomClientElement extends LitElement {
               </div>
             `
         )}
-        <!-- TODO: show admin users -->
       </div>
 
       <div class="banner" style="--color: ${this.me?.color}">
@@ -71,15 +70,15 @@ export class LiveroomClientElement extends LitElement {
           <div class="other_users">
             <span>${Object.values(this.clients).length}</span>
             <svg
-              xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
               aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
             >
               <path
                 fill-rule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-5.5-2.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM10 12a5.99 5.99 0 00-4.793 2.39A6.483 6.483 0 0010 16.5a6.483 6.483 0 004.793-2.11A5.99 5.99 0 0010 12z"
                 clip-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-5.5-2.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM10 12a5.99 5.99 0 00-4.793 2.39A6.483 6.483 0 0010 16.5a6.483 6.483 0 004.793-2.11A5.99 5.99 0 0010 12z"
               />
             </svg>
           </div>
@@ -90,15 +89,9 @@ export class LiveroomClientElement extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-
-    // Mouse move
     window.addEventListener("mousemove", this._throttledDispatchMouseMove);
-
-    // Mouse click
     window.addEventListener("mousedown", this._dispatchMouseDown.bind(this));
     window.addEventListener("mouseup", this._dispatchMouseUp.bind(this));
-
-    // Key press
     window.addEventListener("keydown", this._dispatchKeyDown.bind(this));
     window.addEventListener("keyup", this._dispatchKeyUp.bind(this));
   }
@@ -113,8 +106,8 @@ export class LiveroomClientElement extends LitElement {
 
   _throttledDispatchMouseMove = throttle(
     this._dispatchMouseMove.bind(this),
-    15 // 15ms throttle interval means ~66.6 fps
-    // 10 // 10ms throttle interval means 100 fps
+    15 // 15ms throttle interval = ~66.6 fps
+    // 10 // 10ms throttle interval = 100 fps
   );
   _dispatchMouseMove(e: MouseEvent) {
     if (this.me) {
@@ -188,7 +181,6 @@ export class LiveroomClientElement extends LitElement {
       color: var(--color);
       user-select: none;
       transform: translate(var(--x), var(--y));
-      // filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
     }
 
     .user .halo {
@@ -293,9 +285,11 @@ export class LiveroomClientElement extends LitElement {
 }
 
 // Constants
+
 const INTERESTING_KEYS = ["Escape"];
 
 // Helpers
+
 function throttle(func: (...args: any[]) => any, limit: number) {
   let lastCall = 0;
   return function (...args: any[]) {
@@ -309,6 +303,7 @@ function throttle(func: (...args: any[]) => any, limit: number) {
 }
 
 // Types
+
 type Client = {
   id: string;
   name: string;
