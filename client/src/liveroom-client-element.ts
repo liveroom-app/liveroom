@@ -7,7 +7,7 @@ import { liveState, liveStateConfig } from "phx-live-state";
   topic: "liveroom:test_room",
   properties: ["room", "me", "clients"],
   events: {
-    send: ["mouse_moved", "mouse_down", "mouse_up"],
+    send: ["mouse_moved", "mouse_down", "mouse_up", "key_down", "key_up"],
     receive: [],
   },
 })
@@ -35,7 +35,6 @@ export class LiveroomClientElement extends LitElement {
                 id="user-${client.id}"
                 class="user"
                 data-isself="${client.id == this.me?.id}"
-                data-ismousedown="${client.is_mouse_down}"
                 style="--color: ${client.color}; --x: ${client.x}px; --y: ${client.y}px"
               >
                 <svg
@@ -51,7 +50,11 @@ export class LiveroomClientElement extends LitElement {
                   <polygon points="1,99 1,1 69.3,69.3 29.1,69.3" />
                 </svg>
                 <span class="name">${client.name}</span>
-                <div class="halo" />
+                <div
+                  class="halo"
+                  data-show="${client.is_mouse_down ||
+                  client.is_escape_key_down}"
+                />
               </div>
             `
         )}
@@ -94,8 +97,14 @@ export class LiveroomClientElement extends LitElement {
     // Mouse click
     window.addEventListener("mousedown", this._dispatchMouseDown.bind(this));
     window.addEventListener("mouseup", this._dispatchMouseUp.bind(this));
+
+    // Key press
+    window.addEventListener("keydown", this._dispatchKeyDown.bind(this));
+    window.addEventListener("keyup", this._dispatchKeyUp.bind(this));
   }
   disconnectedCallback() {
+    window.removeEventListener("keyup", this._dispatchKeyUp.bind(this));
+    window.removeEventListener("keydown", this._dispatchKeyDown.bind(this));
     window.removeEventListener("mouseup", this._dispatchMouseUp.bind(this));
     window.removeEventListener("mousedown", this._dispatchMouseDown.bind(this));
     window.removeEventListener(
@@ -140,6 +149,30 @@ export class LiveroomClientElement extends LitElement {
       );
     }
   }
+  _dispatchKeyDown(e: KeyboardEvent) {
+    if (INTERESTING_KEYS.includes(e.key) && this.me) {
+      this.dispatchEvent(
+        new CustomEvent("key_down", {
+          detail: {
+            key: e.key,
+            client_id: this.me.id,
+          },
+        })
+      );
+    }
+  }
+  _dispatchKeyUp(e: KeyboardEvent) {
+    if (INTERESTING_KEYS.includes(e.key) && this.me) {
+      this.dispatchEvent(
+        new CustomEvent("key_up", {
+          detail: {
+            key: e.key,
+            client_id: this.me.id,
+          },
+        })
+      );
+    }
+  }
 
   static styles = css`
     .user {
@@ -154,6 +187,7 @@ export class LiveroomClientElement extends LitElement {
     }
 
     .user .halo {
+      transform: scale(0);
       position: absolute;
       top: -50px;
       left: -50px;
@@ -164,8 +198,8 @@ export class LiveroomClientElement extends LitElement {
       opacity: 0.2;
       transition: transform 0.15s ease-out;
     }
-    .user[data-ismousedown="false"] .halo {
-      transform: scale(0);
+    .user .halo[data-show="true"] {
+      transform: scale(1);
     }
 
     .user .cursor {
@@ -253,6 +287,9 @@ export class LiveroomClientElement extends LitElement {
   `;
 }
 
+// Constants
+const INTERESTING_KEYS = ["Escape"];
+
 // Types
 type Client = {
   id: string;
@@ -261,6 +298,7 @@ type Client = {
   x: number;
   y: number;
   is_mouse_down: boolean;
+  is_escape_key_down: boolean;
   joined_at: string;
 };
 

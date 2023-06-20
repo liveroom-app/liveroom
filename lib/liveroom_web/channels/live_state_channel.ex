@@ -15,6 +15,7 @@ defmodule LiveroomWeb.LiveStateChannel do
       x: 50,
       y: 50,
       is_mouse_down: false,
+      is_escape_key_down: false,
       joined_at: DateTime.utc_now()
     }
 
@@ -34,7 +35,7 @@ defmodule LiveroomWeb.LiveStateChannel do
 
   @impl true
   def handle_event(event, params, state)
-      when event in ["mouse_moved", "mouse_down", "mouse_up"] do
+      when event in ["mouse_moved", "mouse_down", "mouse_up", "key_down", "key_up"] do
     pubsub_topic = pubsub_topic(state.topic)
     Endpoint.broadcast(pubsub_topic, event, params)
     # NOTE: State will be updated when consuming pubsub message.
@@ -91,6 +92,30 @@ defmodule LiveroomWeb.LiveStateChannel do
       update_in(state, [:clients, client_id], fn
         nil -> nil
         client -> %{client | is_mouse_down: is_mouse_down?}
+      end)
+
+    {:noreply, state}
+  end
+
+  def handle_message(
+        %Phoenix.Socket.Broadcast{
+          topic: _topic,
+          event: event,
+          payload: %{"client_id" => client_id, "key" => "Escape"}
+        },
+        state
+      )
+      when event in ["key_down", "key_up"] do
+    is_escape_key_down? =
+      case event do
+        "key_down" -> true
+        "key_up" -> false
+      end
+
+    state =
+      update_in(state, [:clients, client_id], fn
+        nil -> nil
+        client -> %{client | is_escape_key_down: is_escape_key_down?}
       end)
 
     {:noreply, state}
