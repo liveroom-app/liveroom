@@ -14,6 +14,7 @@ defmodule LiveroomWeb.LiveStateChannel do
       color: Liveroom.Colors.get_random_color(),
       x: 50,
       y: 50,
+      is_mouse_down: false,
       joined_at: DateTime.utc_now()
     }
 
@@ -32,9 +33,10 @@ defmodule LiveroomWeb.LiveStateChannel do
   end
 
   @impl true
-  def handle_event("mouse_moved", params, state) do
+  def handle_event(event, params, state)
+      when event in ["mouse_moved", "mouse_down", "mouse_up"] do
     pubsub_topic = pubsub_topic(state.topic)
-    Endpoint.broadcast(pubsub_topic, "mouse_moved", params)
+    Endpoint.broadcast(pubsub_topic, event, params)
     # NOTE: State will be updated when consuming pubsub message.
     {:noreply, state}
   end
@@ -65,6 +67,30 @@ defmodule LiveroomWeb.LiveStateChannel do
       update_in(state, [:clients, client_id], fn
         nil -> nil
         client -> %{client | x: x, y: y}
+      end)
+
+    {:noreply, state}
+  end
+
+  def handle_message(
+        %Phoenix.Socket.Broadcast{
+          topic: _topic,
+          event: event,
+          payload: %{"client_id" => client_id}
+        },
+        state
+      )
+      when event in ["mouse_down", "mouse_up"] do
+    is_mouse_down? =
+      case event do
+        "mouse_down" -> true
+        "mouse_up" -> false
+      end
+
+    state =
+      update_in(state, [:clients, client_id], fn
+        nil -> nil
+        client -> %{client | is_mouse_down: is_mouse_down?}
       end)
 
     {:noreply, state}
