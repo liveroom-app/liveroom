@@ -2,37 +2,101 @@ defmodule LiveroomWeb.LiveStateChannel do
   # use LiveState.Channel, web_module: LiveroomWeb
   use LiveState.Channel, web_module: LiveroomWeb, json_patch: true
 
-  alias LiveState.Event
+  alias LiveroomWeb.Endpoint
+  alias LiveroomWeb.Presence
 
   @impl true
-  def state_key, do: :state
-
-  @impl true
-  def init(_topic, _params, _socket) do
-    # LiveroomWeb.Endpoint.subscribe("comments:#{url}")
-
-    {:ok, %{comments: []}}
-  end
-
-  @impl true
-  def handle_event("add_comment", params, state) do
-    comment = %{
-      author: params["author"],
-      text: params["text"],
-      inserted_at: DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_string()
+  def init(topic, _params, _socket) do
+    me = %{
+      type: :client,
+      id: Ecto.UUID.generate(),
+      name: Liveroom.Names.generate(),
+      color: Liveroom.Colors.get_random_color(),
+      x: 50,
+      y: 50,
+      joined_at: DateTime.utc_now()
     }
 
-    state = Map.update!(state, :comments, &[comment | &1])
+    pubsub_topic = pubsub_topic(topic)
 
-    {:reply, [%Event{name: "comment_added", detail: comment}], state}
-    # {:noreply, state}
+    {:ok, _} = Presence.track(self(), pubsub_topic, me.id, me)
+    :ok = Endpoint.subscribe(pubsub_topic)
+
+    state = %{
+      topic: topic,
+      me: me,
+      clients: list_clients(pubsub_topic)
+    }
+
+    {:ok, state}
   end
 
   @impl true
-  def handle_message({:comment_created, _comment} = msg, state) do
-    dbg({msg, state})
+  def handle_event("mouse_moved", params, state) do
+    pubsub_topic = pubsub_topic(state.topic)
+    Endpoint.broadcast(pubsub_topic, "mouse_moved", params)
+    # NOTE: State will be updated when consuming pubsub message.
+    {:noreply, state}
+  end
 
-    # {:noreply, state |> Map.put(:comments, Comments.list_comments(state.url))}
-    {:noreply, state |> Map.put(:comments, [])}
+  @impl true
+  def handle_message(
+        %Phoenix.Socket.Broadcast{
+          topic: _topic,
+          event: "presence_diff",
+          payload: %{joins: joins, leaves: leaves}
+        },
+        state
+      ) do
+    state = Map.update!(state, :clients, &update_clients(&1, joins, leaves))
+
+    {:noreply, state}
+  end
+
+  def handle_message(
+        %Phoenix.Socket.Broadcast{
+          topic: _topic,
+          event: "mouse_moved",
+          payload: %{"client_id" => client_id, "x" => x, "y" => y}
+        },
+        state
+      ) do
+    state =
+      update_in(state, [:clients, client_id], fn
+        nil -> nil
+        client -> %{client | x: x, y: y}
+      end)
+
+    {:noreply, state}
+  end
+
+  ### Helpers
+
+  defp pubsub_topic(topic), do: topic <> "_pubsub"
+
+  def list_clients(topic) do
+    topic
+    # TODO: Is Presence.fetch more appropriate?
+    |> Presence.list()
+    |> Enum.map(fn {client_id, %{metas: metas}} -> {client_id, hd(metas)} end)
+    |> Enum.into(%{})
+  end
+
+  def update_clients(clients, joins, leaves) do
+    clients
+    |> merge_joins(joins)
+    |> merge_leaves(leaves)
+  end
+
+  def merge_joins(clients, joins) do
+    for {client_id, %{metas: metas}} <- joins, reduce: clients do
+      clients -> Map.put(clients, client_id, hd(metas))
+    end
+  end
+
+  def merge_leaves(clients, leaves) do
+    for {client_id, %{metas: _metas}} <- leaves, reduce: clients do
+      clients -> Map.delete(clients, client_id)
+    end
   end
 end

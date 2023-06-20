@@ -10,13 +10,15 @@
     <title>Liveroom Client Example</title>
 
     <!-- Liveroom -->
-    <script type="module" src="/src/liveroom-client-element.ts"></script>
+    <script type="module" src="./src/liveroom-client-element.ts"></script>
   </head>
 
   <body style="display: flex; flex-direction: column; gap: 3em">
     <h1>Welcome</h1>
 
-    <liveroom-client-element url="ws://localhost:4000/client_socket">
-    </liveroom-client-element>
+    <liveroom-client-element
+      url="ws://localhost:4000/client_socket"
+      room="abc"
+    />
   </body>
 </html>
