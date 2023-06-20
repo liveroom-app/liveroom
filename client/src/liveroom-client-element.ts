@@ -151,7 +151,10 @@ export class LiveroomClientElement extends LitElement {
     }
   }
   _dispatchKeyDown(e: KeyboardEvent) {
-    if (INTERESTING_KEYS.includes(e.key) && this.me) {
+    // NOTE: To avoid sending multiple keydown events when a key is held down.
+    const firstTimeKeyIsPressed = !e.repeat;
+
+    if (firstTimeKeyIsPressed && INTERESTING_KEYS.includes(e.key) && this.me) {
       this.dispatchEvent(
         new CustomEvent("key_down", {
           detail: {
