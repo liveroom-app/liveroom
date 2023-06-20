@@ -92,7 +92,7 @@ export class LiveroomClientElement extends LitElement {
     super.connectedCallback();
 
     // Mouse move
-    window.addEventListener("mousemove", this._dispatchMouseMoved.bind(this));
+    window.addEventListener("mousemove", this._throttledDispatchMouseMoved);
 
     // Mouse click
     window.addEventListener("mousedown", this._dispatchMouseDown.bind(this));
@@ -107,13 +107,14 @@ export class LiveroomClientElement extends LitElement {
     window.removeEventListener("keydown", this._dispatchKeyDown.bind(this));
     window.removeEventListener("mouseup", this._dispatchMouseUp.bind(this));
     window.removeEventListener("mousedown", this._dispatchMouseDown.bind(this));
-    window.removeEventListener(
-      "mousemove",
-      this._dispatchMouseMoved.bind(this)
-    );
+    window.removeEventListener("mousemove", this._throttledDispatchMouseMoved);
     super.disconnectedCallback();
   }
 
+  _throttledDispatchMouseMoved = throttle(
+    this._dispatchMouseMoved.bind(this),
+    10 // 10ms throttle interval means 100 fps
+  );
   _dispatchMouseMoved(e: MouseEvent) {
     if (this.me) {
       this.dispatchEvent(
@@ -289,6 +290,19 @@ export class LiveroomClientElement extends LitElement {
 
 // Constants
 const INTERESTING_KEYS = ["Escape"];
+
+// Helpers
+function throttle(func: (...args: any[]) => any, limit: number) {
+  let lastCall = 0;
+  return function (...args: any[]) {
+    let now = Date.now();
+    if (now - lastCall > limit) {
+      lastCall = now;
+      // @ts-ignore
+      return func.apply(this, args);
+    }
+  };
+}
 
 // Types
 type Client = {
