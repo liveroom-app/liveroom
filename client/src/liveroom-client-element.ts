@@ -7,7 +7,7 @@ import { liveState, liveStateConfig } from "phx-live-state";
   topic: "liveroom:test_room",
   properties: ["room", "me", "clients"],
   events: {
-    send: ["mouse_moved"],
+    send: ["mouse_moved", "mouse_down", "mouse_up"],
     receive: [],
   },
 })
@@ -35,6 +35,7 @@ export class LiveroomClientElement extends LitElement {
                 id="user-${client.id}"
                 class="user"
                 data-isself="${client.id == this.me?.id}"
+                data-ismousedown="${client.is_mouse_down}"
                 style="--color: ${client.color}; --x: ${client.x}px; --y: ${client.y}px"
               >
                 <svg
@@ -50,6 +51,7 @@ export class LiveroomClientElement extends LitElement {
                   <polygon points="1,99 1,1 69.3,69.3 29.1,69.3" />
                 </svg>
                 <span class="name">${client.name}</span>
+                <div class="halo" />
               </div>
             `
         )}
@@ -85,9 +87,17 @@ export class LiveroomClientElement extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+
+    // Mouse move
     window.addEventListener("mousemove", this._dispatchMouseMoved.bind(this));
+
+    // Mouse click
+    window.addEventListener("mousedown", this._dispatchMouseDown.bind(this));
+    window.addEventListener("mouseup", this._dispatchMouseUp.bind(this));
   }
   disconnectedCallback() {
+    window.removeEventListener("mouseup", this._dispatchMouseUp.bind(this));
+    window.removeEventListener("mousedown", this._dispatchMouseDown.bind(this));
     window.removeEventListener(
       "mousemove",
       this._dispatchMouseMoved.bind(this)
@@ -108,6 +118,28 @@ export class LiveroomClientElement extends LitElement {
       );
     }
   }
+  _dispatchMouseDown(_e: MouseEvent) {
+    if (this.me) {
+      this.dispatchEvent(
+        new CustomEvent("mouse_down", {
+          detail: {
+            client_id: this.me.id,
+          },
+        })
+      );
+    }
+  }
+  _dispatchMouseUp(_e: MouseEvent) {
+    if (this.me) {
+      this.dispatchEvent(
+        new CustomEvent("mouse_up", {
+          detail: {
+            client_id: this.me.id,
+          },
+        })
+      );
+    }
+  }
 
   static styles = css`
     .user {
@@ -116,12 +148,24 @@ export class LiveroomClientElement extends LitElement {
       top: 0;
       left: 0;
       color: var(--color);
+      user-select: none;
       transform: translate(var(--x), var(--y));
       // filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
     }
 
-    .user[data-isself="true"] {
-      display: none;
+    .user .halo {
+      position: absolute;
+      top: -50px;
+      left: -50px;
+      width: 100px;
+      height: 100px;
+      border-radius: 100%;
+      background-color: var(--color);
+      opacity: 0.2;
+      transition: transform 0.15s ease-out;
+    }
+    .user[data-ismousedown="false"] .halo {
+      transform: scale(0);
     }
 
     .user .cursor {
@@ -131,6 +175,9 @@ export class LiveroomClientElement extends LitElement {
       width: 20px;
       transform-origin: top left;
       transform: rotate(-25deg);
+    }
+    .user[data-isself="true"] .cursor {
+      display: none;
     }
 
     .user .name {
@@ -144,6 +191,9 @@ export class LiveroomClientElement extends LitElement {
       background-color: var(--color);
       white-space: nowrap;
       border-radius: 9999px;
+    }
+    .user[data-isself="true"] .name {
+      display: none;
     }
 
     .banner {
@@ -210,6 +260,7 @@ type Client = {
   color: string;
   x: number;
   y: number;
+  is_mouse_down: boolean;
   joined_at: string;
 };
 
