@@ -70,22 +70,4 @@ defmodule LiveroomWeb.Layouts do
     </html>
     """
   end
-
-  def render("root_embed.html", assigns) do
-    ~H"""
-    <!DOCTYPE html>
-    <html lang="en" style="scrollbar-gutter: stable;">
-      <head>
-        <meta name="csrf-token" content={get_csrf_token()} />
-        <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
-        <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
-        </script>
-      </head>
-
-      <body class="antialiased">
-        <%= @inner_content %>
-      </body>
-    </html>
-    """
-  end
 end
