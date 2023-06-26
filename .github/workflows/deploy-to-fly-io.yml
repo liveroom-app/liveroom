@@ -29,7 +29,7 @@ jobs:
       - name: Setup Flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
-          version: 0.1.38
+          version: 0.1.40
 
       - name: Flyctl version
         run: flyctl version
