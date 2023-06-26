@@ -19,6 +19,58 @@
 
 Liveroom allows you to collaborate with your users, right inside your product.
 
+## Disclaimer
+
+Liveroom is currently very early stage. We are exploring technical feasibility, and trying different ideas to find what could be a good first version of Liveroom.
+
+If you are interested in beta testing the product once it is ready, please [join the waitlist](https://tally.so/r/wQ1EvX).
+
+## Context
+
+> this is a work in progress
+
+For simplicity, let's consider that Liveroom is being used to showcase a B2B SaaS product called _MyB2BSaaS_.
+
+There are 2 main personas in Liveroom:
+
+- **admin**: this is the builder of the product, who wants to show a demo of his product to his client.
+
+- **client**: this is the potential customer of the product.
+
+Those 2 personas have access to 2 different experiences in Liveroom:
+
+- The admin has an interface showing all the connected clients in the room. They are displayed on different screens, to respect aspect ratio. He can interact with each of them. This interface is hosted on [Liveroom](https://liveroom.app).
+
+- The client has a minimal Liveroom interface, on top of the interface of _MyB2BSaaS_. The Liveroom interface is embedded as much as possible, for example just a little pill on the bottom of the screen.
+
+## Architecture
+
+> this is a work in progress
+
+```mermaid
+graph TD
+    subgraph Front
+      subgraph Liveroom.app
+        Admin(<b>Admin</b> <br/> LiveView)
+      end
+      subgraph MyB2BSaaS.com
+        Client(<b>Client</b> <br/> Custom HTML Element)
+      end
+    end
+
+    subgraph Liveroom Server
+      ClientProcess
+      AdminProcess
+    end
+
+    Client <-- LiveState --> ClientProcess
+    Admin <-- LiveView --> AdminProcess
+```
+
+**ClientProcess** & **AdminProcess** communicate with each other over PubSub (can't draw it properly on the Mermaid graph), on a particular **room** (topic).
+
+The HTML Custom Element allows Liveroom to be plug-and-play on any SaaS product easily.
+
 ## Setup
 
 1. install dependencies: `mix setup`
