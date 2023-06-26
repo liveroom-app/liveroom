@@ -1,4 +1,7 @@
-<!-- SaaS B2B product landing page demo -->
+<!-- This is an example of a simple HTML document using Liveroom HTML Custom Element. -->
+<!-- The Liveroom HTML Custom Element is loaded from the JSDeliver CDN,
+     and uses the Liveroom production environment (on https://liveroom.app). -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,11 +13,16 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Liveroom -->
-    <script type="module" src="../client/liveroom-client.ts"></script>
+    <!-- Load Liveroom HTML Custom Element here: -->
+    <!-- TODO: load it from JSDeliver CDN once published to npm -->
+    <!-- <script type="module" src=""></script> -->
   </head>
 
-  <liveroom-client url="wss://localhost:4000/socket"></liveroom-client>
+  <!-- Insert Liveroom HTML Custom Element here: -->
+  <!-- <liveroom-client-element
+    url="wss://liveroom.app/client_socket"
+    room="simple-html-document"
+  /> -->
 
   <body class="h-screen w-screen flex flex-col items-stretch">
     <header class="bg-white shadow-sm">
