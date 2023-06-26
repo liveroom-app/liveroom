@@ -9,16 +9,14 @@
 
     <title>Liveroom Client Example</title>
 
-    <!-- Liveroom -->
+    <!-- Load Liveroom HTML Custom Element here: -->
     <script type="module" src="./src/liveroom-client-element.ts"></script>
   </head>
 
+  <!-- Insert Liveroom HTML Custom Element here: -->
+  <liveroom-client-element url="ws://localhost:4000/client_socket" room="abc" />
+
   <body style="display: flex; flex-direction: column; gap: 3em">
     <h1>Welcome</h1>
-
-    <liveroom-client-element
-      url="ws://localhost:4000/client_socket"
-      room="abc"
-    />
   </body>
 </html>
