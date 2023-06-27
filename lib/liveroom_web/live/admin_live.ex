@@ -1,7 +1,7 @@
 defmodule LiveroomWeb.AdminLive do
   use LiveroomWeb, :live_view
 
-  alias LiveroomWeb.Components.CursorV1
+  alias LiveroomWeb.Components.Cursor
   alias LiveroomWeb.Components.UserBanner
 
   @reduced_opacity 0.75
@@ -70,7 +70,7 @@ defmodule LiveroomWeb.AdminLive do
     >
       <div class="flex flex-col items-stretch">
         <div class="pb-2">
-          <%!-- name & screen size --%>
+          <%!-- Name & Screen size --%>
           <div class="flex flex-wrap justify-between items-baseline gap-x-16 py-3 px-4">
             <p class="flex items-center space-x-1">
               <span class="font-semibold select-all"><%= @user.name %></span>
@@ -84,6 +84,7 @@ defmodule LiveroomWeb.AdminLive do
               <%= @user.inner_width %> x <%= @user.inner_height %>
             </p>
           </div>
+
           <%!-- user_id & phx_ref --%>
           <table class="w-fit my-1 mx-2 text-xs text-neutral-800/75">
             <tr class="[&_td]:px-2">
@@ -97,36 +98,48 @@ defmodule LiveroomWeb.AdminLive do
           </table>
         </div>
 
-        <%!-- cursors playground --%>
+        <%!-- Cursors Playground --%>
         <div class="flex flex-col items-center p-2">
+          <%!-- TODO: listen to mouse click only inside the container in TrackCursorHook --%>
+          <%!-- TODO: same for keyboard press? --%>
           <div
             id={"cursors_playground_" <> @user.id}
             phx-hook="TrackCursorsHook"
             data-mode="container"
+            data-mouseclick="true"
+            data-keyboardpress="true"
             style={"width: #{@view_width}px; height: #{@view_height}px; background-color: #{@user.color}30; border: solid 2px #{@user.color};"}
             class="relative rounded overflow-hidden"
           >
-            <%!-- :if={@user.id != @current_user.id} --%>
-            <CursorV1.render
-              id={"cursor_v1_" <> @user.id}
-              is_self={@user.id != @current_user.id}
+            <%!-- Other user cursor --%>
+            <Cursor.render
+              id={"cursor_" <> @user.id}
+              is_self={false}
               user_id={@user.id}
               x={@user.x}
               y={@user.y}
               name={@user.name}
               color={@user.color}
+              is_escape_key_down={@user.is_escape_key_down}
+              is_mouse_down={@user.is_mouse_down}
+              msg={@user.msg}
               mode={:container}
               container_width={@view_width}
               container_height={@view_height}
             />
-            <CursorV1.render
-              id={"cursor_v1_" <> @user.id <> "_self"}
+            <%!-- Current user cursor --%>
+            <Cursor.render
+              id={"cursor_" <> @user.id <> "_self"}
               is_self={true}
+              show_self={true}
               user_id={@current_user.id}
               x={@current_user.x}
               y={@current_user.y}
               name={@current_user.name}
               color={@current_user.color}
+              is_escape_key_down={@current_user.is_escape_key_down}
+              is_mouse_down={@current_user.is_mouse_down}
+              msg={@current_user.msg}
               mode={:container}
               container_width={@view_width}
               container_height={@view_height}

@@ -1,19 +1,16 @@
 defmodule LiveroomWeb.ClientLive do
   use LiveroomWeb, :live_view
 
-  alias LiveroomWeb.Components.CursorV1
   alias LiveroomWeb.Components.UserBanner
+  alias LiveroomWeb.Components.CursorsPlayground
 
   @reduced_opacity 0.75
 
   def render(assigns) do
     ~H"""
-    <div
-      id="client_live"
-      phx-hook="TrackCursorsHook"
-      data-mode="fullscreen"
-      class="relative min-h-[100dvh] flex flex-col bg-slate-50 overflow-hidden"
-    >
+    <CursorsPlayground.render current_user_id={@_liveroom_user_id} users={@_liveroom_users} />
+
+    <div id="client_live" class="min-h-[100dvh] flex flex-col bg-slate-50">
       <%!-- Current user --%>
       <div class="space-y-8 mt-8 px-8">
         <h2 class="font-semibold">You</h2>
@@ -44,19 +41,6 @@ defmodule LiveroomWeb.ClientLive do
           />
         </ul>
       </div>
-
-      <CursorV1.render
-        :for={{user_id, user} <- @_liveroom_users}
-        :if={is_other_user = user_id != @_liveroom_user_id}
-        id={"cursor_v1_" <> user_id}
-        is_self={not is_other_user}
-        user_id={user_id}
-        x={user.x}
-        y={user.y}
-        name={user.name}
-        color={user.color}
-        mode={:full_screen}
-      />
 
       <UserBanner.render
         name={@_liveroom_users[@_liveroom_user_id][:name]}

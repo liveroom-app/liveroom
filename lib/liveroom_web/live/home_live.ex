@@ -1,13 +1,13 @@
 defmodule LiveroomWeb.HomeLive do
   use LiveroomWeb, :live_view
 
-  alias LiveroomWeb.Components.Cursors
+  alias LiveroomWeb.Components.CursorsPlayground
   alias LiveroomWeb.Components.InteractiveDashboard
 
   @impl true
   def render(assigns) do
     ~H"""
-    <Cursors.render current_user_id={@_liveroom_user_id} users={@_liveroom_users} />
+    <CursorsPlayground.render current_user_id={@_liveroom_user_id} users={@_liveroom_users} />
 
     <%!-- <.section class="relative bg-[url('/images/texture.png')] w-full !pt-0"> --%>
     <.section class="relative w-full !pt-0">
