@@ -14,18 +14,17 @@ defmodule LiveroomWeb.ClientLive do
       data-mode="fullscreen"
       class="relative min-h-[100dvh] flex flex-col bg-slate-50 overflow-hidden"
     >
-      <%!-- You --%>
+      <%!-- Current user --%>
       <div class="space-y-8 mt-8 px-8">
         <h2 class="font-semibold">You</h2>
-        <ul id="you" class="space-y-8 text-sm text-neutral-800/75">
+        <ul id="current_user" class="space-y-8 text-sm text-neutral-800/75">
           <.user
-            :for={meta <- @_liveroom_v1_metas}
-            :if={_is_self = meta.socket_id == @_liveroom_v1_socket_id}
-            socket_id={meta.socket_id}
-            phx_ref={meta.phx_ref}
-            name={meta.name}
-            color={meta.color}
-            type={meta.type}
+            :if={current_user = @_liveroom_users[@_liveroom_user_id]}
+            user_id={current_user.id}
+            phx_ref={current_user.phx_ref}
+            name={current_user.name}
+            color={current_user.color}
+            type={current_user.type}
           />
         </ul>
       </div>
@@ -35,37 +34,41 @@ defmodule LiveroomWeb.ClientLive do
         <h2 class="font-semibold">Other users in the session</h2>
         <ul id="other_users" class="space-y-8 text-sm text-neutral-800/75">
           <.user
-            :for={meta <- @_liveroom_v1_metas}
-            :if={_is_other_user = meta.socket_id != @_liveroom_v1_socket_id}
-            socket_id={meta.socket_id}
-            phx_ref={meta.phx_ref}
-            name={meta.name}
-            color={meta.color}
-            type={meta.type}
+            :for={{user_id, user} <- @_liveroom_users}
+            :if={_is_other_user = user_id != @_liveroom_user_id}
+            user_id={user_id}
+            phx_ref={user.phx_ref}
+            name={user.name}
+            color={user.color}
+            type={user.type}
           />
         </ul>
       </div>
 
       <CursorV1.render
-        :for={meta <- @_liveroom_v1_metas}
-        :if={meta.socket_id != @_liveroom_v1_socket_id}
-        id={"cursor_v1_" <> meta.socket_id}
-        socket_id={@_liveroom_v1_socket_id}
-        meta_socket_id={meta.socket_id}
-        meta_x={meta.x}
-        meta_y={meta.y}
-        meta_name={meta.name}
-        meta_color={meta.color}
+        :for={{user_id, user} <- @_liveroom_users}
+        :if={is_other_user = user_id != @_liveroom_user_id}
+        id={"cursor_v1_" <> user_id}
+        is_self={not is_other_user}
+        user_id={user_id}
+        x={user.x}
+        y={user.y}
+        name={user.name}
+        color={user.color}
+        mode={:full_screen}
       />
 
-      <UserBanner.render name={@_liveroom_v1_name} color={@_liveroom_v1_color} />
+      <UserBanner.render
+        name={@_liveroom_users[@_liveroom_user_id][:name]}
+        color={@_liveroom_users[@_liveroom_user_id][:color]}
+      />
     </div>
     """
   end
 
   ### Components
 
-  attr :socket_id, :string, required: true
+  attr :user_id, :string, required: true
   attr :phx_ref, :string, required: true
   attr :name, :string, required: true
   attr :color, :string, required: true
@@ -74,7 +77,7 @@ defmodule LiveroomWeb.ClientLive do
   def user(assigns) do
     ~H"""
     <li
-      id={"user_" <> @socket_id}
+      id={"user_" <> @user_id}
       phx-hook="AnimateBackgroundHook"
       data-phxref={@phx_ref}
       data-opacity={reduced_opacity()}
@@ -92,7 +95,7 @@ defmodule LiveroomWeb.ClientLive do
       </p>
 
       <p class="font-medium font-mono select-all"><%= @type %></p>
-      <p class="font-medium font-mono select-all"><%= @socket_id %></p>
+      <p class="font-medium font-mono select-all"><%= @user_id %></p>
       <p class="font-medium font-mono select-all"><%= @phx_ref %></p>
     </li>
     """
@@ -100,22 +103,26 @@ defmodule LiveroomWeb.ClientLive do
 
   ### Server
 
-  def mount(
-        %{"session_id" => session_id} = _params,
-        _session,
-        %{assigns: %{_liveroom_v1_name: name}} = socket
-      ) do
-    {:ok,
-     assign(socket,
-       page_title:
-         case name do
-           nil -> session_id
-           name -> name <> " - " <> session_id
-         end
-     ), layout: false}
+  def mount(%{"room_id" => room_id} = _params, _session, socket) do
+    socket =
+      assign(socket,
+        page_title: page_title(socket, room_id)
+      )
+
+    {:ok, socket, layout: false}
   end
 
   ### Helpers
 
-  def reduced_opacity, do: @reduced_opacity
+  defp page_title(
+         %{assigns: %{_liveroom_user_id: current_user_id, _liveroom_users: users}} = _socket,
+         room_id
+       ) do
+    case users[current_user_id][:name] do
+      nil -> room_id
+      name -> name <> " - " <> room_id
+    end
+  end
+
+  defp reduced_opacity, do: @reduced_opacity
 end

@@ -7,38 +7,40 @@ defmodule LiveroomWeb.Components.CursorV1 do
   @container_padding_r 4
 
   attr :id, :string, required: true
-  attr :socket_id, :string, required: true
-  attr :meta_socket_id, :string, required: true
-  attr :meta_x, :string, required: true
-  attr :meta_y, :string, required: true
-  attr :meta_name, :string, required: true
-  attr :meta_color, :string, required: true
-  attr :mode, :atom, values: ~w"full_screen container"a, default: :full_screen
+  attr :is_self, :boolean, required: true
+  attr :user_id, :string, required: true
+  attr :x, :string, required: true
+  attr :y, :string, required: true
+  attr :name, :string, required: true
+  attr :color, :string, required: true
+  attr :mode, :atom, values: ~w"full_screen container"a, required: true
   attr :container_width, :string, default: nil
   attr :container_height, :string, default: nil
 
   def render(assigns) do
     assigns =
-      assigns
-      |> assign(is_self: assigns.socket_id == assigns.meta_socket_id)
-      |> assign(
+      assign(
+        assigns,
         case assigns.mode do
           :full_screen ->
             [
-              translate_x: "#{assigns.meta_x}vw",
-              translate_y: "#{assigns.meta_y}vh"
+              translate_x: "#{assigns.x}vw",
+              translate_y: "#{assigns.y}vh"
             ]
 
           :container ->
+            {x, ""} = Float.parse(assigns.x)
+            {y, ""} = Float.parse(assigns.y)
+
             [
               translate_x:
-                (assigns.meta_x / 100 * assigns.container_width)
+                (x / 100 * assigns.container_width)
                 |> max(@container_padding_l)
                 |> min(assigns.container_width - @container_padding_r)
                 |> round()
                 |> then(&"#{&1}px"),
               translate_y:
-                (assigns.meta_y / 100 * assigns.container_height)
+                (y / 100 * assigns.container_height)
                 |> max(@container_padding_t)
                 |> min(assigns.container_height - @container_padding_b)
                 |> round()
@@ -50,22 +52,15 @@ defmodule LiveroomWeb.Components.CursorV1 do
     ~H"""
     <span
       id={@id}
-      style={
-        [
-          color: "#{@meta_color}",
-          transform: "translate(#{@translate_x}, #{@translate_y})"
-        ]
-        |> Enum.map(fn {k, v} -> "#{k}: #{v}" end)
-        |> Enum.join("; ")
-      }
+      style={"color: #{@color}; transform: translate(#{@translate_x}, #{@translate_y});"}
       class={[
         "z-[100] absolute top-0 left-0 min-w-[25px] min-h-[25px] flex flex-col justify-start items-start",
         "pointer-events-none select-none"
       ]}
     >
       <%!-- <div
-            id={"cursor_blink_#{@meta_socket_id}"}
-            style={"background-color: #{@meta_color}25; border-color: #{@meta_color};"}
+            id={"cursor_blink_#{@user_id}"}
+            style={"background-color: #{@color}25; border-color: #{@color};"}
             class={[
               not @meta_is_halo_key_pressed && not @meta_is_cursor_pressed && "scale-0",
               "z-40 absolute -top-16 -left-16 h-32 w-32 border rounded-full shadow-md",
@@ -77,7 +72,7 @@ defmodule LiveroomWeb.Components.CursorV1 do
 
       <%!-- data-isself={@is_self} --%>
       <span
-        style={"background-color: #{@meta_color};"}
+        style={"background-color: #{@color};"}
         class={
           [
             "z-50 mt-[20px] ml-[25px] py-1 px-3",
@@ -87,7 +82,7 @@ defmodule LiveroomWeb.Components.CursorV1 do
           ]
         }
       >
-        <%= @meta_name %>
+        <%= @name %>
       </span>
     </span>
     """
