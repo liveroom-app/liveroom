@@ -1,12 +1,9 @@
 defmodule LiveroomWeb.Components.InteractiveDashboard do
   use LiveroomWeb, :live_component
 
-  alias LiveroomWeb.Hooks
-
-  attr :socket_id, :string, required: true
-  attr :users, :list, required: true
-  attr :name, :string, required: true
-  attr :color, :string, required: true
+  attr :room_id, :string, required: true
+  attr :current_user_id, :string, required: true
+  attr :users, :map, required: true
   attr :msg, :string, required: true
   attr :class, :string, default: nil
 
@@ -24,19 +21,19 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
         <ul class="flex flex-col items-start gap-1 mt-8">
           <.sidebar_navigation_link
             id="sidebar_navigation_link_1"
-            hovered_by={hovered_by_user(@socket_id, @users, "sidebar_navigation_link_1")}
+            hovered_by={hovered_by_user(@current_user_id, @users, "sidebar_navigation_link_1")}
           />
           <.sidebar_navigation_link
             id="sidebar_navigation_link_2"
-            hovered_by={hovered_by_user(@socket_id, @users, "sidebar_navigation_link_2")}
+            hovered_by={hovered_by_user(@current_user_id, @users, "sidebar_navigation_link_2")}
           />
           <.sidebar_navigation_link
             id="sidebar_navigation_link_3"
-            hovered_by={hovered_by_user(@socket_id, @users, "sidebar_navigation_link_3")}
+            hovered_by={hovered_by_user(@current_user_id, @users, "sidebar_navigation_link_3")}
           />
           <.sidebar_navigation_link
             id="sidebar_navigation_link_4"
-            hovered_by={hovered_by_user(@socket_id, @users, "sidebar_navigation_link_4")}
+            hovered_by={hovered_by_user(@current_user_id, @users, "sidebar_navigation_link_4")}
           />
         </ul>
       </nav>
@@ -53,7 +50,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
 
           <.header_button
             id="header_button_1"
-            hovered_by={hovered_by_user(@socket_id, @users, "header_button_1")}
+            hovered_by={hovered_by_user(@current_user_id, @users, "header_button_1")}
           />
         </header>
 
@@ -61,15 +58,15 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
           <div class="flex gap-4 justify-start">
             <.card_link
               id="card_link_1"
-              hovered_by={hovered_by_user(@socket_id, @users, "card_link_1")}
+              hovered_by={hovered_by_user(@current_user_id, @users, "card_link_1")}
             />
             <.card_link
               id="card_link_2"
-              hovered_by={hovered_by_user(@socket_id, @users, "card_link_2")}
+              hovered_by={hovered_by_user(@current_user_id, @users, "card_link_2")}
             />
             <.card_link
               id="card_link_3"
-              hovered_by={hovered_by_user(@socket_id, @users, "card_link_3")}
+              hovered_by={hovered_by_user(@current_user_id, @users, "card_link_3")}
             />
           </div>
 
@@ -79,8 +76,8 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
               <.interactive_text_input
                 id="interactive_form"
                 input_id="search_input_1"
-                focused_by={focused_by_user(@socket_id, @users, "search_input_1")}
-                inputs_by={inputs_by_user(@socket_id, @users, "search_input_1")}
+                focused_by={focused_by_user(@current_user_id, @users, "search_input_1")}
+                inputs_by={inputs_by_user(@current_user_id, @users, "search_input_1")}
                 search={@search}
                 myself={@myself}
               />
@@ -90,8 +87,9 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
       </div>
 
       <.pill
-        name={@name}
-        color={@color}
+        :if={current_user = @users[@current_user_id]}
+        name={current_user.name}
+        color={current_user.color}
         camera_on={@camera_on}
         msg={@msg}
         current_msg={@current_msg}
@@ -445,17 +443,30 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
   end
 
   @impl true
-  def handle_event("search_change_" <> input_id, %{"search" => search}, socket) do
-    Hooks.Liveroom.broadcast_user_changes(
-      socket,
-      &%{inputs: Map.put(&1.inputs, input_id, %{type: :text, value: search})}
+  def handle_event(
+        "search_change_" <> input_id,
+        %{"search" => search},
+        %{assigns: %{room_id: room_id, current_user_id: user_id}} = socket
+      ) do
+    LiveroomWeb.Presence.update_user(
+      room_id,
+      user_id,
+      &put_in(&1.inputs[input_id], %{type: :text, value: search})
     )
 
     {:noreply, assign(socket, search: search)}
   end
 
-  def handle_event("send_message", %{"msg" => msg}, socket) do
-    Hooks.Liveroom.broadcast_user_changes(socket, %{msg: msg})
+  def handle_event(
+        "send_message",
+        %{"msg" => msg},
+        %{assigns: %{room_id: room_id, current_user_id: user_id}} = socket
+      ) do
+    LiveroomWeb.Presence.update_user(
+      room_id,
+      user_id,
+      &put_in(&1.msg, msg)
+    )
 
     socket
     |> assign(msg: "", current_msg: msg)
@@ -482,16 +493,34 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
 
   ### Helpers
 
-  defp hovered_by_user(socket_id, users, el_id) do
-    Enum.find(users, &(MapSet.member?(&1.hovered_elements, el_id) && &1.socket_id != socket_id))
+  # TODO: Rewrite data structure for hovered focused and inputs elements
+  #       We should have a dic per element ie. %{<el_id> => [list of users currently hovering this element]}
+
+  defp hovered_by_user(current_user_id, users, el_id) do
+    users
+    |> Enum.find({nil, nil}, fn
+      {^current_user_id, _current_user} -> false
+      {_user_id, user} -> MapSet.member?(user.hovered_elements, el_id)
+    end)
+    |> elem(1)
   end
 
-  defp focused_by_user(socket_id, users, el_id) do
-    Enum.find(users, &(MapSet.member?(&1.focused_elements, el_id) && &1.socket_id != socket_id))
+  defp focused_by_user(current_user_id, users, el_id) do
+    users
+    |> Enum.find({nil, nil}, fn
+      {^current_user_id, _current_user} -> false
+      {_user_id, user} -> MapSet.member?(user.focused_elements, el_id)
+    end)
+    |> elem(1)
   end
 
-  defp inputs_by_user(socket_id, users, el_id) do
-    Enum.find(users, &(&1.inputs[el_id] && &1.socket_id != socket_id))
+  defp inputs_by_user(current_user_id, users, el_id) do
+    users
+    |> Enum.find({nil, nil}, fn
+      {^current_user_id, _current_user} -> false
+      {_user_id, user} -> user.inputs[el_id]
+    end)
+    |> elem(1)
   end
 
   defp js_send_message(js \\ %JS{}, myself) do

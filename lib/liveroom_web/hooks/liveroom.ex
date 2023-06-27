@@ -2,149 +2,185 @@ defmodule LiveroomWeb.Hooks.Liveroom do
   import Phoenix.LiveView
   import Phoenix.Component
 
-  alias LiveroomWeb.Presence
+  require Logger
 
-  @cursorview "cursorview"
+  def on_mount(attrs, params, _session, socket) do
+    room_id = attrs[:room_id] || params["room_id"]
+    type = attrs[:type] || :client
 
-  ### API
-
-  def broadcast_user_changes(socket, attrs) when is_map(attrs) do
-    broadcast_user_changes(socket, fn _ -> attrs end)
-  end
-
-  def broadcast_user_changes(socket, attrs) when is_function(attrs, 1) do
-    Presence.update(self(), @cursorview, socket.id, &Map.merge(&1, attrs.(&1)))
-  end
-
-  def list_users do
-    @cursorview
-    |> Presence.list()
-    |> Enum.map(fn {_socket_id, presence} -> presence[:metas] end)
-    |> List.flatten()
+    {:cont,
+     socket
+     |> assign_initial_state(room_id, type)
+     |> attach_hook(:liveroom_current_url, :handle_params, &handle_params_current_url/3)
+     #  FIXME: use handle_metas in Presence instead, else this is a N+1 problem
+     |> attach_hook(:liveroom_presence_diff, :handle_info, &handle_info_presence_diff/2)
+     |> attach_hook(:liveroom_event, :handle_event, &handle_event_liveroom/3)}
   end
 
   ### Hooks
 
-  def on_mount(:default, _params, _session, socket) do
-    {:cont,
-     socket
-     |> assign_initial_state()
-     |> attach_hook(
-       :liveroom_event,
-       :handle_event,
-       fn
-         "liveroom-cursor-moved", %{"x" => x, "y" => y} = _params, socket ->
-           broadcast_user_changes(socket, %{x: x, y: y})
-           {:halt, socket}
+  defp handle_params_current_url(_params, url, socket) do
+    update_user(socket, &put_in(&1.current_url, url))
 
-         "liveroom-cursor-click-down", _params, socket ->
-           broadcast_user_changes(socket, %{is_cursor_pressed: true})
-           {:halt, socket}
+    {:cont, socket}
+  end
 
-         "liveroom-cursor-click-up", _params, socket ->
-           broadcast_user_changes(socket, %{is_cursor_pressed: false})
-           {:halt, socket}
+  defp handle_info_presence_diff(
+         %Phoenix.Socket.Broadcast{
+           topic: "liveroom:" <> room_id,
+           event: "presence_diff",
+           payload: %{joins: joins, leaves: leaves}
+         } = _msg,
+         %{assigns: %{_liveroom_room_id: room_id}} = socket
+       ) do
+    socket =
+      update(
+        socket,
+        :_liveroom_users,
+        &LiveroomWeb.Presence.merge_joins_and_leaves(&1, joins, leaves)
+      )
 
-         "liveroom-element-hovered", %{"id" => id} = _params, socket ->
-           broadcast_user_changes(
-             socket,
-             &%{hovered_elements: MapSet.put(&1.hovered_elements, id)}
-           )
+    {:halt, socket}
+  end
 
-           {:halt, socket}
+  #  Important, catch-all clause to ensure the liveview receives all other messages
+  defp handle_info_presence_diff(_msg, socket) do
+    {:cont, socket}
+  end
 
-         "liveroom-element-not-hovered", %{"id" => id} = _params, socket ->
-           broadcast_user_changes(
-             socket,
-             &%{hovered_elements: MapSet.delete(&1.hovered_elements, id)}
-           )
+  defp handle_event_liveroom(
+         "liveroom-mousemove" = _event,
+         %{"x" => x, "y" => y} = _params,
+         socket
+       ) do
+    update_user(socket, &(&1 |> put_in([:x], x) |> put_in([:y], y)))
 
-           {:halt, socket}
+    {:halt, socket}
+  end
 
-         "liveroom-element-focused", %{"id" => id} = _params, socket ->
-           broadcast_user_changes(
-             socket,
-             &%{focused_elements: MapSet.put(&1.focused_elements, id)}
-           )
+  defp handle_event_liveroom("liveroom-mousedown" = _event, _params, socket) do
+    update_user(socket, &put_in(&1.is_mouse_down, true))
 
-           {:halt, socket}
+    {:halt, socket}
+  end
 
-         "liveroom-element-not-focused", %{"id" => id} = _params, socket ->
-           broadcast_user_changes(
-             socket,
-             &%{focused_elements: MapSet.delete(&1.focused_elements, id)}
-           )
+  defp handle_event_liveroom("liveroom-mouseup" = _event, _params, socket) do
+    update_user(socket, &put_in(&1.is_mouse_down, false))
 
-           {:halt, socket}
+    {:halt, socket}
+  end
 
-         "liveroom-halo-key-down", _params, socket ->
-           broadcast_user_changes(socket, %{is_halo_key_pressed: true})
-           {:halt, socket}
+  defp handle_event_liveroom("liveroom-keydown" = _event, %{"key" => "Escape"} = _params, socket) do
+    update_user(socket, &put_in(&1.is_escape_key_down, true))
 
-         "liveroom-halo-key-up", _params, socket ->
-           broadcast_user_changes(socket, %{is_halo_key_pressed: false})
-           {:halt, socket}
+    {:halt, socket}
+  end
 
-         "liveroom-window-resize", _params, socket ->
-           #  Don-t handle this one for now
-           {:halt, socket}
+  defp handle_event_liveroom("liveroom-keyup" = _event, %{"key" => "Escape"} = _params, socket) do
+    update_user(socket, &put_in(&1.is_escape_key_down, false))
 
-         _event, _params, socket ->
-           {:cont, socket}
-       end
-     )
-     |> attach_hook(:liveroom_presence_diff, :handle_info, fn
-       %{event: "presence_diff", payload: _payload}, socket ->
-         {:halt, refresh_users(socket)}
+    {:halt, socket}
+  end
 
-       _msg, socket ->
-         {:cont, socket}
-     end)}
+  defp handle_event_liveroom(
+         "liveroom-element-mouseover" = _event,
+         %{"id" => el_id} = _params,
+         socket
+       ) do
+    update_user(socket, &update_in(&1.hovered_elements, fn set -> MapSet.put(set, el_id) end))
+
+    {:halt, socket}
+  end
+
+  defp handle_event_liveroom(
+         "liveroom-element-mouseout" = _event,
+         %{"id" => el_id} = _params,
+         socket
+       ) do
+    update_user(socket, &update_in(&1.hovered_elements, fn set -> MapSet.delete(set, el_id) end))
+
+    {:halt, socket}
+  end
+
+  defp handle_event_liveroom(
+         "liveroom-element-focus" = _event,
+         %{"id" => el_id} = _params,
+         socket
+       ) do
+    update_user(socket, &update_in(&1.focused_elements, fn set -> MapSet.put(set, el_id) end))
+
+    {:halt, socket}
+  end
+
+  defp handle_event_liveroom(
+         "liveroom-element-blur" = _event,
+         %{"id" => el_id} = _params,
+         socket
+       ) do
+    update_user(socket, &update_in(&1.focused_elements, fn set -> MapSet.delete(set, el_id) end))
+
+    {:halt, socket}
+  end
+
+  defp handle_event_liveroom(
+         "liveroom-window-resize" = _event,
+         %{"inner_width" => inner_width, "inner_height" => inner_height} = _params,
+         socket
+       ) do
+    update_user(
+      socket,
+      &(&1 |> put_in([:inner_width], inner_width) |> put_in([:inner_height], inner_height))
+    )
+
+    {:halt, socket}
+  end
+
+  # TODO: add missing events like Escape key, hovered, focused inputs, etc...
+
+  defp handle_event_liveroom("liveroom-" <> _ = event, _params, socket) do
+    Logger.warning("Got unknown liveroom event: #{inspect(event)}")
+    {:halt, socket}
+  end
+
+  #  Important, catch-all clause to ensure the liveview receives all other events
+  defp handle_event_liveroom(_event, _params, socket) do
+    {:cont, socket}
   end
 
   ### Helpers
 
-  defp assign_initial_state(socket) do
-    socket_id = socket.id
-    name = Liveroom.Names.generate()
-    color = Liveroom.Colors.get_random_color()
+  defp assign_initial_state(socket, room_id, type)
+       when is_binary(room_id) and room_id != "" and
+              type in [:client, :admin] do
+    if not connected?(socket) do
+      assign(socket,
+        _liveroom_room_id: room_id,
+        _liveroom_user_id: nil,
+        _liveroom_users: %{}
+      )
+    else
+      me = LiveroomWeb.Presence.create_user(room_id, type, socket.assigns.analytics_data)
 
-    initial_users =
-      if connected?(socket) do
-        Presence.track(self(), @cursorview, socket_id, %{
-          socket_id: socket_id,
-          name: name,
-          color: color,
-          # camera_on: false,
-          msg: "",
-          x: 50,
-          y: 50,
-          is_cursor_pressed: false,
-          is_halo_key_pressed: false,
-          hovered_elements: MapSet.new(),
-          focused_elements: MapSet.new(),
-          inputs: %{}
-        })
+      :ok = LiveroomWeb.Presence.join_room(room_id, me)
 
-        LiveroomWeb.Endpoint.subscribe(@cursorview)
-
-        list_users()
-      else
-        []
-      end
-
-    assign(socket, :liveroom, %{
-      socket_id: socket_id,
-      users: initial_users,
-      name: name,
-      color: color,
-      msg: ""
-      # current_msg: "",
-      # camera_on: false
-    })
+      assign(socket,
+        _liveroom_room_id: room_id,
+        _liveroom_user_id: me.id,
+        _liveroom_users: LiveroomWeb.Presence.list_users(room_id)
+      )
+    end
   end
 
-  defp refresh_users(socket) do
-    update(socket, :liveroom, &Map.put(&1, :users, list_users()))
+  defp update_user(
+         %{assigns: %{_liveroom_room_id: room_id, _liveroom_user_id: user_id}} = _socket,
+         update_fn
+       )
+       when is_binary(room_id) and room_id != "" and
+              is_binary(user_id) and user_id != "" do
+    LiveroomWeb.Presence.update_user(room_id, user_id, update_fn)
+  end
+
+  defp update_user(_socket, _update_fn) do
+    Logger.warning("Socket not connected to a room, cannot update user")
   end
 end

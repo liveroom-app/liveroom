@@ -1,11 +1,14 @@
 defmodule LiveroomWeb.HomeLive do
   use LiveroomWeb, :live_view
 
+  alias LiveroomWeb.Components.Cursors
   alias LiveroomWeb.Components.InteractiveDashboard
 
   @impl true
   def render(assigns) do
     ~H"""
+    <Cursors.render current_user_id={@_liveroom_user_id} users={@_liveroom_users} />
+
     <%!-- <.section class="relative bg-[url('/images/texture.png')] w-full !pt-0"> --%>
     <.section class="relative w-full !pt-0">
       <.hero />
@@ -35,7 +38,7 @@ defmodule LiveroomWeb.HomeLive do
           </span>
 
           <p class="font-semibold">
-            <%= case length(@liveroom.users) do %>
+            <%= case map_size(@_liveroom_users) do %>
               <% 1 -> %>
                 1 user
               <% n -> %>
@@ -48,10 +51,9 @@ defmodule LiveroomWeb.HomeLive do
         <.live_component
           module={InteractiveDashboard}
           id="interactive_dashboard"
-          socket_id={@liveroom.socket_id}
-          users={@liveroom.users}
-          name={@liveroom.name}
-          color={@liveroom.color}
+          room_id={@_liveroom_room_id}
+          current_user_id={@_liveroom_user_id}
+          users={@_liveroom_users}
           class="aspect-video w-full h-full max-w-screen-lg"
         />
       </div>

@@ -1,8 +1,8 @@
 defmodule LiveroomWeb.Components.Cursors do
   use LiveroomWeb, :html
 
-  attr :socket_id, :string, required: true
-  attr :users, :list, required: true
+  attr :current_user_id, :string, required: true
+  attr :users, :map, required: true
 
   def render(assigns) do
     ~H"""
@@ -12,27 +12,28 @@ defmodule LiveroomWeb.Components.Cursors do
       data-mode="fullscreen"
       data-mouseclick="true"
       data-keyboardpress="true"
-      class="list-none "
+      class="list-none"
     >
       <%!-- NOTE: A JS hook + passing color,x,y as data attributes would allow
                   to further optimize the payload over the wire.
                   But this feels like a good tradeoff, to have all the logic in one place. --%>
       <li
-        :for={user <- @users}
+        :for={{user_id, user} <- @users}
         style={"--color: #{user.color}; --x: #{user.x}vw; --y: #{user.y}vh;"}
+        data-isself={user_id == @current_user_id}
         class={[
           "text-[color:var(--color)]",
-          "translate-x-[calc(var(--x)-10px)] translate-y-[calc(var(--y)-11px)]",
+          "translate-x-[calc(var(--x))] translate-y-[calc(var(--y))]",
           "z-[100] absolute top-0 left-0 flex flex-col justify-start items-start pt-[24px]",
-          "pointer-events-none select-none"
+          "pointer-events-none select-none group"
         ]}
       >
         <%!-- Halo --%>
         <div
-          id={"cursor_blink_#{user.socket_id}"}
-          data-hidden={not user.is_halo_key_pressed and not user.is_cursor_pressed}
+          id={"cursor_blink_#{user_id}"}
+          data-show={user.is_escape_key_down || user.is_mouse_down}
           class={[
-            "data-[hidden]:scale-0",
+            "scale-0 data-[show]:scale-100",
             "bg-[color:var(--color)]",
             "border-[color:var(--color)]",
             "opacity-25",
@@ -42,13 +43,13 @@ defmodule LiveroomWeb.Components.Cursors do
         />
 
         <%!-- Cursor --%>
-        <.cursor :if={user.socket_id != @socket_id} class="z-50 absolute top-0 left-0 shadow-2xl" />
+        <.cursor class="group-data-[isself]:hidden z-50 absolute top-0 left-0 shadow-2xl" />
 
         <%!-- Name --%>
         <span
-          :if={user.socket_id != @socket_id}
           data-hidden={user.msg != ""}
           class={[
+            "group-data-[isself]:hidden",
             "data-[hidden]:hidden",
             "bg-[color:var(--color)]",
             "z-50 ml-[30px] py-1 px-3 text-sm text-brand font-semibold whitespace-nowrap rounded-full shadow-2xl"

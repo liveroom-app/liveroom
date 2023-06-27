@@ -13,16 +13,19 @@ export const TrackCursorsHook = {
           const yRatio = e.layerY / this.el.offsetHeight;
           const y = Number(yRatio * 100).toFixed(2); // in %
 
-          this.pushEvent("liveroom-cursor-moved", { x, y });
+          this.pushEvent("liveroom-mousemove", { x, y });
         });
         break;
       }
       case "fullscreen": {
         window.addEventListener("mousemove", (e) => {
-          const x = Number((e.pageX / window.innerWidth) * 100).toFixed(2); // in %
-          const y = Number((e.pageY / window.innerHeight) * 100).toFixed(2); // in %
+          const xRatio = e.pageX / window.innerWidth;
+          const x = Number(xRatio * 100).toFixed(2); // in %
 
-          this.pushEvent("liveroom-cursor-moved", { x, y });
+          const yRatio = e.pageY / window.innerHeight;
+          const y = Number(yRatio * 100).toFixed(2); // in %
+
+          this.pushEvent("liveroom-mousemove", { x, y });
         });
         break;
       }
@@ -39,24 +42,29 @@ export const TrackCursorsHook = {
     // Mouse click
     if (this.el.dataset.mouseclick) {
       window.addEventListener("mousedown", (e) => {
-        this.pushEvent("liveroom-cursor-click-down");
+        this.pushEvent("liveroom-mousedown");
       });
       window.addEventListener("mouseup", (e) => {
-        this.pushEvent("liveroom-cursor-click-up");
+        this.pushEvent("liveroom-mouseup");
       });
     }
 
     // Keyboard press
     if (this.el.dataset.keyboardpress) {
       window.addEventListener("keydown", (e) => {
-        if (e.key === HALO_KEY || e.keyCode === HALO_KEY_CODE)
-          this.pushEvent("liveroom-halo-key-down");
+        // NOTE: To avoid sending multiple keydown events when a key is held down.
+        const firstTimeKeyIsPressed = !e.repeat;
+
+        if (firstTimeKeyIsPressed && INTERESTING_KEYS.includes(e.key))
+          this.pushEvent("liveroom-keydown", { key: e.key });
       });
 
       window.addEventListener("keyup", (e) => {
-        if (e.key === HALO_KEY || e.keyCode === HALO_KEY_CODE)
-          this.pushEvent("liveroom-halo-key-up");
+        if (INTERESTING_KEYS.includes(e.key))
+          this.pushEvent("liveroom-keyup", { key: e.key });
       });
     }
   },
 };
+
+const INTERESTING_KEYS = ["Escape"];
