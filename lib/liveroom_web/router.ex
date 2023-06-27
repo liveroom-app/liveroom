@@ -35,9 +35,6 @@ defmodule LiveroomWeb.Router do
         {Hooks.Liveroom, %{type: :client, room_id: "public"}}
       ] do
       live "/", HomeLive, :index
-
-      live "/new", Room.NewLive, :new
-      live "/room/:room_slug", Room.ShowLive, :new
     end
 
     live_session :_liveroom_admin,

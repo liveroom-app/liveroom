@@ -38,7 +38,6 @@ defmodule Liveroom.MixProject do
       {:live_state, "~> 0.6.1"},
       {:cors_plug, "~> 3.0.3"},
       {:libcluster, "~> 3.3.2"},
-      # {:stun, "~> 1.2.7"},
       {:req, "~> 0.3.6"},
       {:plug_canonical_host, "~> 2.0"},
       {:phoenix, "~> 1.7.2"},

@@ -1,5 +1,4 @@
-const HALO_KEY = "Escape";
-const HALO_KEY_CODE = 27;
+const INTERESTING_KEYS = ["Escape"];
 
 export const TrackCursorsHook = {
   mounted() {
@@ -66,5 +65,3 @@ export const TrackCursorsHook = {
     }
   },
 };
-
-const INTERESTING_KEYS = ["Escape"];

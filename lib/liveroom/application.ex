@@ -21,7 +21,6 @@ defmodule Liveroom.Application do
       LiveroomWeb.Presence,
       # Start the Endpoint (http/https)
       LiveroomWeb.Endpoint,
-      # LiveroomWeb.Stun
       # Start a worker by calling: Liveroom.Worker.start_link(arg)
       # {Liveroom.Worker, arg}
       # setup for clustering
