@@ -135,8 +135,6 @@ defmodule LiveroomWeb.Hooks.Liveroom do
     {:halt, socket}
   end
 
-  # TODO: add missing events like Escape key, hovered, focused inputs, etc...
-
   defp handle_event_liveroom("liveroom-" <> _ = event, _params, socket) do
     Logger.warning("Got unknown liveroom event: #{inspect(event)}")
     {:halt, socket}

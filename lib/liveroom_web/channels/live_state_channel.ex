@@ -31,16 +31,35 @@ defmodule LiveroomWeb.LiveStateChannel do
   end
 
   @impl true
-  def handle_event(event, params, state)
-      when event in ["mouse_move", "mouse_down", "mouse_up", "key_down", "key_up"] do
-    # TODO: Here we broadcast directly on the pubsub, so memory efficient because we skip Presence.
-    #       But a user joining the room (or reconnecting) wont have up-to-date information
-    #       about mouse & keyboard state of other users until they move their mouse or press a key.
-
-    LiveroomWeb.Presence.broadcast(state.room_id, event, params)
-    # NOTE: State will be updated when consuming pubsub message.
+  def handle_event("mouse_move", %{"x" => x, "y" => y} = _params, state) do
+    update_user(state, &(&1 |> put_in([:x], x) |> put_in([:y], y)))
     {:noreply, state}
   end
+
+  def handle_event("mouse_down", _params, state) do
+    update_user(state, &put_in(&1.is_mouse_down, true))
+    {:noreply, state}
+  end
+
+  def handle_event("mouse_up", _params, state) do
+    update_user(state, &put_in(&1.is_mouse_down, false))
+    {:noreply, state}
+  end
+
+  def handle_event("key_down", %{"key" => "Escape"} = _params, state) do
+    update_user(state, &put_in(&1.is_escape_key_down, true))
+    {:noreply, state}
+  end
+
+  def handle_event("key_up", %{"key" => "Escape"} = _params, state) do
+    update_user(state, &put_in(&1.is_escape_key_down, false))
+    {:noreply, state}
+  end
+
+  # TODO:
+  #   - mouseover, mouseout (hovered elements)
+  #   - focus, blur (focused elements)
+  #   - window resize
 
   @impl true
   #  FIXME: use handle_metas in Presence instead, else this is a N+1 problem
@@ -58,68 +77,76 @@ defmodule LiveroomWeb.LiveStateChannel do
     {:noreply, state}
   end
 
-  def handle_message(
-        %Phoenix.Socket.Broadcast{
-          topic: _topic,
-          event: "mouse_move",
-          payload: %{"user_id" => user_id, "x" => x, "y" => y}
-        },
-        state
-      ) do
-    state =
-      update_in(state, [:users, user_id], fn
-        nil -> nil
-        user -> %{user | x: x, y: y}
-      end)
+  # def handle_message(
+  #       %Phoenix.Socket.Broadcast{
+  #         topic: _topic,
+  #         event: "mouse_move",
+  #         payload: %{"user_id" => user_id, "x" => x, "y" => y}
+  #       },
+  #       state
+  #     ) do
+  #   state =
+  #     update_in(state, [:users, user_id], fn
+  #       nil -> nil
+  #       user -> %{user | x: x, y: y}
+  #     end)
 
-    {:noreply, state}
-  end
+  #   {:noreply, state}
+  # end
 
-  def handle_message(
-        %Phoenix.Socket.Broadcast{
-          topic: _topic,
-          event: event,
-          payload: %{"user_id" => user_id}
-        },
-        state
-      )
-      when event in ["mouse_down", "mouse_up"] do
-    is_mouse_down? =
-      case event do
-        "mouse_down" -> true
-        "mouse_up" -> false
-      end
+  # def handle_message(
+  #       %Phoenix.Socket.Broadcast{
+  #         topic: _topic,
+  #         event: event,
+  #         payload: %{"user_id" => user_id}
+  #       },
+  #       state
+  #     )
+  #     when event in ["mouse_down", "mouse_up"] do
+  #   is_mouse_down? =
+  #     case event do
+  #       "mouse_down" -> true
+  #       "mouse_up" -> false
+  #     end
 
-    state =
-      update_in(state, [:users, user_id], fn
-        nil -> nil
-        user -> %{user | is_mouse_down: is_mouse_down?}
-      end)
+  #   state =
+  #     update_in(state, [:users, user_id], fn
+  #       nil -> nil
+  #       user -> %{user | is_mouse_down: is_mouse_down?}
+  #     end)
 
-    {:noreply, state}
-  end
+  #   {:noreply, state}
+  # end
 
-  def handle_message(
-        %Phoenix.Socket.Broadcast{
-          topic: _topic,
-          event: event,
-          payload: %{"user_id" => user_id, "key" => "Escape"}
-        },
-        state
-      )
-      when event in ["key_down", "key_up"] do
-    is_escape_key_down? =
-      case event do
-        "key_down" -> true
-        "key_up" -> false
-      end
+  # def handle_message(
+  #       %Phoenix.Socket.Broadcast{
+  #         topic: _topic,
+  #         event: event,
+  #         payload: %{"user_id" => user_id, "key" => "Escape"}
+  #       },
+  #       state
+  #     )
+  #     when event in ["key_down", "key_up"] do
+  #   is_escape_key_down? =
+  #     case event do
+  #       "key_down" -> true
+  #       "key_up" -> false
+  #     end
 
-    state =
-      update_in(state, [:users, user_id], fn
-        nil -> nil
-        user -> %{user | is_escape_key_down: is_escape_key_down?}
-      end)
+  #   state =
+  #     update_in(state, [:users, user_id], fn
+  #       nil -> nil
+  #       user -> %{user | is_escape_key_down: is_escape_key_down?}
+  #     end)
 
-    {:noreply, state}
+  #   {:noreply, state}
+  # end
+
+  ### Helpers
+
+  defp update_user(%{room_id: room_id, me: %{id: user_id}} = _state, update_fn)
+       when is_binary(room_id) and room_id != "" and
+              is_binary(user_id) and user_id != "" do
+    LiveroomWeb.Presence.update_user(room_id, user_id, update_fn)
   end
 end

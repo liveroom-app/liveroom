@@ -135,8 +135,6 @@ export class LiveroomClientElement extends LitElement {
         new CustomEvent("mouse_move", {
           detail: {
             user_id: this.me.id,
-            // x: e.pageX, // in px
-            // y: e.pageY, // in px
             x: Number((e.pageX / window.innerWidth) * 100).toFixed(2), // in %
             y: Number((e.pageY / window.innerHeight) * 100).toFixed(2), // in %
           },
