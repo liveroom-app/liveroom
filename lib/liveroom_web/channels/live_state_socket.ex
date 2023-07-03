@@ -1,7 +1,7 @@
 defmodule LiveroomWeb.LiveStateSocket do
   use Phoenix.Socket
 
-  channel "liveroom:*", LiveroomWeb.LiveStateChannel
+  channel "liveroom-livestate:*", LiveroomWeb.LiveStateChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After

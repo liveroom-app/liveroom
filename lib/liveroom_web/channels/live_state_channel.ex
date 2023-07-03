@@ -2,11 +2,23 @@ defmodule LiveroomWeb.LiveStateChannel do
   use LiveState.Channel, web_module: LiveroomWeb, json_patch: true
 
   @impl true
-  def init(topic, _params, _socket) do
-    # FIXME: use proper session_id / room_id instead of whole topic
-    room_id = topic
+  def init(
+        _topic,
+        %{
+          "room_id" => room_id,
+          "current_url" => current_url,
+          "inner_width" => inner_width,
+          "inner_height" => inner_height
+        } = _params,
+        _socket
+      ) do
+    me =
+      LiveroomWeb.Presence.create_user(room_id, :client, %{
+        url: current_url,
+        inner_width: inner_width,
+        inner_height: inner_height
+      })
 
-    me = LiveroomWeb.Presence.create_user(room_id, :client)
     :ok = LiveroomWeb.Presence.join_room(room_id, me)
 
     state = %{

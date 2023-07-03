@@ -1,23 +1,16 @@
 import { html, css, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { liveState, liveStateConfig } from "phx-live-state";
+import { LiveState, connectElement } from "phx-live-state";
 
 @customElement("liveroom-client-element")
-@liveState({
-  topic: "liveroom:test_room",
-  properties: ["room_id", "me", "users"],
-  events: {
-    send: ["mouse_move", "mouse_down", "mouse_up", "key_down", "key_up"],
-    receive: [],
-  },
-})
 export class LiveroomClientElement extends LitElement {
-  @liveStateConfig("url")
   @property({ attribute: "url" })
   url!: string;
 
   @property({ attribute: "room_id" })
   room_id!: string;
+
+  liveState: LiveState | undefined;
 
   @state()
   me: User<"client"> | undefined;
@@ -89,6 +82,28 @@ export class LiveroomClientElement extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+
+    // Setup LiveState
+    const liveState = new LiveState({
+      url: this.url,
+      topic: `liveroom-livestate:${this.room_id}`,
+      params: {
+        room_id: this.room_id,
+        current_url: window.origin,
+        inner_width: window.innerWidth,
+        inner_height: window.innerHeight,
+      },
+    });
+    connectElement(liveState, this, {
+      properties: ["room_id", "me", "users"],
+      events: {
+        send: ["mouse_move", "mouse_down", "mouse_up", "key_down", "key_up"],
+        receive: [],
+      },
+    });
+    this.liveState = liveState;
+
+    // Setup event listeners
     window.addEventListener("mousemove", this._throttledDispatchMouseMove);
     window.addEventListener("mousedown", this._dispatchMouseDown.bind(this));
     window.addEventListener("mouseup", this._dispatchMouseUp.bind(this));
@@ -96,11 +111,16 @@ export class LiveroomClientElement extends LitElement {
     window.addEventListener("keyup", this._dispatchKeyUp.bind(this));
   }
   disconnectedCallback() {
+    // Remove event listeners
     window.removeEventListener("keyup", this._dispatchKeyUp.bind(this));
     window.removeEventListener("keydown", this._dispatchKeyDown.bind(this));
     window.removeEventListener("mouseup", this._dispatchMouseUp.bind(this));
     window.removeEventListener("mousedown", this._dispatchMouseDown.bind(this));
     window.removeEventListener("mousemove", this._throttledDispatchMouseMove);
+
+    // Disconnect LiveState
+    this.liveState && this.liveState.disconnect();
+
     super.disconnectedCallback();
   }
 
