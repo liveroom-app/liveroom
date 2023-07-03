@@ -500,7 +500,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
     users
     |> Enum.find({nil, nil}, fn
       {^current_user_id, _current_user} -> false
-      {_user_id, user} -> MapSet.member?(user.hovered_elements, el_id)
+      {_user_id, user} -> Map.has_key?(user.hovered_elements, el_id)
     end)
     |> elem(1)
   end
@@ -509,7 +509,7 @@ defmodule LiveroomWeb.Components.InteractiveDashboard do
     users
     |> Enum.find({nil, nil}, fn
       {^current_user_id, _current_user} -> false
-      {_user_id, user} -> MapSet.member?(user.focused_elements, el_id)
+      {_user_id, user} -> Map.has_key?(user.focused_elements, el_id)
     end)
     |> elem(1)
   end

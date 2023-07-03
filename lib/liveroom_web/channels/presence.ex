@@ -31,8 +31,8 @@ defmodule LiveroomWeb.Presence do
       msg: "",
       is_mouse_down: false,
       is_escape_key_down: false,
-      hovered_elements: MapSet.new(),
-      focused_elements: MapSet.new(),
+      hovered_elements: %{},
+      focused_elements: %{},
       inputs: %{}
     }
   end

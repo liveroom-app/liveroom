@@ -87,7 +87,7 @@ defmodule LiveroomWeb.Hooks.Liveroom do
          %{"id" => el_id} = _params,
          socket
        ) do
-    update_user(socket, &update_in(&1.hovered_elements, fn set -> MapSet.put(set, el_id) end))
+    update_user(socket, &put_in(&1.hovered_elements[el_id], true))
 
     {:halt, socket}
   end
@@ -97,7 +97,7 @@ defmodule LiveroomWeb.Hooks.Liveroom do
          %{"id" => el_id} = _params,
          socket
        ) do
-    update_user(socket, &update_in(&1.hovered_elements, fn set -> MapSet.delete(set, el_id) end))
+    update_user(socket, &update_in(&1.hovered_elements, fn map -> Map.delete(map, el_id) end))
 
     {:halt, socket}
   end
@@ -107,7 +107,7 @@ defmodule LiveroomWeb.Hooks.Liveroom do
          %{"id" => el_id} = _params,
          socket
        ) do
-    update_user(socket, &update_in(&1.focused_elements, fn set -> MapSet.put(set, el_id) end))
+    update_user(socket, &put_in(&1.focused_elements[el_id], true))
 
     {:halt, socket}
   end
@@ -117,7 +117,7 @@ defmodule LiveroomWeb.Hooks.Liveroom do
          %{"id" => el_id} = _params,
          socket
        ) do
-    update_user(socket, &update_in(&1.focused_elements, fn set -> MapSet.delete(set, el_id) end))
+    update_user(socket, &update_in(&1.focused_elements, fn map -> Map.delete(map, el_id) end))
 
     {:halt, socket}
   end
