@@ -56,10 +56,22 @@ defmodule LiveroomWeb.LiveStateChannel do
     {:noreply, state}
   end
 
-  # TODO:
+  def handle_event(
+        "window_resize",
+        %{"inner_width" => inner_width, "inner_height" => inner_height} = _params,
+        state
+      ) do
+    update_user(
+      state,
+      &(&1 |> put_in([:inner_width], inner_width) |> put_in([:inner_height], inner_height))
+    )
+
+    {:noreply, state}
+  end
+
+  # TODO: Not handled yet by the HTML Client Element:
   #   - mouseover, mouseout (hovered elements)
   #   - focus, blur (focused elements)
-  #   - window resize
 
   @impl true
   #  FIXME: use handle_metas in Presence instead, else this is a N+1 problem

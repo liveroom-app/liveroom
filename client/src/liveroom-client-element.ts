@@ -97,7 +97,14 @@ export class LiveroomClientElement extends LitElement {
     connectElement(liveState, this, {
       properties: ["room_id", "me", "users"],
       events: {
-        send: ["mouse_move", "mouse_down", "mouse_up", "key_down", "key_up"],
+        send: [
+          "mouse_move",
+          "mouse_down",
+          "mouse_up",
+          "key_down",
+          "key_up",
+          "window_resize",
+        ],
         receive: [],
       },
     });
@@ -109,9 +116,11 @@ export class LiveroomClientElement extends LitElement {
     window.addEventListener("mouseup", this._dispatchMouseUp.bind(this));
     window.addEventListener("keydown", this._dispatchKeyDown.bind(this));
     window.addEventListener("keyup", this._dispatchKeyUp.bind(this));
+    window.addEventListener("resize", this._dispatchWindowResize.bind(this));
   }
   disconnectedCallback() {
     // Remove event listeners
+    window.removeEventListener("resize", this._dispatchWindowResize.bind(this));
     window.removeEventListener("keyup", this._dispatchKeyUp.bind(this));
     window.removeEventListener("keydown", this._dispatchKeyDown.bind(this));
     window.removeEventListener("mouseup", this._dispatchMouseUp.bind(this));
@@ -185,6 +194,19 @@ export class LiveroomClientElement extends LitElement {
         new CustomEvent("key_up", {
           detail: {
             key: e.key,
+            user_id: this.me.id,
+          },
+        })
+      );
+    }
+  }
+  _dispatchWindowResize(_e: UIEvent) {
+    if (this.me) {
+      this.dispatchEvent(
+        new CustomEvent("window_resize", {
+          detail: {
+            inner_width: window.innerWidth,
+            inner_height: window.innerHeight,
             user_id: this.me.id,
           },
         })
