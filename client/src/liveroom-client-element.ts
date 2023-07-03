@@ -5,7 +5,7 @@ import { liveState, liveStateConfig } from "phx-live-state";
 @customElement("liveroom-client-element")
 @liveState({
   topic: "liveroom:test_room",
-  properties: ["room", "me", "clients"],
+  properties: ["room_id", "me", "users"],
   events: {
     send: ["mouse_move", "mouse_down", "mouse_up", "key_down", "key_up"],
     receive: [],
@@ -16,19 +16,19 @@ export class LiveroomClientElement extends LitElement {
   @property({ attribute: "url" })
   url!: string;
 
-  @property({ attribute: "room" })
-  room!: string;
+  @property({ attribute: "room_id" })
+  room_id!: string;
 
   @state()
-  me: Client | undefined;
+  me: User<"client"> | undefined;
 
   @state()
-  clients: { [key: string]: Client } = {};
+  users: { [key: string]: User } = {};
 
   render() {
     return html`
       <div id="users-container">
-        ${Object.values(this.clients).map(
+        ${Object.values(this.users).map(
           (client) =>
             html`
               <div
@@ -68,7 +68,7 @@ export class LiveroomClientElement extends LitElement {
           </div>
 
           <div class="other_users">
-            <span>${Object.values(this.clients).length}</span>
+            <span>${Object.values(this.users).length}</span>
             <svg
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -114,7 +114,7 @@ export class LiveroomClientElement extends LitElement {
       this.dispatchEvent(
         new CustomEvent("mouse_move", {
           detail: {
-            client_id: this.me.id,
+            user_id: this.me.id,
             // x: e.pageX, // in px
             // y: e.pageY, // in px
             x: Number((e.pageX / window.innerWidth) * 100).toFixed(2), // in %
@@ -129,7 +129,7 @@ export class LiveroomClientElement extends LitElement {
       this.dispatchEvent(
         new CustomEvent("mouse_down", {
           detail: {
-            client_id: this.me.id,
+            user_id: this.me.id,
           },
         })
       );
@@ -140,7 +140,7 @@ export class LiveroomClientElement extends LitElement {
       this.dispatchEvent(
         new CustomEvent("mouse_up", {
           detail: {
-            client_id: this.me.id,
+            user_id: this.me.id,
           },
         })
       );
@@ -155,7 +155,7 @@ export class LiveroomClientElement extends LitElement {
         new CustomEvent("key_down", {
           detail: {
             key: e.key,
-            client_id: this.me.id,
+            user_id: this.me.id,
           },
         })
       );
@@ -167,7 +167,7 @@ export class LiveroomClientElement extends LitElement {
         new CustomEvent("key_up", {
           detail: {
             key: e.key,
-            client_id: this.me.id,
+            user_id: this.me.id,
           },
         })
       );
@@ -306,15 +306,26 @@ function throttle(func: (...args: any[]) => any, limit: number) {
 
 // Types
 
-type Client = {
+type UserType = "client" | "admin";
+
+type User<T extends UserType = UserType> = {
   id: string;
+  room_id: string;
+  type: T;
   name: string;
   color: string;
-  x: number;
-  y: number;
+  joined_at: string;
+  current_url: string;
+  inner_width: string;
+  inner_height: string;
+  x: string;
+  y: string;
+  msg: string;
   is_mouse_down: boolean;
   is_escape_key_down: boolean;
-  joined_at: string;
+  hovered_elements: Object;
+  focused_elements: Object;
+  inputs: Object;
 };
 
 declare global {
