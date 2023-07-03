@@ -17,6 +17,8 @@ defmodule LiveroomWeb.Presence do
     %{
       id: Ecto.UUID.generate(),
       room_id: room_id,
+      # :phx_ref added by Presence
+      # :phx_ref_prev added by Presence
       type: type,
       name: Liveroom.Names.generate(),
       color: Liveroom.Colors.get_random_color(),

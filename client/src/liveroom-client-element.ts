@@ -351,6 +351,8 @@ type UserType = "client" | "admin";
 type User<T extends UserType = UserType> = {
   id: string;
   room_id: string;
+  phx_ref: string;
+  phx_ref_prev: string;
   type: T;
   name: string;
   color: string;
