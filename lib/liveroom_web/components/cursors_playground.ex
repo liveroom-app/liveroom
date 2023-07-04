@@ -15,8 +15,9 @@ defmodule LiveroomWeb.Components.CursorsPlayground do
       data-mouseclick="true"
       data-keyboardpress="true"
     >
-      <Cursor.render
+      <.live_component
         :for={{user_id, user} <- @users}
+        module={Cursor}
         id={"cursor_#{user_id}"}
         is_self={user_id == @current_user_id}
         user_id={user_id}

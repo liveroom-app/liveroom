@@ -1,5 +1,5 @@
 defmodule LiveroomWeb.Components.Cursor do
-  use LiveroomWeb, :html
+  use LiveroomWeb, :live_component
 
   @container_padding_t 2
   @container_padding_b 4
