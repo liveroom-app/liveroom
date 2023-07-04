@@ -1,6 +1,8 @@
 defmodule LiveroomWeb.Router do
   use LiveroomWeb, :router
 
+  import Phoenix.LiveDashboard.Router
+
   alias LiveroomWeb.Hooks
   alias LiveroomWeb.Plugs
 
@@ -12,6 +14,10 @@ defmodule LiveroomWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     # no plug Plugs.Analytics, it is handled by a Liveview hook on mount
+  end
+
+  pipeline :admins_only do
+    plug :admin_basic_auth
   end
 
   pipeline :api do
@@ -59,20 +65,29 @@ defmodule LiveroomWeb.Router do
   #   pipe_through :api
   # end
 
-  # Enable LiveDashboard and Swoosh mailbox preview in development
-  if Application.compile_env(:liveroom, :dev_routes) do
-    # If you want to use the LiveDashboard in production, you should put
-    # it behind authentication and allow only admins to access it.
-    # If your application does not have an admins-only section yet,
-    # you can use Plug.BasicAuth to set up some basic authentication
-    # as long as you are also using SSL (which you should anyway).
-    import Phoenix.LiveDashboard.Router
+  # Admin
+  scope "/_admin", LiveroomWeb do
+    pipe_through :browser
+    if Mix.env() == :prod, do: pipe_through(:admins_only)
 
+    live_dashboard "/dashboard", metrics: LiveroomWeb.Telemetry
+  end
+
+  # Enable Swoosh mailbox preview in development
+  if Mix.env() == :dev do
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: LiveroomWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+  end
+
+  ### Plugs
+
+  defp admin_basic_auth(conn, _opts) do
+    username = Application.fetch_env!(:liveroom, :admin_basic_auth)[:username]
+    password = Application.fetch_env!(:liveroom, :admin_basic_auth)[:password]
+
+    Plug.BasicAuth.basic_auth(conn, username: username, password: password)
   end
 end

@@ -28,6 +28,10 @@ if config_env() != :test do
 end
 
 if config_env() == :prod do
+  config :liveroom, :admin_basic_auth,
+    username: System.fetch_env!("ADMIN_BASIC_AUTH_USERNAME"),
+    password: System.fetch_env!("ADMIN_BASIC_AUTH_PASSWORD")
+
   if app_name = System.get_env("FLY_APP_NAME") do
     config :libcluster,
       debug: true,
