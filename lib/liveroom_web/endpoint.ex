@@ -27,7 +27,15 @@ defmodule LiveroomWeb.Endpoint do
     ]
 
   socket "/client_socket", LiveroomWeb.LiveStateSocket,
-    websocket: [timeout: 45_000],
+    websocket: [
+      timeout: 45_000,
+      check_origin: [
+        "//liveroom.app",
+        "//localhost",
+        "//127.0.0.1",
+        "//github.com"
+      ]
+    ],
     longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.
