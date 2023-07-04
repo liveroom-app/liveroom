@@ -29,12 +29,8 @@ defmodule LiveroomWeb.Endpoint do
   socket "/client_socket", LiveroomWeb.LiveStateSocket,
     websocket: [
       timeout: 45_000,
-      check_origin: [
-        "//liveroom.app",
-        "//localhost",
-        "//127.0.0.1",
-        "//github.com"
-      ]
+      # NOTE: Anyone can integrate the liveroom-client-element on its own app/domain
+      check_origin: false
     ],
     longpoll: false
 
