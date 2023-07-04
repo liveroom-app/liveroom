@@ -1,18 +1,26 @@
 {
-  "name": "liveroom-client",
-  "private": true,
-  "version": "0.0.0",
+  "name": "liveroom-client-element",
+  "private": false,
+  "version": "0.0.1",
   "type": "module",
+  "main": "liveroom-client-element.js",
+  "module": "liveroom-client-element.js",
+  "types": "liveroom-client-element.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "lit": "^2.7.2",
     "phx-live-state": "^0.9.0"
   },
   "devDependencies": {
+    "@types/node": "^20.3.3",
+    "@types/phoenix": "^1.6.0",
+    "lit": "^2.7.2",
     "typescript": "^5.0.2",
     "vite": "^4.3.9"
   }

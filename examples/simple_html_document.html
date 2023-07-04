@@ -1,6 +1,9 @@
-<!-- This is an example of a simple HTML document using Liveroom HTML Custom Element. -->
-<!-- The Liveroom HTML Custom Element is loaded from the JSDeliver CDN,
-     and uses the Liveroom production environment (on https://liveroom.app). -->
+<!--
+  This is an example of a simple HTML document using Liveroom HTML Custom Element.
+
+  The Liveroom HTML Custom Element is loaded from the JSDeliver CDN,
+  and uses the Liveroom production environment (on https://liveroom.app).
+-->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,14 +17,32 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Load Liveroom HTML Custom Element here: -->
-    <!-- TODO: load it from JSDeliver CDN once published to npm -->
-    <!-- <script type="module" src=""></script> -->
+
+    <!-- Option 1: from npm using JSDelivr -->
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/liveroom-client-element@0.0.1/dist/liveroom-client-element.es.min.js"
+    ></script>
+
+    <!-- Option 2: from local build -->
+    <!-- <script
+      type="module"
+      src="../client/dist/liveroom-client-element.es.js"
+    ></script> -->
   </head>
 
   <!-- Insert Liveroom HTML Custom Element here: -->
-  <!-- <liveroom-client-element
+
+  <!-- Option 1: connect to Liveroom production environment -->
+  <liveroom-client-element
     url="wss://liveroom.app/client_socket"
-    room_id="simple-html-document"
+    room_id="public"
+  />
+
+  <!-- Option 2: connect to local environment -->
+  <!-- <liveroom-client-element
+    url="ws://localhost:4000/client_socket"
+    room_id="public"
   /> -->
 
   <body class="h-screen w-screen flex flex-col items-stretch">
