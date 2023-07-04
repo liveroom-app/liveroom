@@ -12,13 +12,13 @@
     <script type="module" src="./src/liveroom-client-element.ts"></script>
   </head>
 
+  <body style="display: flex; flex-direction: column; gap: 3em">
+    <h1>Welcome</h1>
+  </body>
+
   <!-- Insert Liveroom HTML Custom Element here: -->
   <liveroom-client-element
     url="ws://localhost:4000/client_socket"
     room_id="public"
   />
-
-  <body style="display: flex; flex-direction: column; gap: 3em">
-    <h1>Welcome</h1>
-  </body>
 </html>
