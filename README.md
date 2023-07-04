@@ -25,6 +25,32 @@ Liveroom is currently very early stage. We are exploring technical feasibility, 
 
 If you are interested in beta testing the product once it is ready, please [join the waitlist](https://tally.so/r/wQ1EvX).
 
+## Demo
+
+### on [liveroom.app](https://liveroom.app)
+
+The landing page has an interactive dashboard to play with. Open 2 browser windows to see the collaborative features in real-time.
+
+### on any website
+
+1. run the following code in the browser console to install the **Liveroom Client**:
+
+```js
+const script = document.createElement("script");
+script.type = "module";
+script.src =
+  "https://cdn.jsdelivr.net/npm/liveroom-client-element@0.0.1/dist/liveroom-client-element.es.min.js";
+script.onload = function () {
+  const liveroomElement = document.createElement("liveroom-client-element");
+  liveroomElement.setAttribute("url", "wss://liveroom.app/client_socket");
+  liveroomElement.setAttribute("room_id", "public");
+  document.body.appendChild(liveroomElement);
+};
+document.head.appendChild(script);
+```
+
+2. open https://liveroom.app/room/public/admin in a second browser window.
+
 ## Context
 
 > this is a work in progress
