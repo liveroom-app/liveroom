@@ -22,13 +22,13 @@ export class LiveroomClientElement extends LitElement {
     return html`
       <div id="users-container">
         ${Object.values(this.users).map(
-          (client) =>
+          (user) =>
             html`
               <div
-                id="user-${client.id}"
+                id="user-${user.id}"
                 class="user"
-                data-isself="${client.id == this.me?.id}"
-                style="--color: ${client.color}; --x: ${client.x}vw; --y: ${client.y}vh;"
+                data-isself="${user.id == this.me?.id}"
+                style="--color: ${user.color}; --x: ${user.x}vw; --y: ${user.y}vh;"
               >
                 <svg
                   class="cursor"
@@ -42,11 +42,10 @@ export class LiveroomClientElement extends LitElement {
                 >
                   <polygon points="1,99 1,1 69.3,69.3 29.1,69.3" />
                 </svg>
-                <span class="name">${client.name}</span>
+                <span class="name">${user.name}</span>
                 <div
                   class="halo"
-                  data-show="${client.is_mouse_down ||
-                  client.is_escape_key_down}"
+                  data-show="${user.is_mouse_down || user.is_escape_key_down}"
                 />
               </div>
             `
