@@ -8,7 +8,7 @@ export DATABASE_URL="postgres://postgres:postgres@localhost:5432/liveroom"
 
 export SECRET_KEY_BASE="FILL_ME" # run `mix phx.gen.secret` to generate one
 
-export UMAMI_ENABLED="true"
+export UMAMI_ENABLED="false"
 export UMAMI_BASE_URL="http://localhost:3000"
 export UMAMI_WEBSITE_ID="FILL_ME"
 
