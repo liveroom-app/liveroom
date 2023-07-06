@@ -14,13 +14,14 @@ defmodule LiveroomWeb.AdminLive do
                      and updating the _liveroom_users as a whole every time, reducing memory usage.
         --%>
         <.live_component
-          :for={{user_id, user} <- @_liveroom_users}
+          :for={{user_id, _user} <- @_liveroom_users}
           :if={_is_other_user = user_id != @_liveroom_user_id}
           module={__MODULE__.PresenceCard}
           id={"presence_card_#{user_id}"}
-          user={user}
-          current_user={@_liveroom_users[@_liveroom_user_id]}
+          card_user_id={user_id}
+          current_user_id={@_liveroom_user_id}
           inner_width={@analytics_data.inner_width}
+          users={@_liveroom_users}
         />
       </div>
 
@@ -41,21 +42,24 @@ defmodule LiveroomWeb.AdminLive do
     alias LiveroomWeb.Components.Cursor
 
     attr :id, :string, required: true
-    attr :user, :map, required: true
-    attr :current_user, :map, required: true
+    attr :users, :map, required: true
+    attr :card_user_id, :string, required: true
+    attr :current_user_id, :string, required: true
     attr :inner_width, :integer, required: true
     attr :rest, :global
 
     def render(assigns) do
-      ratio = Float.round(assigns.user.inner_width / assigns.user.inner_height, 2)
+      card_user = assigns.users[assigns.card_user_id]
 
-      # view_width: min(max(assigns.user.inner_width, min_width), max_width)
+      ratio = Float.round(card_user.inner_width / card_user.inner_height, 2)
+
+      # view_width: min(max(card_user.inner_width, min_width), max_width)
       #
       # NOTE: Formula is `client_width * final_ratio` with
       #        - final_ratio = 90vw / 3200
       #        - 1vw = admin_width / 100
       view_width =
-        (assigns.user.inner_width * (90 / 1920) * (assigns.inner_width / 100))
+        (card_user.inner_width * (90 / 1920) * (assigns.inner_width / 100))
         |> max(_min_width = 150)
         |> min(_max_width = 90 / 100 * assigns.inner_width)
         |> round()
@@ -73,7 +77,15 @@ defmodule LiveroomWeb.AdminLive do
       <div
         id={@id}
         phx-hook="AnimateBackgroundHook"
-        data-phxref={@user.phx_ref <> @current_user.phx_ref}
+        data-phxref={
+          # NOTE: If there is a cursor playground (user is a client),
+          #       then we animate the card if the card user moves OR if the current user moves.
+          #       Else, if the user is an admin, we animate the card only if the card user moves.
+          case card_user = @users[@card_user_id] do
+            %{type: :client} -> card_user.phx_ref <> @users[@current_user_id].phx_ref
+            %{type: :admin} -> card_user.phx_ref
+          end
+        }
         data-opacity={reduced_opacity()}
         data-opacityanimated={1}
         data-boxshadow="none"
@@ -86,9 +98,9 @@ defmodule LiveroomWeb.AdminLive do
             <%!-- Name & Screen size --%>
             <div class="flex flex-wrap justify-between items-baseline gap-x-16 py-3 px-4">
               <p class="flex items-center gap-2">
-                <span class="font-semibold select-all"><%= @user.name %></span>
+                <span class="font-semibold select-all"><%= @users[@card_user_id].name %></span>
                 <span
-                  :if={@user.type == :admin}
+                  :if={@users[@card_user_id].type == :admin}
                   name="hero-shield-check-solid"
                   class="text-xs text-neutral-800 bg-neutral-800/10 rounded-full py-0.5 px-2"
                 >
@@ -96,7 +108,7 @@ defmodule LiveroomWeb.AdminLive do
                 </span>
               </p>
               <p class="text-xs font-medium font-mono">
-                <%= @user.inner_width %> x <%= @user.inner_height %>
+                <%= @users[@card_user_id].inner_width %> x <%= @users[@card_user_id].inner_height %>
               </p>
             </div>
 
@@ -104,65 +116,50 @@ defmodule LiveroomWeb.AdminLive do
               <%!-- user_id --%>
               <tr class="[&_td]:px-2">
                 <td class="select-none">user_id</td>
-                <td class="font-medium font-mono select-all"><%= @user.id %></td>
+                <td class="font-medium font-mono select-all"><%= @users[@card_user_id].id %></td>
               </tr>
               <%!-- current_url --%>
               <tr class="[&_td]:px-2">
                 <td class="select-none">current_url</td>
-                <td class="font-medium font-mono select-all"><%= @user.current_url %></td>
+                <td class="font-medium font-mono select-all">
+                  <%= @users[@card_user_id].current_url %>
+                </td>
               </tr>
               <%!-- phx_ref --%>
               <tr class="[&_td]:px-2">
                 <td class="select-none">phx_ref</td>
-                <td class="font-medium font-mono select-all"><%= @user.phx_ref %></td>
+                <td class="font-medium font-mono select-all"><%= @users[@card_user_id].phx_ref %></td>
               </tr>
             </table>
           </div>
 
           <%!-- Cursors Playground --%>
-          <div :if={@user.type == :client} class="flex flex-col items-center p-2">
+          <div :if={@users[@card_user_id].type == :client} class="flex flex-col items-center p-2">
             <%!-- TODO: listen to mouse click only inside the container in TrackCursorHook --%>
             <%!-- TODO: same for keyboard press? --%>
             <div
-              id={"cursors_playground_" <> @user.id}
+              id={"cursors_playground_" <> @users[@card_user_id].id}
               phx-hook="TrackCursorsHook"
               data-mode="container"
               data-mouseclick="true"
               data-keyboardpress="true"
-              style={"width: #{@view_width}px; height: #{@view_height}px; background-color: #{@user.color}30; border: solid 2px #{@user.color};"}
+              style={"width: #{@view_width}px; height: #{@view_height}px; background-color: #{@users[@card_user_id].color}30; border: solid 2px #{@users[@card_user_id].color};"}
               class="relative rounded overflow-hidden"
             >
-              <%!-- Other user cursor --%>
               <.live_component
+                :for={{user_id, user} <- @users}
                 module={Cursor}
-                id={"cursor_" <> @user.id}
-                is_self={false}
-                user_id={@user.id}
-                x={@user.x}
-                y={@user.y}
-                name={@user.name}
-                color={@user.color}
-                is_escape_key_down={@user.is_escape_key_down}
-                is_mouse_down={@user.is_mouse_down}
-                msg={@user.msg}
-                mode={:container}
-                container_width={@view_width}
-                container_height={@view_height}
-              />
-              <%!-- Current user cursor --%>
-              <.live_component
-                module={Cursor}
-                id={"cursor_" <> @user.id <> "_self"}
-                is_self={true}
+                id={"cursor_#{user_id}"}
+                is_self={user_id == @users[@current_user_id].id}
                 show_self={true}
-                user_id={@current_user.id}
-                x={@current_user.x}
-                y={@current_user.y}
-                name={@current_user.name}
-                color={@current_user.color}
-                is_escape_key_down={@current_user.is_escape_key_down}
-                is_mouse_down={@current_user.is_mouse_down}
-                msg={@current_user.msg}
+                user_id={user_id}
+                x={user.x}
+                y={user.y}
+                name={user.name}
+                color={user.color}
+                is_escape_key_down={user.is_escape_key_down}
+                is_mouse_down={user.is_mouse_down}
+                msg={user.msg}
                 mode={:container}
                 container_width={@view_width}
                 container_height={@view_height}
