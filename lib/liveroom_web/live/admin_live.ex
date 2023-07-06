@@ -25,7 +25,7 @@ defmodule LiveroomWeb.AdminLive do
       </div>
 
       <UserBanner.render
-        class="z-[100]"
+        class="z-[1000]"
         name={@_liveroom_users[@_liveroom_user_id][:name]}
         color={@_liveroom_users[@_liveroom_user_id][:color]}
       />
