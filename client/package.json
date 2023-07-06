@@ -1,7 +1,7 @@
 {
   "name": "liveroom-client-element",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "liveroom-client-element.js",
   "module": "liveroom-client-element.js",
