@@ -277,6 +277,7 @@ export class LiveroomClientElement extends LitElement {
     }
 
     .banner {
+      z-index: 1000;
       position: fixed;
       bottom: 12px;
       inset-inline: 0;
