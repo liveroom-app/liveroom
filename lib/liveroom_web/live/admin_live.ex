@@ -98,12 +98,18 @@ defmodule LiveroomWeb.AdminLive do
               </p>
             </div>
 
-            <%!-- user_id & phx_ref --%>
             <table class="w-fit my-1 mx-2 text-xs text-neutral-800/75">
+              <%!-- user_id --%>
               <tr class="[&_td]:px-2">
                 <td class="select-none">user_id</td>
                 <td class="font-medium font-mono select-all"><%= @user.id %></td>
               </tr>
+              <%!-- current_url --%>
+              <tr class="[&_td]:px-2">
+                <td class="select-none">current_url</td>
+                <td class="font-medium font-mono select-all"><%= @user.current_url %></td>
+              </tr>
+              <%!-- phx_ref --%>
               <tr class="[&_td]:px-2">
                 <td class="select-none">phx_ref</td>
                 <td class="font-medium font-mono select-all"><%= @user.phx_ref %></td>
