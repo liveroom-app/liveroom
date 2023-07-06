@@ -85,13 +85,15 @@ defmodule LiveroomWeb.AdminLive do
           <div class="pb-2">
             <%!-- Name & Screen size --%>
             <div class="flex flex-wrap justify-between items-baseline gap-x-16 py-3 px-4">
-              <p class="flex items-center space-x-1">
+              <p class="flex items-center gap-2">
                 <span class="font-semibold select-all"><%= @user.name %></span>
-                <.icon
+                <span
                   :if={@user.type == :admin}
                   name="hero-shield-check-solid"
-                  class="block w-[18px] h-[18px] bg-neutral-800"
-                />
+                  class="text-xs text-neutral-800 bg-neutral-800/10 rounded-full py-0.5 px-2"
+                >
+                  admin
+                </span>
               </p>
               <p class="text-xs font-medium font-mono">
                 <%= @user.inner_width %> x <%= @user.inner_height %>
@@ -118,7 +120,7 @@ defmodule LiveroomWeb.AdminLive do
           </div>
 
           <%!-- Cursors Playground --%>
-          <div class="flex flex-col items-center p-2">
+          <div :if={@user.type == :client} class="flex flex-col items-center p-2">
             <%!-- TODO: listen to mouse click only inside the container in TrackCursorHook --%>
             <%!-- TODO: same for keyboard press? --%>
             <div
