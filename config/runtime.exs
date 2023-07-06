@@ -25,6 +25,10 @@ if config_env() != :test do
     enabled: System.get_env("UMAMI_ENABLED") == "true",
     base_url: System.get_env("UMAMI_BASE_URL"),
     website_id: System.get_env("UMAMI_WEBSITE_ID")
+
+  config :liveroom, :discord,
+    enabled: System.get_env("DISCORD_ENABLED") == "true",
+    webhook_url_app_logs: System.get_env("DISCORD_WEBHOOK_URL_APP_LOGS")
 end
 
 if config_env() == :prod do

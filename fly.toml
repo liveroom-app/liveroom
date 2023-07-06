@@ -18,6 +18,8 @@ processes = []
   UMAMI_BASE_URL = "https://liveroom-umami.fly.dev"
   # UMAMI_BASE_URL = "http://liveroom-umami.internal:3000" # Does not work...
   # UMAMI_WEBSITE_ID set as secret
+  DISCORD_ENABLED = "true"
+  # DISCORD_WEBHOOK_URL_APP_LOGS set as secret
   # ADMIN_BASIC_AUTH_USERNAME set as secret
   # ADMIN_BASIC_AUTH_PASSWORD set as secret
 
