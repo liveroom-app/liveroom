@@ -22,6 +22,7 @@ defmodule LiveroomWeb.AdminLive do
           card_user_id={user_id}
           current_user_id={@_liveroom_user_id}
           inner_width={@analytics_data.inner_width}
+          inner_height={@analytics_data.inner_height}
           users={@_liveroom_users}
         />
       </div>
@@ -47,31 +48,36 @@ defmodule LiveroomWeb.AdminLive do
     attr :card_user_id, :string, required: true
     attr :current_user_id, :string, required: true
     attr :inner_width, :integer, required: true
+    attr :inner_height, :integer, required: true
     attr :rest, :global
 
     def render(assigns) do
       card_user = assigns.users[assigns.card_user_id]
 
-      ratio = Float.round(card_user.inner_width / card_user.inner_height, 2)
+      ratio = (card_user.inner_width / card_user.inner_height) |> Float.round(2)
 
-      # view_width: min(max(card_user.inner_width, min_width), max_width)
-      #
-      # NOTE: Formula is `client_width * final_ratio` with
-      #        - final_ratio = 90vw / 3200
-      #        - 1vw = admin_width / 100
-      view_width =
-        (card_user.inner_width * (90 / 1920) * (assigns.inner_width / 100))
-        |> max(_min_width = 150)
-        |> min(_max_width = 90 / 100 * assigns.inner_width)
-        |> round()
+      # NOTE: The goal is to have the full card user screen visible,
+      #       without overflowing on the current user (admin) screen.
+      #       If ratio > 1, width is greater than height, so we use width as the reference.
+      #       Else, if ratio < 1, height is greater than width, so we use height as the reference.
+      {view_width, view_height} =
+        case ratio > 1.0 do
+          true ->
+            view_width = 0.8 * assigns.inner_width
+            view_height = view_width / ratio
+            {view_width, view_height}
 
-      view_height = (view_width / ratio) |> round()
+          false ->
+            view_height = 0.7 * assigns.inner_height
+            view_width = view_height * ratio
+            {view_width, view_height}
+        end
 
       assigns =
         assign(assigns,
           ratio: ratio,
-          view_width: view_width,
-          view_height: view_height
+          view_width: round(view_width),
+          view_height: round(view_height)
         )
 
       ~H"""
