@@ -7,12 +7,6 @@ defmodule LiveroomWeb.AdminLive do
     ~H"""
     <div id="admin_live" class="min-h-[100dvh] flex flex-col items-stretch space-y-8 bg-slate-100">
       <div class="flex flex-reverse flex-wrap items-start gap-8 mt-8 mb-32 px-8">
-        <%!-- FIXME: Each presence card should be its own child liveview,
-                     listening to the pubsub message sent by Liveroom Presence in handle_metas.
-
-                     This way, we avoid storing the _liveroom_users in the socket
-                     and updating the _liveroom_users as a whole every time, reducing memory usage.
-        --%>
         <.live_component
           :for={{user_id, _user} <- @_liveroom_users}
           :if={_is_other_user = user_id != @_liveroom_user_id}
