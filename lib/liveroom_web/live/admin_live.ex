@@ -152,7 +152,7 @@ defmodule LiveroomWeb.AdminLive do
               <.live_component
                 :for={{user_id, user} <- @users}
                 module={Cursor}
-                id={"cursor_#{user_id}"}
+                id={"cursor_#{@card_user_id}_#{user_id}"}
                 is_self={user_id == @users[@current_user_id].id}
                 show_self={true}
                 user_id={user_id}
