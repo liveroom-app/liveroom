@@ -20,7 +20,9 @@ defmodule LiveroomWeb.Hooks.Liveroom do
   ### Hooks
 
   defp handle_params_current_url(_params, url, socket) do
-    update_user(socket, &put_in(&1.current_url, url))
+    if connected?(socket) do
+      update_user(socket, &put_in(&1.current_url, url))
+    end
 
     {:cont, socket}
   end
