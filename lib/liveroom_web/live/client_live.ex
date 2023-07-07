@@ -68,14 +68,15 @@ defmodule LiveroomWeb.ClientLive do
       ~H"""
       <li
         id={@id}
-        phx-hook="AnimateBackgroundHook"
-        data-phxref={@phx_ref}
-        data-opacity={reduced_opacity()}
-        data-opacityanimated={1}
-        data-boxshadow="none"
-        data-boxshadowanimated="none"
-        class="flex flex-col sm:flex-row sm:flex-wrap items-baseline gap-y-2 gap-x-8 transition-all duration-300"
-        style={"opacity: #{reduced_opacity()};"}
+        phx-hook="AnimateHook"
+        data-watched={@phx_ref}
+        data-animateonmount="true"
+        data-timeout="1000"
+        class={[
+          "flex flex-col sm:flex-row sm:flex-wrap items-baseline gap-y-2 gap-x-8",
+          "opacity-75 data-[animated]:opacity-100",
+          "transition-all duration-300"
+        ]}
       >
         <p
           class="w-fit py-1 p-2.5 font-semibold select-all rounded-full"
@@ -90,9 +91,6 @@ defmodule LiveroomWeb.ClientLive do
       </li>
       """
     end
-
-    @reduced_opacity 0.75
-    defp reduced_opacity, do: @reduced_opacity
   end
 
   ### Server

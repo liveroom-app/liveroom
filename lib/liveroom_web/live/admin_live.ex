@@ -76,8 +76,8 @@ defmodule LiveroomWeb.AdminLive do
       ~H"""
       <div
         id={@id}
-        phx-hook="AnimateBackgroundHook"
-        data-phxref={
+        phx-hook="AnimateHook"
+        data-watched={
           # NOTE: If there is a cursor playground (user is a client),
           #       then we animate the card if the card user moves OR if the current user moves.
           #       Else, if the user is an admin, we animate the card only if the card user moves.
@@ -86,12 +86,14 @@ defmodule LiveroomWeb.AdminLive do
             %{type: :admin} -> card_user.phx_ref
           end
         }
-        data-opacity={reduced_opacity()}
-        data-opacityanimated={1}
-        data-boxshadow="none"
-        data-boxshadowanimated=""
-        class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300"
-        style={"opacity: #{reduced_opacity()};"}
+        data-animateonmount="true"
+        data-timeout="1000"
+        class={[
+          "bg-white rounded-xl overflow-hidden",
+          "opacity-75 data-[animated]:opacity-100",
+          "shadow-none data-[animated]:shadow-md",
+          "transition-all duration-300"
+        ]}
       >
         <div class="flex flex-col items-stretch">
           <div class="pb-2">
@@ -170,9 +172,6 @@ defmodule LiveroomWeb.AdminLive do
       </div>
       """
     end
-
-    @reduced_opacity 0.75
-    defp reduced_opacity, do: @reduced_opacity
   end
 
   ### Server
