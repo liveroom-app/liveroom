@@ -6,9 +6,16 @@ defmodule LiveroomWeb.AdminLive do
   def render(assigns) do
     ~H"""
     <div id="admin_live" class="min-h-[100dvh] flex flex-col items-stretch space-y-8 bg-slate-100">
-      <div class="flex flex-reverse flex-wrap items-start gap-8 mt-8 mb-32 px-8">
+      <div class="flex flex-wrap items-start gap-8 mt-8 mb-32 px-8">
         <.live_component
-          :for={{user_id, _user} <- @_liveroom_users}
+          :for={
+            {user_id, _user} <-
+              Enum.sort_by(
+                @_liveroom_users,
+                fn {_user_id, user} -> user.joined_at end,
+                {:asc, DateTime}
+              )
+          }
           :if={_is_other_user = user_id != @_liveroom_user_id}
           module={__MODULE__.PresenceCard}
           id={"presence_card_#{user_id}"}
