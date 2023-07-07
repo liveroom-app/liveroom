@@ -29,6 +29,11 @@ if config_env() != :test do
   config :liveroom, :discord,
     enabled: System.get_env("DISCORD_ENABLED") == "true",
     webhook_url_app_logs: System.get_env("DISCORD_WEBHOOK_URL_APP_LOGS")
+
+  config :liveroom, :livekit,
+    ws_url: System.get_env("LIVEKIT_WS_URL"),
+    api_key: System.get_env("LIVEKIT_API_KEY"),
+    api_secret: System.get_env("LIVEKIT_API_SECRET")
 end
 
 if config_env() == :prod do

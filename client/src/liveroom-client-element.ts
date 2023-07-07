@@ -1,6 +1,7 @@
-import { html, css, LitElement } from "lit";
+import { html, css, LitElement, PropertyValueMap } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { LiveState, connectElement } from "phx-live-state";
+import { Room } from "livekit-client";
 
 @customElement("liveroom-client-element")
 export class LiveroomClientElement extends LitElement {
@@ -10,13 +11,19 @@ export class LiveroomClientElement extends LitElement {
   @property({ attribute: "room_id" })
   room_id!: string;
 
-  liveState: LiveState | undefined;
+  liveState?: LiveState;
+  livekitRoom?: Room;
 
   @state()
-  me: User<"client"> | undefined;
+  me?: User<"client">;
 
   @state()
   users: { [key: string]: User } = {};
+
+  @state()
+  livekit_ws_url?: string;
+  @state()
+  livekit_token?: string;
 
   render() {
     return html`
@@ -94,7 +101,7 @@ export class LiveroomClientElement extends LitElement {
       },
     });
     connectElement(liveState, this, {
-      properties: ["room_id", "me", "users"],
+      properties: ["room_id", "me", "users", "livekit_ws_url", "livekit_token"],
       events: {
         send: [
           "mouse_move",
@@ -129,7 +136,24 @@ export class LiveroomClientElement extends LitElement {
     // Disconnect LiveState
     this.liveState && this.liveState.disconnect();
 
+    // Disconnect LiveKit
+    this.livekitRoom && this.livekitRoom.disconnect();
+
     super.disconnectedCallback();
+  }
+
+  updated(
+    changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
+    if (
+      changedProperties.has("livekit_ws_url") ||
+      changedProperties.has("livekit_token")
+    ) {
+      if (this.livekit_ws_url && this.livekit_token) {
+        // Setup LiveKit screensharing
+        void this._setupLiveKit();
+      }
+    }
   }
 
   _throttledDispatchMouseMove = throttle(
@@ -212,6 +236,26 @@ export class LiveroomClientElement extends LitElement {
         })
       );
     }
+  }
+
+  async _setupLiveKit() {
+    this.livekitRoom = new Room({ dynacast: true });
+
+    if (!this.livekit_ws_url) throw new Error("LiveKit websocket URL not set");
+    if (!this.livekit_token) throw new Error("LiveKit token not set");
+
+    await this.livekitRoom.connect(this.livekit_ws_url, this.livekit_token);
+
+    console.log("[LiveKit] Connected to room", this.livekitRoom.name);
+
+    await this.livekitRoom.localParticipant.setScreenShareEnabled(true, {
+      audio: false,
+      selfBrowserSurface: "include",
+      surfaceSwitching: "exclude",
+      systemAudio: "exclude",
+    });
+
+    console.log("[LiveKit] Screen shared");
   }
 
   static styles = css`

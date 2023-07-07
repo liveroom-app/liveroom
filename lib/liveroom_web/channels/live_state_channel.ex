@@ -24,7 +24,9 @@ defmodule LiveroomWeb.LiveStateChannel do
     state = %{
       room_id: room_id,
       me: me,
-      users: LiveroomWeb.Presence.list_users(room_id)
+      users: LiveroomWeb.Presence.list_users(room_id),
+      livekit_ws_url: Liveroom.LiveKit.ws_url(),
+      livekit_token: Liveroom.LiveKit.generate_token(room_id, me.id, me.name)
     }
 
     {:ok, state}

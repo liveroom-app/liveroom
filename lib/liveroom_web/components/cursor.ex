@@ -9,6 +9,7 @@ defmodule LiveroomWeb.Components.Cursor do
   attr :id, :string, required: true
   attr :is_self, :boolean, required: true
   attr :show_self, :boolean, default: false
+  attr :show_halo, :boolean, default: true
   attr :user_id, :string, required: true
   attr :x, :string, required: true
   attr :y, :string, required: true
@@ -86,6 +87,7 @@ defmodule LiveroomWeb.Components.Cursor do
       <%!-- Halo --%>
       <%!-- TODO: how to have an background opacity of 25% while keeping the border at 100%? --%>
       <div
+        :if={@show_halo}
         data-show={@is_escape_key_down || @is_mouse_down}
         class={[
           "scale-0 data-[show]:scale-100",

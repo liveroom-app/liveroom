@@ -21,9 +21,11 @@ defmodule LiveroomWeb.AdminLive do
           id={"presence_card_#{user_id}"}
           card_user_id={user_id}
           current_user_id={@_liveroom_user_id}
+          current_user_name={@_liveroom_users[@_liveroom_user_id][:name]}
           inner_width={@analytics_data.inner_width}
           inner_height={@analytics_data.inner_height}
           users={@_liveroom_users}
+          room_id={@_liveroom_room_id}
         />
       </div>
 
@@ -47,8 +49,10 @@ defmodule LiveroomWeb.AdminLive do
     attr :users, :map, required: true
     attr :card_user_id, :string, required: true
     attr :current_user_id, :string, required: true
+    attr :current_user_name, :string, required: true
     attr :inner_width, :integer, required: true
     attr :inner_height, :integer, required: true
+    attr :room_id, :string, required: true
     attr :rest, :global
 
     def render(assigns) do
@@ -146,8 +150,10 @@ defmodule LiveroomWeb.AdminLive do
           <div :if={@users[@card_user_id].type == :client} class="flex flex-col items-center p-2">
             <%!-- TODO: listen to mouse click only inside the container in TrackCursorHook --%>
             <%!-- TODO: same for keyboard press? --%>
+            <%!-- TODO: Use only 1 instance of LiveKit Screensharing Hook
+                  and attach each tracks to each Presence Card video element --%>
             <div
-              id={"cursors_playground_" <> @users[@card_user_id].id}
+              id={"cursors_playground_#{@card_user_id}"}
               phx-hook="TrackCursorsHook"
               data-mode="container"
               data-mouseclick="true"
@@ -155,12 +161,34 @@ defmodule LiveroomWeb.AdminLive do
               style={"width: #{@view_width}px; height: #{@view_height}px; background-color: #{@users[@card_user_id].color}30; border: solid 2px #{@users[@card_user_id].color};"}
               class="relative rounded overflow-hidden"
             >
+              <video
+                id={"livekit_screensharing_#{@card_user_id}"}
+                phx-hook="LiveKitScreensharingHook"
+                data-livekitwsurl={Liveroom.LiveKit.ws_url()}
+                data-livekittoken={
+                  Liveroom.LiveKit.generate_token(
+                    @room_id,
+                    @current_user_id <> @card_user_id,
+                    @current_user_name
+                  )
+                }
+                data-remoteuserid={@card_user_id}
+                class="absolute inset-0 rounded"
+              />
+
               <.live_component
                 :for={{user_id, user} <- @users}
                 module={Cursor}
                 id={"cursor_#{@card_user_id}_#{user_id}"}
                 is_self={user_id == @users[@current_user_id].id}
-                show_self={true}
+                show_self={
+                  # TODO: only show when livekit screensharing is NOT connected
+                  false
+                }
+                show_halo={
+                  # TODO: only show when livekit screensharing is NOT connected
+                  false
+                }
                 user_id={user_id}
                 x={user.x}
                 y={user.y}
