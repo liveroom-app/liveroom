@@ -35,6 +35,7 @@ defmodule Liveroom.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:joken, "~> 2.6.0"},
       {:live_state, "~> 0.6.1"},
       {:cors_plug, "~> 3.0.3"},
       {:libcluster, "~> 3.3.2"},
