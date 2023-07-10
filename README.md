@@ -49,7 +49,7 @@ The landing page has an interactive dashboard to play with. Open 2 browser windo
 ```html
 <liveroom-client-element
   url="wss://liveroom.app/client_socket"
-  room_id="public"
+  room_id="my_room"
 />
 ```
 
@@ -67,13 +67,13 @@ script.src =
 script.onload = function () {
   const liveroomElement = document.createElement("liveroom-client-element");
   liveroomElement.setAttribute("url", "wss://liveroom.app/client_socket");
-  liveroomElement.setAttribute("room_id", "public");
+  liveroomElement.setAttribute("room_id", "my_room");
   document.body.appendChild(liveroomElement);
 };
 document.head.appendChild(script);
 ```
 
-2. open https://liveroom.app/room/public/admin in a second browser window.
+2. open https://liveroom.app/room/my_room/admin in a second browser window.
 
 ## Context
 
