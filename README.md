@@ -31,6 +31,30 @@ If you are interested in beta testing the product once it is ready, please [join
 
 The landing page has an interactive dashboard to play with. Open 2 browser windows to see the collaborative features in real-time.
 
+### on your own website
+
+> ⚠️ Liveroom is NOT production ready, please don't deploy it yet. This is only for tests purposes.
+
+1. load the **Liveroom Client** script in your HTML header:
+
+```html
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/liveroom-client-element@0.0.2/dist/liveroom-client-element.es.min.js"
+></script>
+```
+
+2. add the **Liveroom Client** HTML element at the end of your `<body>`:
+
+```html
+<liveroom-client-element
+  url="wss://liveroom.app/client_socket"
+  room_id="public"
+/>
+```
+
+See [examples/simple_html_document.html](examples/simple_html_document.html) as an example.
+
 ### on any website
 
 1. run the following code in the browser console to install the **Liveroom Client**:
