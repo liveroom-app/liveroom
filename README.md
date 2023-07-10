@@ -53,6 +53,8 @@ The landing page has an interactive dashboard to play with. Open 2 browser windo
 />
 ```
 
+3. open https://liveroom.app/room/my_room/admin in a second browser window.
+
 See [examples/simple_html_document.html](examples/simple_html_document.html) as an example.
 
 ### on any website
