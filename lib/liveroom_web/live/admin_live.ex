@@ -98,7 +98,7 @@ defmodule LiveroomWeb.AdminLive do
           end
         }
         data-animateonmount="true"
-        data-timeout="1000"
+        data-timeout="60000"
         class={[
           "bg-white rounded-xl overflow-hidden",
           "opacity-75 data-[animated]:opacity-100",
