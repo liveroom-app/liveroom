@@ -6,7 +6,23 @@ defmodule LiveroomWeb.AdminLive do
   def render(assigns) do
     ~H"""
     <div id="admin_live" class="min-h-[100dvh] flex flex-col items-stretch space-y-8 bg-slate-100">
-      <div class="flex flex-wrap items-start gap-8 mt-8 mb-32 px-8">
+      <div
+        id="presence_cards_container"
+        phx-hook="LiveKitHook"
+        data-livekitwsurl={Liveroom.LiveKit.ws_url()}
+        data-livekittoken={
+          Liveroom.LiveKit.generate_token(
+            @_liveroom_room_id,
+            @_liveroom_user_id,
+            nil
+            # NOTE: This causes re-generation of token after each LiveView updates
+            # @_liveroom_users[@_liveroom_user_id][:name]
+          )
+        }
+        data-cameraprefix="livekit_camera_"
+        data-screensharingprefix="livekit_screensharing_"
+        class="flex flex-wrap items-start gap-8 mt-8 mb-32 px-8"
+      >
         <.live_component
           :for={
             {user_id, _user} <-
@@ -31,6 +47,7 @@ defmodule LiveroomWeb.AdminLive do
 
       <UserBanner.render
         class="z-[1000]"
+        user_id={@_liveroom_user_id}
         name={@_liveroom_users[@_liveroom_user_id][:name]}
         color={@_liveroom_users[@_liveroom_user_id][:color]}
       />
@@ -105,13 +122,16 @@ defmodule LiveroomWeb.AdminLive do
           "shadow-none data-[animated]:shadow-md",
           "transition-all duration-300"
         ]}
+        style={"--color: #{color = @users[@card_user_id].color}; --color30: #{color}30;"}
       >
         <div class="flex flex-col items-stretch">
-          <div class="pb-2">
+          <div class="px-4">
             <%!-- Name & Screen size --%>
-            <div class="flex flex-wrap justify-between items-baseline gap-x-16 py-3 px-4">
+            <div class="flex flex-wrap justify-between items-baseline gap-x-16 py-4">
               <p class="flex items-center gap-2">
-                <span class="font-semibold select-all"><%= @users[@card_user_id].name %></span>
+                <span class="text-sm font-semibold rounded-full py-1 px-3 bg-[--color] select-all">
+                  <%= @users[@card_user_id].name %>
+                </span>
                 <span
                   :if={@users[@card_user_id].type == :admin}
                   name="hero-shield-check-solid"
@@ -125,29 +145,37 @@ defmodule LiveroomWeb.AdminLive do
               </p>
             </div>
 
-            <table class="w-fit my-1 mx-2 text-xs text-neutral-800/75">
-              <%!-- user_id --%>
-              <tr class="[&_td]:px-2">
-                <td class="select-none">user_id</td>
-                <td class="font-medium font-mono select-all"><%= @users[@card_user_id].id %></td>
-              </tr>
-              <%!-- current_url --%>
-              <tr class="[&_td]:px-2">
-                <td class="select-none">current_url</td>
-                <td class="font-medium font-mono select-all">
-                  <%= @users[@card_user_id].current_url %>
-                </td>
-              </tr>
-              <%!-- phx_ref --%>
-              <tr class="[&_td]:px-2">
-                <td class="select-none">phx_ref</td>
-                <td class="font-medium font-mono select-all"><%= @users[@card_user_id].phx_ref %></td>
-              </tr>
-            </table>
+            <div class="flex flex-wrap items-start gap-x-4 pb-4">
+              <video
+                id={"livekit_camera_#{@card_user_id}"}
+                class="w-48 aspect-video rounded bg-neutral-100"
+                phx-update="ignore"
+              />
+
+              <table class="my-1 text-xs text-neutral-800/75">
+                <%!-- user_id --%>
+                <tr class="[&_td]:px-2">
+                  <td class="select-none">user_id</td>
+                  <td class="font-medium font-mono select-all"><%= @users[@card_user_id].id %></td>
+                </tr>
+                <%!-- current_url --%>
+                <tr class="[&_td]:px-2">
+                  <td class="select-none">current_url</td>
+                  <td class="font-medium font-mono select-all">
+                    <%= @users[@card_user_id].current_url %>
+                  </td>
+                </tr>
+                <%!-- phx_ref --%>
+                <tr class="[&_td]:px-2">
+                  <td class="select-none">phx_ref</td>
+                  <td class="font-medium font-mono select-all"><%= @users[@card_user_id].phx_ref %></td>
+                </tr>
+              </table>
+            </div>
           </div>
 
           <%!-- Cursors Playground --%>
-          <div :if={@users[@card_user_id].type == :client} class="flex flex-col items-center p-2">
+          <div :if={@users[@card_user_id].type == :client} class="flex flex-col items-center p-4">
             <%!-- TODO: listen to mouse click only inside the container in TrackCursorHook --%>
             <%!-- TODO: same for keyboard press? --%>
             <%!-- TODO: Use only 1 instance of LiveKit Screensharing Hook
@@ -158,26 +186,25 @@ defmodule LiveroomWeb.AdminLive do
               data-mode="container"
               data-mouseclick="true"
               data-keyboardpress="true"
-              style={"width: #{@view_width}px; height: #{@view_height}px; background-color: #{@users[@card_user_id].color}30; border: solid 2px #{@users[@card_user_id].color};"}
-              class="relative rounded overflow-hidden"
+              style={"width: #{@view_width}px; height: #{@view_height}px;"}
+              class={[
+                "relative rounded overflow-hidden",
+                "bg-[--color30]",
+                "border-2 border-[--color]"
+              ]}
             >
               <video
                 id={"livekit_screensharing_#{@card_user_id}"}
-                phx-hook="LiveKitScreensharingHook"
-                data-livekitwsurl={Liveroom.LiveKit.ws_url()}
-                data-livekittoken={
-                  Liveroom.LiveKit.generate_token(
-                    @room_id,
-                    @current_user_id <> @card_user_id,
-                    @current_user_name
-                  )
-                }
-                data-remoteuserid={@card_user_id}
-                class="absolute inset-0 rounded"
+                class="absolute inset-0"
+                phx-update="ignore"
               />
 
               <.live_component
                 :for={{user_id, user} <- @users}
+                :if={
+                  # TODO: only show when livekit screensharing is NOT connected
+                  user_id == @card_user_id
+                }
                 module={Cursor}
                 id={"cursor_#{@card_user_id}_#{user_id}"}
                 is_self={user_id == @users[@current_user_id].id}

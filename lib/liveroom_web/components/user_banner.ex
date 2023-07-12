@@ -1,31 +1,39 @@
 defmodule LiveroomWeb.Components.UserBanner do
   use LiveroomWeb, :html
 
+  attr :user_id, :string, required: true
   attr :name, :string, required: true
   attr :color, :string, required: true
   attr :class, :string, default: nil
 
   def render(assigns) do
     ~H"""
-    <div class={[
-      "fixed bottom-0 inset-x-0",
-      "flex justify-center items-center py-6 px-6",
-      "bg-white border-t border-slate-200",
-      "shadow-2xl",
-      @class
-    ]}>
+    <div
+      class={[
+        "fixed bottom-0 inset-x-0",
+        "flex justify-center items-center px-6",
+        "bg-white border-t border-slate-200",
+        "shadow-2xl",
+        @class
+      ]}
+      style={"--color: #{@color};"}
+    >
       <%!-- welcome --%>
       <div class="absolute left-4 inset-y-0 flex items-center">
-        <h1 class="font-semibold">Welcome 👋</h1>
+        <p class="font-semibold">
+          <span>👋 Welcome</span>
+          <span class="ml-1 text-sm font-semibold rounded-full py-1 px-3 bg-[--color]">
+            <%= @name %>
+          </span>
+        </p>
       </div>
 
-      <%!-- name --%>
-      <p
-        class="mx-auto font-semibold rounded-full py-1.5 px-6"
-        style={@color && "background-color: #{@color}"}
-      >
-        <%= @name %>
-      </p>
+      <%!-- self camera --%>
+      <video
+        id={"livekit_camera_#{@user_id}"}
+        class="h-20 aspect-video my-2 rounded bg-neutral-100"
+        phx-update="ignore"
+      />
 
       <%!-- liveroom logo --%>
       <div class="absolute right-4 inset-y-0 flex items-center">

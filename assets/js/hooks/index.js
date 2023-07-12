@@ -1,12 +1,12 @@
 import { AnimateHook } from "./animateHook";
-import { TrackCursorsHook } from "./trackCursorsHook";
-import { LiveKitScreensharingHook } from "./liveKitScreensharingHook";
 import { BroadcastHoveredHook, BroadcastFocusedHook } from "./broadcastHooks";
+import { LiveKitHook } from "./liveKitHook";
+import { TrackCursorsHook } from "./trackCursorsHook";
 
 export const Hooks = {
   AnimateHook,
-  TrackCursorsHook,
   BroadcastHoveredHook,
   BroadcastFocusedHook,
-  LiveKitScreensharingHook,
+  LiveKitHook,
+  TrackCursorsHook,
 };
